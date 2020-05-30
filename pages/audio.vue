@@ -34,8 +34,8 @@ export default Vue.extend({
   mounted() {
     fetch('/instruments/instruments.json')
       .then((res) => res.json())
-      .then((res) => {
-        this.sfzs = res
+      .then((res: string[]) => {
+        this.sfzs = res.map((s) => `/${s}`)
       })
   },
   methods: {
