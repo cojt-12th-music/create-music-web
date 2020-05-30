@@ -11,7 +11,9 @@
         <v-card-text>
           気軽に音楽を創りたい人達によるプロジェクト
         </v-card-text>
-        <v-card-actions> </v-card-actions>
+        <v-card-actions>
+          <v-btn link to="/audio">AUDIO班プレイグランド</v-btn>
+        </v-card-actions>
       </v-card>
     </v-row>
   </v-layout>

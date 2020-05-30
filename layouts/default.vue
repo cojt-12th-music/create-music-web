@@ -5,7 +5,7 @@
       <v-toolbar-title>気軽に音楽を創りたい！</v-toolbar-title>
     </v-app-bar>
     <v-content>
-      <v-container class="fill-height" fluid>
+      <v-container class="fill-height">
         <nuxt />
       </v-container>
     </v-content>
