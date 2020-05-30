@@ -17,6 +17,10 @@ export async function main() {
   }
 
   consola.info('Preparing instruments...')
+  if (process.env.force_instruments_reset) {
+    await fs.remove(path.resolve(__dirname, './archives'))
+    await fs.remove(path.resolve(__dirname, './instruments'))
+  }
   await Promise.all(
     list.map(async (inst) => {
       await downloadAndUnzip(inst.url, inst.name)
