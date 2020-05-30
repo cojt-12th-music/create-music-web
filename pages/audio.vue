@@ -32,7 +32,7 @@ export default Vue.extend({
     }
   },
   mounted() {
-    fetch('/sounds/instruments.json')
+    fetch('/instruments/instruments.json')
       .then((res) => res.json())
       .then((res) => {
         this.sfzs = res

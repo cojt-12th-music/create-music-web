@@ -1,6 +1,8 @@
 import colors from 'vuetify/es5/util/colors'
 import { Configuration } from '@nuxt/types'
-import { InstrumentDownloader } from './tools/instrument-downloader'
+import { InstPlugin } from './tools/im/plugin'
+
+const instPlugin = new InstPlugin()
 
 const config: Configuration = {
   mode: 'universal',
@@ -101,8 +103,8 @@ const config: Configuration = {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     extend(config, ctx) {
       if (ctx.isClient) {
-        if (config.plugins) config.plugins.push(new InstrumentDownloader())
-        else config.plugins = [new InstrumentDownloader()]
+        if (config.plugins) config.plugins.push(instPlugin)
+        else config.plugins = [instPlugin]
       }
     }
   }
