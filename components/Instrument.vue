@@ -185,6 +185,7 @@ export default Vue.extend({
     },
     /**
      * メロディーのデモ再生
+     * soundの再生を非同期にセットしている
      */
     async demoMelody() {
       await Promise.all(
