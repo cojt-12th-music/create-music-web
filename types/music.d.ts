@@ -9,8 +9,8 @@
  * delay: 音源を再生する相対時刻
  */
 export interface Sound {
-  key: number;
-  delay: number;
+  key: number
+  delay: number
 }
 /**
  * Block: ブロックに関するデータ型. 編集画面のブロックの部分である.
@@ -18,8 +18,8 @@ export interface Sound {
  * sounds: ブロックの構成する音
  */
 export interface Block {
-  label: string;
-  sounds: Sound[];
+  label: string
+  sounds: Sound[]
 }
 
 /**
@@ -28,7 +28,7 @@ export interface Block {
  *   TODO: 最終的にはブロックごとに割り振ったIDの配列を持たせる方が良さそう
  */
 export interface Melody {
-  blocks: Block[];
+  blocks: Block[]
 }
 
 // コードに関するデータ型
@@ -39,7 +39,7 @@ export interface Rhythm {}
 
 // 楽譜全体に関するデータ型
 export interface Music {
-  melody: Melody;
-  chord: Chord;
-  rhythm: Rhythm;
+  melody: Melody
+  chord: Chord
+  rhythm: Rhythm
 }

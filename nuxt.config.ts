@@ -111,7 +111,7 @@ const config: Configuration = {
         if (config.plugins) config.plugins.push(instPlugin)
         else config.plugins = [instPlugin]
       }
-    },
+    }
   }
 }
 
