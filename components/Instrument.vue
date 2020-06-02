@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-btn @click="demo">demo</v-btn>
+    <v-btn @click="demoMelody">demo melody</v-btn>
   </div>
 </template>
 
@@ -181,6 +182,16 @@ export default Vue.extend({
       this.playNote(64, 0.2) // ..
       this.playNote(67, 0.3)
       this.playNote(72, 0.4)
+    },
+    /**
+     * メロディーのデモ再生
+     */
+    async demoMelody() {
+      await Promise.all(
+        this.$accessor.music.melodySounds.map((sound) => {
+          this.playNote(sound.key, sound.delay)
+        })
+      )
     },
     /**
      * urlに直接指定できない文字列をエンコードするヘルパー関数

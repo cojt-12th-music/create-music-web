@@ -6,13 +6,29 @@
       </v-col>
     </v-row>
     <v-row v-if="context">
-      <player :context="context" :sfzs="sfzs" />
+      <v-col>SFZファイル</v-col>
+      <v-col v-for="s in sfzs" :key="s">
+        <instrument :sfz-path="s" :context="context" />
+      </v-col>
+    </v-row>
+    <v-row v-if="context">
+      <v-col>音を追加</v-col>
+      <v-col>
+        <v-btn v-for="key in keys" :key="key" @click="pushSound(key)">{{
+          key
+        }}</v-btn>
+      </v-col>
+    </v-row>
+    <v-row v-if="melody">
+      <p>{{ melody }}</p>
     </v-row>
   </v-container>
 </template>
+
 <script lang="ts">
 import Vue from 'vue'
-import Player from '~/components/Player.vue'
+import Instrument from '~/components/Instrument.vue'
+import { Melody } from '@/types/music'
 
 type DataType = {
   sfzs: string[]
@@ -21,12 +37,20 @@ type DataType = {
 
 export default Vue.extend({
   components: {
-    Player
+    Instrument
   },
   data(): DataType {
     return {
       sfzs: [],
       context: null
+    }
+  },
+  computed: {
+    melody(): Melody {
+      return this.$accessor.music.melody
+    },
+    keys(): number[] {
+      return [48, 60, 64, 67, 72]
     }
   },
   mounted() {
@@ -39,6 +63,10 @@ export default Vue.extend({
   methods: {
     init() {
       this.context = new AudioContext()
+    },
+    pushSound(key: number) {
+      const delay = this.$accessor.music.melodySounds.length * 0.1
+      this.$accessor.music.pushSound({ key, delay })
     }
   }
 })
