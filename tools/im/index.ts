@@ -16,7 +16,10 @@ export async function main() {
       .map((p) => p.replace(/^static/, '').replace(/\\/g, '/'))
   }
 
-  consola.info('Preparing instruments...')
+  consola.info('Preparing instruments... ')
+  consola.info(
+    `force_instruments_reset: ${process.env.force_instruments_reset}`
+  )
   if (process.env.force_instruments_reset) {
     await fs.remove(path.resolve(__dirname, './archives'))
     await fs.remove(path.resolve(__dirname, './instruments'))
