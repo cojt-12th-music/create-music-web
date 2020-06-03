@@ -21,6 +21,10 @@ export async function main() {
     `force_instruments_reset: ${process.env.force_instruments_reset}`
   )
   if (process.env.force_instruments_reset) {
+    consola.info(
+      path.resolve(__dirname, './archives'),
+      fs.existsSync(path.resolve(__dirname, './archives'))
+    )
     await fs.remove(path.resolve(__dirname, './archives'))
     await fs.remove(path.resolve(__dirname, './instruments'))
   }
