@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import parseSFZ, { SfzRegion } from 'sfz-parser'
+import { SfzRegion } from 'sfz-parser'
 
 /**
  * Playerコンポーネント
@@ -89,9 +89,9 @@ export default Vue.extend({
 
       // sfzファイルを取得
       await fetch(this.encodedSfzPath)
-        .then((res) => res.text())
+        .then((res) => res.json())
         .then((sfz) => {
-          this.sampleDefinition = parseSFZ(sfz)
+          this.sampleDefinition = sfz
         })
 
       // 楽器の音源データーを取得
