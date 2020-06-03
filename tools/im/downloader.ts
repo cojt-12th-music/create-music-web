@@ -13,7 +13,7 @@ export async function downloadAndUnzip(url: string, name: string) {
   consola.info(`Downloading ${name}`)
   const archivePath = await download(url)
   consola.info(`Decompressing ${name}`)
-  await unzip(archivePath, './instruments/')
+  await unzip(archivePath, `./instruments/${path.basename(archivePath)}`)
   consola.info(`Done ${name}`)
 }
 
