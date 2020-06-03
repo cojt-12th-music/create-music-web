@@ -16,11 +16,20 @@ export async function main() {
       .map((p) => p.replace(/^static/, '').replace(/\\/g, '/'))
   }
 
+  async function mkdirIfNotExist(p: string) {
+    if (!fs.existsSync(path.resolve(__dirname, p)))
+      await fs.mkdir(path.resolve(__dirname, p))
+  }
+
   consola.info('Preparing instruments... ')
   if (process.env.force_instruments_reset) {
     await fs.remove(path.resolve(__dirname, './archives'))
     await fs.remove(path.resolve(__dirname, './instruments'))
   }
+
+  await mkdirIfNotExist('./archives')
+  fs.remove(path.resolve(__dirname, './instruments'))
+  await mkdirIfNotExist('./instruments')
   await Promise.all(
     list.map(async (inst) => {
       await downloadAndUnzip(inst.url, inst.name)
