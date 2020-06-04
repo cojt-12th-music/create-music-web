@@ -25,10 +25,9 @@ export interface Block {
 /**
  * Melody: 楽譜の内メロディ全体に関するデータ型
  * blocks: メロディを構成するブロック配列
- *   TODO: 最終的にはブロックごとに割り振ったIDの配列を持たせる方が良さそう
  */
 export interface Melody {
-  blocks: Block[]
+  blockLabels: string[]
 }
 
 // コードに関するデータ型
@@ -42,4 +41,9 @@ export interface Music {
   melody: Melody
   chord: Chord
   rhythm: Rhythm
+  blocks: {
+    melody: { [label: string]: Block }
+    chord: { [label: string]: Block }
+    rhythm: { [label: string]: Block }
+  }
 }

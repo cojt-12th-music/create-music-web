@@ -4,17 +4,19 @@
  */
 
 import { getterTree, mutationTree, actionTree } from 'typed-vuex'
-import { Music } from '~/types/music'
+import { Block } from '~/types/music'
 
-export const state = (): Music => ({
-  melody: {
-    blocks: [{ label: 'init', sounds: [] }]
-  },
+export interface BlockState {
+  melody: { [label: string]: Block }
+  chord: { [label: string]: Block }
+  rhythm: { [label: string]: Block }
+}
+
+export const state = (): BlockState => ({
+  melody: {},
   chord: {},
   rhythm: {}
 })
-
-export type State = ReturnType<typeof state>
 
 export const getters = getterTree(state, {})
 

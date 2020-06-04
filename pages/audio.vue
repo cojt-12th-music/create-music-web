@@ -28,7 +28,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Instrument from '~/components/Instrument.vue'
-import { Melody } from '@/types/music'
+import { Sound } from '@/types/music'
 
 type DataType = {
   sfzs: string[]
@@ -46,8 +46,8 @@ export default Vue.extend({
     }
   },
   computed: {
-    melody(): Melody {
-      return this.$accessor.music.melody
+    melody(): Sound[] {
+      return this.$accessor.music.melodySounds
     },
     keys(): number[] {
       return [48, 60, 64, 67, 72]
@@ -66,7 +66,8 @@ export default Vue.extend({
     },
     pushSound(key: number) {
       const delay = this.$accessor.music.melodySounds.length * 0.1
-      this.$accessor.music.pushSound({ key, delay })
+      const sound: Sound = { key, delay }
+      this.$accessor.music.pushSound({ blockLabel: 'init', sound })
     }
   }
 })
