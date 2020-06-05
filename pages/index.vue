@@ -1,9 +1,18 @@
 <template>
   <div>
-    <p>トップページ</p>
-    <musical-score />
-    <block-list />
-    <operation-area />
+    <v-container>
+      <div id="musical-score-wrapper">
+        <musical-score />
+      </div>
+
+      <div id="block-list-wrapper">
+        <block-list />
+      </div>
+
+      <div id="operation-area-wrapper">
+        <operation-area />
+      </div>
+    </v-container>
   </div>
 </template>
 
@@ -20,3 +29,17 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+#musical-score-wrapper {
+  height: 65vh;
+  margin-bottom: 3vh;
+}
+#block-list-wrapper {
+  height: 15vh;
+  margin-bottom: 3vh;
+}
+#operation-area-wrapper {
+  height: 10vh;
+}
+</style>
