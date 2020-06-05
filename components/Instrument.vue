@@ -45,6 +45,10 @@ export default Vue.extend({
     context: {
       required: true,
       type: Object as Vue.PropType<AudioContext>
+    },
+    node: {
+      required: true,
+      type: Object as Vue.PropType<AudioNode>
     }
   },
   data(): DataType {
@@ -115,19 +119,28 @@ export default Vue.extend({
      * @param key 鍵盤番号
      * @param delay 再生までの遅延
      */
-    playNote(key: number, delay = 0) {
+    playNote(key: number, delay = 0, duration = 0.5) {
+      const nodes = this.constructGraph(key, delay, duration)
+      nodes.forEach((n, i, nodes) =>
+        nodes[i + 1] ? n.connect(nodes[i + 1]) : n.connect(this.node)
+      )
+      ;(nodes[0] as AudioScheduledSourceNode).start(
+        this.context.currentTime + delay
+      )
+    },
+    constructGraph(key: number, delay = 0, duration = 0.5): AudioNode[] {
       // 指定された鍵盤番号の音を鳴らすのに必要な音データを探す
       const target = this.sampleDefinition.find(
         (s) =>
           s.key === key ||
           (s.lokey && s.lokey <= key && s.hikey && key <= s.hikey)
       )
-      if (!target) return // 対応するものが無ければ何もしない
+      if (!target) return [] // 対応するものが無ければ何もしない
+
+      const nodes: AudioNode[] = []
 
       const source = this.context.createBufferSource()
       source.buffer = this.samples[target.sample] // 対応する音データをセット
-      source.connect(this.context.destination)
-
       /**
        * 再生速度を調整して音階を調整する
        * 例えばレの音はドの音を使って鳴らしてね、という定義だった場合
@@ -141,7 +154,22 @@ export default Vue.extend({
       else if (target.lokey)
         source.playbackRate.value = (2 ** (1 / 12)) ** (key - target.lokey)
 
-      source.start(this.context.currentTime + delay)
+      nodes.push(source)
+
+      // リリース対応
+      if (target.ampeg_release) {
+        const releaseGain = this.context.createGain()
+        releaseGain.gain.linearRampToValueAtTime(
+          0,
+          this.context.currentTime +
+            delay +
+            duration +
+            Number(target.ampeg_release)
+        )
+        nodes.push(releaseGain)
+      }
+
+      return nodes
     },
     /**
      * デモ再生

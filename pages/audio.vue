@@ -6,15 +6,13 @@
       </v-col>
     </v-row>
     <v-row v-if="context">
-      <v-col v-for="s in sfzs" :key="s">
-        <instrument :sfz-path="s" :context="context" />
-      </v-col>
+      <player :context="context" :sfzs="sfzs" />
     </v-row>
   </v-container>
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import Instrument from '~/components/Instrument.vue'
+import Player from '~/components/Player.vue'
 
 type DataType = {
   sfzs: string[]
@@ -23,7 +21,7 @@ type DataType = {
 
 export default Vue.extend({
   components: {
-    Instrument
+    Player
   },
   data(): DataType {
     return {
