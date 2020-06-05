@@ -184,15 +184,20 @@ export default Vue.extend({
       this.playNote(72, 0.4)
     },
     /**
-     * メロディーのデモ再生
-     * soundの再生を非同期にセットしている
+     * 作ったメロディのデモ再生
+     * TODO: 音符が増えても影響が出ないよう並列にする
      */
-    async demoMelody() {
-      await Promise.all(
-        this.$accessor.music.melodySounds.map((sound) => {
-          this.playNote(sound.key, sound.delay)
+    demoMelody() {
+      let delay = 0
+      this.$accessor.music.melodyBlocks.forEach((block) => {
+        if (!block.sounds) return
+
+        block.sounds.forEach((sound) => {
+          this.playNote(sound.key, sound.delay + delay, sound.duration)
         })
-      )
+
+        delay += block.totalTime
+      })
     },
     /**
      * urlに直接指定できない文字列をエンコードするヘルパー関数

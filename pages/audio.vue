@@ -17,8 +17,8 @@
         }}</v-btn>
       </v-col>
     </v-row>
-    <v-row v-if="melodySounds">
-      <p>{{ melodySounds }}</p>
+    <v-row v-if="melodyBlocks">
+      <p>{{ melodyBlocks }}</p>
     </v-row>
   </v-container>
 </template>
@@ -26,7 +26,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Player from '~/components/Player.vue'
-import { Sound } from '@/types/music'
+import { Sound, Block } from '@/types/music'
 
 type DataType = {
   sfzs: string[]
@@ -44,8 +44,8 @@ export default Vue.extend({
     }
   },
   computed: {
-    melodySounds(): Sound[] {
-      return this.$accessor.music.melodySounds
+    melodyBlocks(): Block[] {
+      return this.$accessor.music.melodyBlocks
     },
     keys(): number[] {
       return [48, 60, 64, 67, 72]
@@ -62,10 +62,11 @@ export default Vue.extend({
     init() {
       this.context = new AudioContext()
     },
-    pushSound(key: number) {
-      const delay = this.$accessor.music.melodySounds.length * 0.1
-      const sound: Sound = { key, delay }
-      this.$accessor.music.pushSound({ blockLabel: 'init', sound })
+    pushSound(key: number, blockLabel = 'init') {
+      const delay =
+        this.$accessor.music.blocks.melody[blockLabel].sounds.length * 0.1
+      const sound: Sound = { key, delay, duration: 1 }
+      this.$accessor.music.pushSound({ blockLabel, sound })
     }
   }
 })

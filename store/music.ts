@@ -8,15 +8,18 @@ import { Music, Block, Sound } from '~/types/music'
 
 export const state = (): Music => ({
   melody: {
-    blockLabels: ['init']
+    blockLabels: ['init', '', 'init'],
+    gain: 1
   },
   chord: {},
   rhythm: {},
   blocks: {
-    melody: { init: { label: 'init', sounds: [] } },
+    // 適当に初期ブロック「init」を入れている状態
+    melody: { init: { label: 'init', sounds: [], totalTime: 1 } },
     chord: {},
     rhythm: {}
-  }
+  },
+  bpm: 120
 })
 
 export type MusicState = ReturnType<typeof state>
@@ -24,12 +27,7 @@ export type MusicState = ReturnType<typeof state>
 export const getters = getterTree(state, {
   // メロディーのblocksを返すgetter
   melodyBlocks: (state: MusicState): Block[] =>
-    state.melody.blockLabels.map((label) => state.blocks.melody[label]),
-  // メロディーのsoundsを一連で返すgetter
-  melodySounds: (state: MusicState): Sound[] =>
-    state.melody.blockLabels
-      .map((label) => state.blocks.melody[label].sounds)
-      .flat()
+    state.melody.blockLabels.map((label) => state.blocks.melody[label] || {})
 })
 
 export const mutations = mutationTree(state, {
