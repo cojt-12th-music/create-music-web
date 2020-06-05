@@ -7,9 +7,7 @@
     </v-row>
     <v-row v-if="context">
       <v-col>SFZファイル</v-col>
-      <v-col v-for="s in sfzs" :key="s">
-        <instrument :sfz-path="s" :context="context" />
-      </v-col>
+      <player :context="context" :sfzs="sfzs" />
     </v-row>
     <v-row v-if="context">
       <v-col>音を追加</v-col>
@@ -19,15 +17,15 @@
         }}</v-btn>
       </v-col>
     </v-row>
-    <v-row v-if="melody">
-      <p>{{ melody }}</p>
+    <v-row v-if="melodySounds">
+      <p>{{ melodySounds }}</p>
     </v-row>
   </v-container>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import Instrument from '~/components/Instrument.vue'
+import Player from '~/components/Player.vue'
 import { Sound } from '@/types/music'
 
 type DataType = {
@@ -37,7 +35,7 @@ type DataType = {
 
 export default Vue.extend({
   components: {
-    Instrument
+    Player
   },
   data(): DataType {
     return {
@@ -46,7 +44,7 @@ export default Vue.extend({
     }
   },
   computed: {
-    melody(): Sound[] {
+    melodySounds(): Sound[] {
       return this.$accessor.music.melodySounds
     },
     keys(): number[] {
