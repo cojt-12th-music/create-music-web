@@ -24,7 +24,7 @@ type DataType = {
   /**
    * スピーカーに流すための実際の楽器の波形データを保持
    */
-  samples: { [key: string]: AudioBuffer }
+  samples: { [key: string]: { data: AudioBuffer; offset: number } }
   /**
    * sfzを読み込み中でtrue
    */
@@ -94,9 +94,14 @@ export default Vue.extend({
           return Promise.all(
             Object.keys(sfz.samples).map((key) =>
               this.context
-                .decodeAudioData(this.base64ToArrayBuffer(sfz.samples[key]))
+                .decodeAudioData(
+                  this.base64ToArrayBuffer(sfz.samples[key].data)
+                )
                 .then((buf) => {
-                  this.samples[key] = buf
+                  this.samples[key] = {
+                    data: buf,
+                    offset: sfz.samples[key].offset
+                  }
                 })
             )
           )
@@ -129,7 +134,7 @@ export default Vue.extend({
       const nodes: AudioNode[] = []
 
       const source = this.context.createBufferSource()
-      source.buffer = this.samples[target.sample] // 対応する音データをセット
+      source.buffer = this.samples[target.sample].data // 対応する音データをセット
       /**
        * 再生速度を調整して音階を調整する
        * 例えばレの音はドの音を使って鳴らしてね、という定義だった場合

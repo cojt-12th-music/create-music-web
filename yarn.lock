@@ -5385,6 +5385,11 @@ inquirer@^7.0.0:
     strip-ansi "^6.0.0"
     through "^2.3.6"
 
+int24@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/int24/-/int24-0.0.1.tgz#96cff1430a46557352edb406cd87b3082b369d84"
+  integrity sha1-ls/xQwpGVXNS7bQGzYezCCs2nYQ=
+
 invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"

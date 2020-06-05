@@ -28,6 +28,7 @@
     "decompress": "^4.2.1",
     "decompress-tarxz": "^3.0.0",
     "fs-extra": "^9.0.0",
+    "int24": "^0.0.1",
     "lamejs": "^1.2.0",
     "nuxt": "^2.0.0",
     "sfz-parser": "^0.0.8",
