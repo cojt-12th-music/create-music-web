@@ -57,7 +57,8 @@ export default {
           list: [
             { name: 'メロ1', id: 0 },
             { name: 'メロ2', id: 1 },
-            { name: 'メロ3', id: 2 }
+            { name: 'メロ3', id: 2 },
+            { name: 'メロ4', id: 3 }
           ]
         }
       ],
