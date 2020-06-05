@@ -4,22 +4,24 @@
  */
 
 import { getterTree, mutationTree, actionTree } from 'typed-vuex'
-import { Music, Block, Sound } from '~/types/music'
+import { Music, Block, Sound } from '@/types/music'
+import { MELODY_PRESETS, CHORD_PRESETS, RHYTHM_PRESETS } from '@/lib/presets'
 
 export const state = (): Music => ({
   melody: {
+    // init, 空白, init というブロックの並び
     blockLabels: ['init', '', 'init'],
     gain: 1
   },
   chord: {},
   rhythm: {},
   blocks: {
-    // 適当に初期ブロック「init」を入れている状態
-    melody: { init: { label: 'init', sounds: [], totalTime: 1 } },
-    chord: {},
-    rhythm: {}
+    // プリセットはとりあえず @/lib/presets.ts に定義している
+    melody: MELODY_PRESETS,
+    chord: CHORD_PRESETS,
+    rhythm: RHYTHM_PRESETS
   },
-  bpm: 120
+  bpm: 100
 })
 
 export type MusicState = ReturnType<typeof state>

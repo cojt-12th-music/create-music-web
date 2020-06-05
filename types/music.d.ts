@@ -1,6 +1,7 @@
 /**
  * music.d.ts
  * ユーザが作成する楽譜に関するデータ型
+ * 各ブロックはblocks以下に置き, メロディ, コード, リズムそれぞれではblockの参照を持つ
  */
 
 /**
@@ -31,6 +32,7 @@ export interface Block {
 /**
  * Melody: 楽譜の内メロディ全体に関するデータ型
  * blockLabels: メロディを構成するブロック配列
+ * gain: メロディ全ての音源のゲイン (楽器の音調節用)
  */
 export interface Melody {
   blockLabels: string[]
