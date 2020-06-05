@@ -29,7 +29,8 @@
     "decompress-tarxz": "^3.0.0",
     "fs-extra": "^9.0.0",
     "nuxt": "^2.0.0",
-    "sfz-parser": "^0.0.8"
+    "sfz-parser": "^0.0.8",
+    "vuedraggable": "^2.23.2"
   },
   "devDependencies": {
     "@nuxt/typescript-build": "^0.6.0",
