@@ -169,6 +169,30 @@ export default Vue.extend({
         nodes.push(releaseGain)
       }
 
+      // フィルター
+      if (target.fil_type && target.cutoff) {
+        const filter = this.context.createBiquadFilter()
+
+        switch (target.fil_type) {
+          case 'lpf_2p': // 2極ローパスフィルター（12dB /オクターブ）
+            filter.type = 'lowpass'
+            filter.frequency.value = target.cutoff
+            break
+          case 'hpf_2p': // 2極ハイパスフィルター（12dB /オクターブ）
+            filter.type = 'highpass'
+            filter.frequency.value = target.cutoff
+            break
+          case 'bpf_2p': // 2極バンドパスフィルター（12dB /オクターブ）
+            filter.type = 'bandpass'
+            filter.frequency.value = target.cutoff
+            break
+          default:
+            break
+        }
+
+        nodes.push(filter)
+      }
+
       return nodes
     },
     /**
