@@ -3,7 +3,7 @@
     <v-container>
       <v-row>
         <v-col cols="4">
-          <ul id="rhythm" class="blue lighten-3">
+          <ul id="rhythm" class="blue darken-1">
             <li>リズム</li>
             <li>
               <draggable element="ul" class="draggable">
@@ -15,7 +15,7 @@
           </ul>
         </v-col>
         <v-col cols="4">
-          <ul id="code" class="green lighten-3">
+          <ul id="code" class="green lighten-1">
             <li>コード</li>
             <li>
               <draggable element="ul" class="draggable">
@@ -27,7 +27,7 @@
           </ul>
         </v-col>
         <v-col cols="4">
-          <ul id="melody" class="pink lighten-3">
+          <ul id="melody" class="pink lighten-1">
             <li>メロディ</li>
             <li>
               <draggable element="ul" class="draggable">
@@ -53,7 +53,7 @@ export default {
   },
   data() {
     return {
-      rhythmBlocks: ['C', 'D', 'E', 'F', 'G', 'A', 'B'],
+      rhythmBlocks: ['D', 'E', 'F', 'G', 'A', 'B', 'A'],
       codeBlocks: ['C', 'D', 'E', 'F', 'G', 'A', 'B'],
       melodyBlocks: ['C', 'D', 'E', 'F', 'G', 'A', 'B']
     }
@@ -64,7 +64,6 @@ export default {
 <style lang="scss" scoped>
 div#component-frame {
   height: 100%;
-  overflow: scroll;
 }
 
 ul {
@@ -76,7 +75,6 @@ ul.draggable {
   li {
     margin: 1rem;
     display: block;
-    background: #c0c0c0;
     height: 5rem;
   }
 }
