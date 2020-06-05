@@ -7,7 +7,9 @@
             <li>リズム</li>
             <li>
               <draggable element="ul" class="draggable">
-                <li v-for="block in rhythmBlocks" :key="block">{{ block }}</li>
+                <li v-for="block in rhythmBlocks" :key="block">
+                  <block :text="block" />
+                </li>
               </draggable>
             </li>
           </ul>
@@ -17,7 +19,9 @@
             <li>コード</li>
             <li>
               <draggable element="ul" class="draggable">
-                <li v-for="block in codeBlocks" :key="block">{{ block }}</li>
+                <li v-for="block in codeBlocks" :key="block">
+                  <block :text="block" />
+                </li>
               </draggable>
             </li>
           </ul>
@@ -27,7 +31,9 @@
             <li>メロディ</li>
             <li>
               <draggable element="ul" class="draggable">
-                <li v-for="block in melodyBlocks" :key="block">{{ block }}</li>
+                <li v-for="block in melodyBlocks" :key="block">
+                  <block :text="block" />
+                </li>
               </draggable>
             </li>
           </ul>
@@ -39,9 +45,11 @@
 
 <script lang="ts">
 import draggable from 'vuedraggable'
+import block from '~/components/block.vue'
 export default {
   components: {
-    draggable
+    draggable,
+    block
   },
   data() {
     return {
