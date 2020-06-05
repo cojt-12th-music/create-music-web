@@ -1,25 +1,45 @@
 <template>
-  <v-layout>
-    <v-row align="center" justify="center">
-      <v-card>
-        <v-card-title>
-          気軽に音楽を創りたい！
-        </v-card-title>
-        <v-card-subtitle>
-          cojt-12th
-        </v-card-subtitle>
-        <v-card-text>
-          気軽に音楽を創りたい人達によるプロジェクト
-        </v-card-text>
-        <v-card-actions>
-          <v-btn link to="/audio">AUDIO班プレイグランド</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-row>
-  </v-layout>
+  <div>
+    <v-container>
+      <div id="musical-score-wrapper">
+        <musical-score />
+      </div>
+
+      <div id="block-list-wrapper">
+        <block-list />
+      </div>
+
+      <div id="operation-area-wrapper">
+        <operation-area />
+      </div>
+    </v-container>
+  </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-export default Vue.extend({})
+import MusicalScore from '@/components/musicalScore.vue'
+import BlockList from '@/components/blockList.vue'
+import OperationArea from '@/components/operationArea.vue'
+
+export default {
+  components: {
+    MusicalScore,
+    BlockList,
+    OperationArea
+  }
+}
 </script>
+
+<style lang="scss" scoped>
+#musical-score-wrapper {
+  height: 65vh;
+  margin-bottom: 3vh;
+}
+#block-list-wrapper {
+  height: 15vh;
+  margin-bottom: 3vh;
+}
+#operation-area-wrapper {
+  height: 10vh;
+}
+</style>
