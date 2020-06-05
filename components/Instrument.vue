@@ -45,6 +45,10 @@ export default Vue.extend({
     context: {
       required: true,
       type: Object as Vue.PropType<AudioContext>
+    },
+    node: {
+      required: true,
+      type: Object as Vue.PropType<AudioNode>
     }
   },
   data(): DataType {
@@ -116,13 +120,22 @@ export default Vue.extend({
      * @param delay 再生までの遅延
      */
     playNote(key: number, delay = 0, duration = 0.5) {
+      const nodes = this.constructGraph(key, delay, duration)
+      nodes.forEach((n, i, nodes) =>
+        nodes[i + 1] ? n.connect(nodes[i + 1]) : n.connect(this.node)
+      )
+      ;(nodes[0] as AudioScheduledSourceNode).start(
+        this.context.currentTime + delay
+      )
+    },
+    constructGraph(key: number, delay = 0, duration = 0.5): AudioNode[] {
       // 指定された鍵盤番号の音を鳴らすのに必要な音データを探す
       const target = this.sampleDefinition.find(
         (s) =>
           s.key === key ||
           (s.lokey && s.lokey <= key && s.hikey && key <= s.hikey)
       )
-      if (!target) return // 対応するものが無ければ何もしない
+      if (!target) return [] // 対応するものが無ければ何もしない
 
       const nodes: AudioNode[] = []
 
@@ -143,6 +156,7 @@ export default Vue.extend({
 
       nodes.push(source)
 
+      // リリース対応
       if (target.ampeg_release) {
         const releaseGain = this.context.createGain()
         releaseGain.gain.linearRampToValueAtTime(
@@ -155,13 +169,7 @@ export default Vue.extend({
         nodes.push(releaseGain)
       }
 
-      nodes.forEach((n, i, nodes) =>
-        nodes[i + 1]
-          ? n.connect(nodes[i + 1])
-          : n.connect(this.context.destination)
-      )
-
-      source.start(this.context.currentTime + delay)
+      return nodes
     },
     /**
      * デモ再生
