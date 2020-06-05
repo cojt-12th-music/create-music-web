@@ -28,9 +28,11 @@
     "decompress": "^4.2.1",
     "decompress-tarxz": "^3.0.0",
     "fs-extra": "^9.0.0",
+    "lamejs": "^1.2.0",
     "nuxt": "^2.0.0",
     "sfz-parser": "^0.0.8",
-    "vuedraggable": "^2.23.2"
+    "vuedraggable": "^2.23.2",
+    "wav": "^1.0.2"
   },
   "devDependencies": {
     "@nuxt/typescript-build": "^0.6.0",
@@ -39,6 +41,7 @@
     "@nuxtjs/vuetify": "^1.0.0",
     "@types/decompress": "^4.2.3",
     "@types/fs-extra": "^9.0.1",
+    "@types/wav": "^1.0.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^6.1.0",
     "eslint-config-prettier": "^6.10.0",
