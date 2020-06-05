@@ -2,6 +2,7 @@
  * music.d.ts
  * ユーザが作成する楽譜に関するデータ型
  * 各ブロックはblocks以下に置き, メロディ, コード, リズムそれぞれではblockの参照を持つ
+ * 楽譜内における時間は, 4分音符1つ分を1とする
  */
 
 /**
@@ -9,7 +10,6 @@
  * key: 再生する音源のキー
  * delay: 音源を再生する相対時刻
  * duration: 音源を再生する相対時間
- * TODO: 4分音符1つ分を1とした時間にする?
  */
 export interface Sound {
   key: number
@@ -21,7 +21,6 @@ export interface Sound {
  * label: ブロックのラベル
  * sounds: ブロックの構成する音
  * totalTime: ブロックの時間
- * TODO: 4分音符1つ分を1とした時間にする?
  */
 export interface Block {
   label: string
