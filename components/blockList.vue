@@ -9,26 +9,31 @@
 
       <v-tabs-items v-model="tab">
         <v-tab-item v-for="item in items" :key="item.tab">
-          <v-card flat>
-            <div class="boxContainer">
-              <draggable>
-                <v-card-text v-for="element in item.list" :key="element.name">
-                  {{ element.name }}
-                </v-card-text>
-              </draggable>
-            </div>
-          </v-card>
+          <div class="boxContainer">
+            <draggable>
+              <block
+                v-for="element in item.list"
+                :key="element.id"
+                class="child"
+                :text="element.name"
+              />
+            </draggable>
+          </div>
         </v-tab-item>
       </v-tabs-items>
     </v-card>
+
+    <!-- <block text="aaa" /> -->
   </div>
 </template>
 
 <script>
 import draggable from 'vuedraggable'
+import block from './block'
 export default {
   components: {
-    draggable
+    draggable,
+    block
   },
   data() {
     return {
@@ -79,13 +84,12 @@ div#component-frame {
   white-space: nowrap;
   -webkit-overflow-scrolling: touch;
 }
-.v-card__text {
-  background-color: #efefef;
+.child {
   display: inline-block;
   width: 100px;
   height: 60px;
   line-height: 30px;
-  margin: 5px;
+  margin: 10px;
   text-align: center;
 }
 </style>
