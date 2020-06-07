@@ -6,7 +6,7 @@
           <ul id="rhythm" class="blue darken-1">
             <li>リズム</li>
             <li>
-              <draggable element="ul" class="draggable">
+              <draggable element="ul" class="draggable" group="block">
                 <li v-for="block in rhythmBlocks" :key="block">
                   <block :text="block" />
                 </li>

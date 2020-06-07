@@ -7,10 +7,10 @@
         </v-tab>
       </v-tabs>
 
-      <v-tabs-items v-model="tab">
+      <v-tabs-items v-model="tab" :touchless="true">
         <v-tab-item v-for="item in items" :key="item.tab">
           <div class="boxContainer">
-            <draggable>
+            <draggable :group="{ name: 'box', pull: 'clone', put: false }">
               <block
                 v-for="element in item.list"
                 :key="element.id"
