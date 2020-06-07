@@ -10,7 +10,10 @@
       <v-tabs-items v-model="tab" :touchless="true">
         <v-tab-item v-for="item in items" :key="item.tab">
           <div class="boxContainer">
-            <draggable :group="{ name: 'box', pull: 'clone', put: false }">
+            <draggable
+              :group="{ name: 'block', pull: 'clone', put: false }"
+              v-bind="dragOptions"
+            >
               <block
                 v-for="element in item.list"
                 :key="element.id"
@@ -69,6 +72,14 @@ export default {
       ],
       enabled: true,
       dragging: false
+    }
+  },
+  computed: {
+    dragOptions() {
+      return {
+        animation: 300,
+        disabled: false
+      }
     }
   }
 }
