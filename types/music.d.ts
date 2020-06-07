@@ -7,7 +7,7 @@
 
 /**
  * Sound: 音に関するデータ型
- * id: FirestoreにおけるID. Block内でIDが被ることがないようにする.
+ * id: Block内における識別子. auto incrementが良さそう
  * key: 再生する音源のキー
  * delay: 音源を再生する相対時刻
  * duration: 音源を再生する相対時間
