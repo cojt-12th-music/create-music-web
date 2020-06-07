@@ -190,13 +190,13 @@ export default Vue.extend({
     demoMelody() {
       let delay = 0
       this.$accessor.music.melodyBlocks.forEach((block) => {
-        if (!block.sounds) return
+        if (!block.sounds.length) return
 
         block.sounds.forEach((sound) => {
           this.playNote(sound.key, sound.delay + delay, sound.duration)
         })
 
-        delay += block.totalTime
+        delay += block.duration
       })
     },
     /**

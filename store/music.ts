@@ -9,8 +9,8 @@ import { MELODY_PRESETS, CHORD_PRESETS, RHYTHM_PRESETS } from '@/lib/presets'
 
 export const state = (): Music => ({
   melody: {
-    // init, 空白, init というブロックの並び
-    blockLabels: ['init', '', 'init'],
+    // init, init というブロックの並び
+    blockLabels: ['init', 'init'],
     gain: 1
   },
   chord: {},

@@ -7,25 +7,38 @@
 
 /**
  * Sound: 音に関するデータ型
+ * id: FirestoreにおけるID. Block内でIDが被ることがないようにする.
  * key: 再生する音源のキー
  * delay: 音源を再生する相対時刻
  * duration: 音源を再生する相対時間
  */
 export interface Sound {
+  id?: number
   key: number
   delay: number
   duration: number
 }
+
 /**
  * Block: ブロックに関するデータ型. 編集画面のブロックの部分である.
+ * id: FirestoreにおけるID. blocks内でIDが被ることがないようにする.
  * label: ブロックのラベル
  * sounds: ブロックの構成する音
- * totalTime: ブロックの時間
+ * duration: ブロックを再生するのにかかる時間
  */
 export interface Block {
+  id?: number
   label: string
   sounds: Sound[]
-  totalTime: number
+  duration: number
+}
+
+/**
+ * Preset: ブロックをまとめたプリセットに関するデータ型.
+ * ブロックのlabelをキーとするオブジェクト
+ */
+interface Preset {
+  [label: string]: Block
 }
 
 /**
@@ -44,15 +57,22 @@ export interface Chord {}
 // リズムに関するデータ型
 export interface Rhythm {}
 
-// 楽譜全体に関するデータ型
+/**
+ * Music: 楽譜全体に関するデータ型
+ * bpm: 楽曲再生時のbpm
+ * melody: メロディの楽譜情報
+ * chord: コードの楽譜情報
+ * rhythm: リズムの楽譜情報
+ * blocks: melody, chord, rhytmそれぞれのブロック
+ */
 export interface Music {
   bpm: number
   melody: Melody
   chord: Chord
   rhythm: Rhythm
   blocks: {
-    melody: { [label: string]: Block }
-    chord: { [label: string]: Block }
-    rhythm: { [label: string]: Block }
+    melody: Preset
+    chord: Preset
+    rhythm: Preset
   }
 }
