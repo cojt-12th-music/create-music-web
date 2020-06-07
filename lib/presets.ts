@@ -1,7 +1,7 @@
 import { Preset } from '@/types/music'
 
 export const MELODY_PRESETS: Preset = {
-  init: { label: 'init', sounds: [], duration: 1 }
+  init: { name: 'init', sounds: [], duration: 1 }
 }
 
 export const CHORD_PRESETS: Preset = {}

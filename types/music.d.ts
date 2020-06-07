@@ -21,31 +21,31 @@ export interface Sound {
 
 /**
  * Block: ブロックに関するデータ型. 編集画面のブロックの部分である.
- * label: ブロックのラベル (Firestoreにおける主キー)
+ * name: ブロックのラベル (Firestoreにおける主キー)
  * sounds: ブロックの構成する音
  * duration: ブロックを再生するのにかかる時間
  */
 export interface Block {
-  label: string
+  name: string
   sounds: Sound[]
   duration: number
 }
 
 /**
  * Preset: ブロックをまとめたプリセットに関するデータ型.
- * ブロックのlabelをキーとするオブジェクト
+ * ブロックのnameをキーとするオブジェクト
  */
 interface Preset {
-  [label: string]: Block
+  [name: string]: Block
 }
 
 /**
  * Melody: 楽譜の内メロディ全体に関するデータ型
- * blockLabels: メロディを構成するブロック配列
+ * blockNames: メロディを構成するブロック配列
  * gain: メロディ全ての音源のゲイン (楽器の音調節用)
  */
 export interface Melody {
-  blockLabels: string[]
+  blockNames: string[]
   gain: number
 }
 

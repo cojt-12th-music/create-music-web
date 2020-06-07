@@ -10,7 +10,7 @@ import { MELODY_PRESETS, CHORD_PRESETS, RHYTHM_PRESETS } from '@/lib/presets'
 export const state = (): Music => ({
   melody: {
     // init, init というブロックの並び
-    blockLabels: ['init', 'init'],
+    blockNames: ['init', 'init'],
     gain: 1
   },
   chord: {},
@@ -29,20 +29,20 @@ export type MusicState = ReturnType<typeof state>
 export const getters = getterTree(state, {
   // メロディーのblocksを返す
   melodyBlocks: (state: MusicState): Block[] =>
-    state.melody.blockLabels.map((label) => state.blocks.melody[label])
+    state.melody.blockNames.map((name) => state.blocks.melody[name])
 })
 
 export const mutations = mutationTree(state, {
   /**
    * blockをメロディにクローンする
-   * @param blockLabel ブロックの名前
+   * @param blockName ブロックの名前
    * @param index 追加する場所
    */
   CLONE_BLOCK(
     state: MusicState,
-    { blockLabel, index }: { blockLabel: string; index: number }
+    { blockName, index }: { blockName: string; index: number }
   ) {
-    state.melody.blockLabels.splice(index, 0, blockLabel)
+    state.melody.blockNames.splice(index, 0, blockName)
   },
   /**
    * ブロックを移動させる
@@ -53,38 +53,38 @@ export const mutations = mutationTree(state, {
     state: MusicState,
     { oldIndex, newIndex }: { oldIndex: number; newIndex: number }
   ) {
-    const labels = state.melody.blockLabels.splice(oldIndex, 1)
-    state.melody.blockLabels.splice(newIndex, 0, labels[0])
+    const names = state.melody.blockNames.splice(oldIndex, 1)
+    state.melody.blockNames.splice(newIndex, 0, names[0])
   },
   /**
    * ブロックをブロックリストに追加する
    * @param block 追加するブロック
    */
   ADD_BLOCK_TO_LIST(state: MusicState, block: Block) {
-    state.blocks.melody[block.label] = block
+    state.blocks.melody[block.name] = block
   },
   /**
    * ブロックに新しいsoundを追加する
-   * @param blockLabel 追加するブロックの名前
+   * @param blockName 追加するブロックの名前
    * @param sound 追加するsound
    */
   ADD_SOUND(
     state: MusicState,
-    { blockLabel, sound }: { blockLabel: string; sound: Sound }
+    { blockName, sound }: { blockName: string; sound: Sound }
   ) {
-    sound.id = state.blocks.melody[blockLabel].sounds.length + 1
-    state.blocks.melody[blockLabel].sounds.push(sound)
+    sound.id = state.blocks.melody[blockName].sounds.length + 1
+    state.blocks.melody[blockName].sounds.push(sound)
   },
   /**
    * ブロックのsoundを変更する
-   * @param blockLabel 変更する音が存在しているブロックの名前
+   * @param blockName 変更する音が存在しているブロックの名前
    * @param sound 変更後のsound
    */
   UPDATE_SOUND(
     state: MusicState,
-    { blockLabel, sound }: { blockLabel: string; sound: Sound }
+    { blockName, sound }: { blockName: string; sound: Sound }
   ) {
-    state.blocks.melody[blockLabel].sounds.splice((sound.id || 0) - 1, 1, sound)
+    state.blocks.melody[blockName].sounds.splice((sound.id || 0) - 1, 1, sound)
   }
 })
 
@@ -93,14 +93,14 @@ export const actions = actionTree(
   {
     /**
      * blockをメロディにクローンする
-     * @param blockLabel ブロックの名前
+     * @param blockName ブロックの名前
      * @param index 追加する場所
      */
     cloneBlock(
       { commit },
-      { blockLabel, index }: { blockLabel: string; index: number }
+      { blockName, index }: { blockName: string; index: number }
     ) {
-      commit('CLONE_BLOCK', { blockLabel, index })
+      commit('CLONE_BLOCK', { blockName, index })
     },
     /**
      * ブロックを移動させる
@@ -122,25 +122,25 @@ export const actions = actionTree(
     },
     /**
      * ブロックに新しいsoundを追加する
-     * @param blockLabel 追加するブロックの名前
+     * @param blockName 追加するブロックの名前
      * @param sound 追加するsound
      */
     addSound(
       { commit },
-      { blockLabel, sound }: { blockLabel: string; sound: Sound }
+      { blockName, sound }: { blockName: string; sound: Sound }
     ) {
-      commit('ADD_SOUND', { blockLabel, sound })
+      commit('ADD_SOUND', { blockName, sound })
     },
     /**
      * ブロックのsoundを変更する
-     * @param blockLabel 変更する音が存在しているブロックの名前
+     * @param blockName 変更する音が存在しているブロックの名前
      * @param sound 変更後のsound
      */
     updateSound(
       { commit },
-      { blockLabel, sound }: { blockLabel: string; sound: Sound }
+      { blockName, sound }: { blockName: string; sound: Sound }
     ) {
-      commit('UPDATE_SOUND', { blockLabel, sound })
+      commit('UPDATE_SOUND', { blockName, sound })
     }
   }
 )

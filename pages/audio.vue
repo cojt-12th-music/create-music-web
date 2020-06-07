@@ -62,11 +62,11 @@ export default Vue.extend({
     init() {
       this.context = new AudioContext()
     },
-    pushSound(key: number, blockLabel = 'init') {
+    pushSound(key: number, blockName = 'init') {
       const delay =
-        this.$accessor.music.blocks.melody[blockLabel].sounds.length * 0.1
+        this.$accessor.music.blocks.melody[blockName].sounds.length * 0.1
       const sound: Sound = { key, delay, duration: 1 }
-      this.$accessor.music.addSound({ blockLabel, sound })
+      this.$accessor.music.addSound({ blockName, sound })
     }
   }
 })
