@@ -21,13 +21,11 @@ export interface Sound {
 
 /**
  * Block: ブロックに関するデータ型. 編集画面のブロックの部分である.
- * id: FirestoreにおけるID. blocks内でIDが被ることがないようにする.
- * label: ブロックのラベル
+ * label: ブロックのラベル (Firestoreにおける主キー)
  * sounds: ブロックの構成する音
  * duration: ブロックを再生するのにかかる時間
  */
 export interface Block {
-  id?: number
   label: string
   sounds: Sound[]
   duration: number
