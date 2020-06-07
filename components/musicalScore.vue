@@ -6,9 +6,9 @@
           <ul id="rhythm" class="blue darken-1">
             <li>リズム</li>
             <li>
-              <draggable element="ul" class="draggable">
+              <draggable element="ul" class="draggable" group="rhythm">
                 <li v-for="block in rhythmBlocks" :key="block">
-                  <block :text="block" />
+                  <block :text="block.name" />
                 </li>
               </draggable>
             </li>
@@ -20,7 +20,7 @@
             <li>
               <draggable element="ul" class="draggable">
                 <li v-for="block in codeBlocks" :key="block">
-                  <block :text="block" />
+                  <block :text="block.name" />
                 </li>
               </draggable>
             </li>
@@ -32,7 +32,7 @@
             <li>
               <draggable element="ul" class="draggable">
                 <li v-for="block in melodyBlocks" :key="block">
-                  <block :text="block" />
+                  <block :text="block.name" />
                 </li>
               </draggable>
             </li>
@@ -43,7 +43,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import draggable from 'vuedraggable'
 import block from '~/components/block.vue'
 export default {
@@ -53,9 +53,33 @@ export default {
   },
   data() {
     return {
-      rhythmBlocks: ['D', 'E', 'F', 'G', 'A', 'B', 'A'],
-      codeBlocks: ['C', 'D', 'E', 'F', 'G', 'A', 'B'],
-      melodyBlocks: ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+      rhythmBlocks: [
+        { name: 'C', type: '', id: 1 },
+        { name: 'D', type: '', id: 2 },
+        { name: 'E', type: '', id: 3 },
+        { name: 'F', type: '', id: 4 },
+        { name: 'G', type: '', id: 5 },
+        { name: 'A', type: '', id: 6 },
+        { name: 'B', type: '', id: 7 }
+      ],
+      codeBlocks: [
+        { name: 'Am', type: '', id: 1 },
+        { name: 'F', type: '', id: 2 },
+        { name: 'G', type: '', id: 3 },
+        { name: 'C', type: '', id: 4 },
+        { name: 'Am', type: '', id: 5 },
+        { name: 'F', type: '', id: 6 },
+        { name: 'G', type: '', id: 7 }
+      ],
+      melodyBlocks: [
+        { name: 'C', type: '', id: 1 },
+        { name: 'D', type: '', id: 2 },
+        { name: 'E', type: '', id: 3 },
+        { name: 'F', type: '', id: 4 },
+        { name: 'G', type: '', id: 5 },
+        { name: 'A', type: '', id: 6 },
+        { name: 'B', type: '', id: 7 }
+      ]
     }
   }
 }
