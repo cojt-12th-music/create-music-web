@@ -54,31 +54,31 @@ export default {
   data() {
     return {
       rhythmBlocks: [
-        { name: 'C', type: '', id: 1 },
-        { name: 'D', type: '', id: 2 },
-        { name: 'E', type: '', id: 3 },
-        { name: 'F', type: '', id: 4 },
-        { name: 'G', type: '', id: 5 },
-        { name: 'A', type: '', id: 6 },
-        { name: 'B', type: '', id: 7 }
+        { name: 'C', id: 1 },
+        { name: 'D', id: 2 },
+        { name: 'E', id: 3 },
+        { name: 'F', id: 4 },
+        { name: 'G', id: 5 },
+        { name: 'A', id: 6 },
+        { name: 'B', id: 7 }
       ],
       codeBlocks: [
-        { name: 'Am', type: '', id: 1 },
-        { name: 'F', type: '', id: 2 },
-        { name: 'G', type: '', id: 3 },
-        { name: 'C', type: '', id: 4 },
-        { name: 'Am', type: '', id: 5 },
-        { name: 'F', type: '', id: 6 },
-        { name: 'G', type: '', id: 7 }
+        { name: 'Am', id: 1 },
+        { name: 'F', id: 2 },
+        { name: 'G', id: 3 },
+        { name: 'C', id: 4 },
+        { name: 'Am', id: 5 },
+        { name: 'F', id: 6 },
+        { name: 'G', id: 7 }
       ],
       melodyBlocks: [
-        { name: 'C', type: '', id: 1 },
-        { name: 'D', type: '', id: 2 },
-        { name: 'E', type: '', id: 3 },
-        { name: 'F', type: '', id: 4 },
-        { name: 'G', type: '', id: 5 },
-        { name: 'A', type: '', id: 6 },
-        { name: 'B', type: '', id: 7 }
+        { name: 'C', id: 1 },
+        { name: 'D', id: 2 },
+        { name: 'E', id: 3 },
+        { name: 'F', id: 4 },
+        { name: 'G', id: 5 },
+        { name: 'A', id: 6 },
+        { name: 'B', id: 7 }
       ]
     }
   }
