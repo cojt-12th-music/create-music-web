@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-btn @click="demo">demo</v-btn>
+    <v-btn @click="demoMelody">demo melody</v-btn>
   </div>
 </template>
 
@@ -181,6 +182,22 @@ export default Vue.extend({
       this.playNote(64, 0.2) // ..
       this.playNote(67, 0.3)
       this.playNote(72, 0.4)
+    },
+    /**
+     * 作ったメロディのデモ再生
+     * TODO: 音符が増えても影響が出ないよう並列にする
+     */
+    demoMelody() {
+      let delay = 0
+      this.$accessor.music.melodyBlocks.forEach((block) => {
+        if (!block.sounds.length) return
+
+        block.sounds.forEach((sound) => {
+          this.playNote(sound.key, sound.delay + delay, sound.duration)
+        })
+
+        delay += block.duration
+      })
     },
     /**
      * urlに直接指定できない文字列をエンコードするヘルパー関数
