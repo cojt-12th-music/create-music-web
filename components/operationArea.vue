@@ -1,17 +1,20 @@
 <template>
   <div id="component-frame" class="darken-2 background">
-    <!-- <div class="tmp1">
+    <v-container>
       <v-row justify="center">
-        <v-icon size="400%" color="#c4c4c4" @click="play">mdi-play</v-icon>
+        <v-col cols="4"></v-col>
+        <v-col cols="4" align-self="center">
+          <div class="iconCenter">
+            <v-icon size="400%" color="#c4c4c4" @click="play">mdi-play</v-icon>
+          </div>
+        </v-col>
+        <v-col cols="4" align-self="center">
+          <div class="iconRight">
+            <v-icon size="300%" color="#c4c4c4" @click="config">mdi-cog</v-icon>
+          </div>
+        </v-col>
       </v-row>
-    </div>
-    <div class="tmp2">
-      <v-icon size="300%" color="#c4c4c4" @click="config">mdi-cog</v-icon>
-    </div> -->
-    <v-row justify="center">
-      <v-icon size="400%" color="#c4c4c4" @click="play">mdi-play</v-icon>
-    </v-row>
-    <v-icon size="300%" color="#c4c4c4" @click="config">mdi-cog</v-icon>
+    </v-container>
   </div>
 </template>
 
@@ -40,16 +43,10 @@ div#component-frame {
 div.background {
   background-color: #424242;
 }
-// div.tyuou{
-//   //justify-content: center;
-//   text-align: center;
-// }
-// div.tmp1{
-//   position: absolute;
-//   right: 50%;
-// }
-// div.tmp2{
-//   position: absolute;
-//   right: 100%;
-// }
+div.iconCenter {
+  text-align: center;
+}
+div.iconRight {
+  text-align: right;
+}
 </style>
