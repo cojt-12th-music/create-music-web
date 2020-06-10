@@ -8,7 +8,7 @@
       </v-tabs>
 
       <v-tabs-items v-model="tab" :touchless="true">
-        <v-tab-item v-for="item in items" :key="item.tab">
+        <v-tab-item v-for="item in melodyBlocks" :key="item.tab">
           <div class="boxContainer">
             <draggable
               :group="{ name: 'block', pull: 'clone', put: false }"
@@ -16,10 +16,10 @@
               @end="dragEnd"
             >
               <block
-                v-for="element in item.list"
-                :key="element.id"
+                v-for="element in melodyBlocks"
+                :key="element"
                 class="child"
-                :text="element.name"
+                :text="element"
               />
             </draggable>
           </div>
@@ -76,6 +76,9 @@ export default {
     }
   },
   computed: {
+    melodyBlocks() {
+      return this.$accessor.music.melodyBlockNames
+    },
     dragOptions() {
       return {
         animation: 300,
