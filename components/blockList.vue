@@ -13,6 +13,7 @@
             <draggable
               :group="{ name: 'block', pull: 'clone', put: false }"
               v-bind="dragOptions"
+              @end="dragEnd"
             >
               <block
                 v-for="element in item.list"
@@ -80,6 +81,13 @@ export default {
         animation: 300,
         disabled: false
       }
+    }
+  },
+  methods: {
+    dragEnd(event) {
+      console.log(event)
+      console.log(event.from)
+      console.log(event.to)
     }
   }
 }
