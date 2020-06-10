@@ -39,6 +39,7 @@
     "@nuxtjs/vuetify": "^1.0.0",
     "@types/decompress": "^4.2.3",
     "@types/fs-extra": "^9.0.1",
+    "@types/vuedraggable": "^2.23.1",
     "babel-eslint": "^10.0.1",
     "eslint": "^6.1.0",
     "eslint-config-prettier": "^6.10.0",
