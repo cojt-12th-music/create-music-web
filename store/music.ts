@@ -10,7 +10,7 @@ import { MELODY_PRESETS, CHORD_PRESETS, RHYTHM_PRESETS } from '@/lib/presets'
 export const state = (): Music => ({
   melody: {
     // init, init というブロックの並び
-    blockNames: ['init', 'init'],
+    blockNames: ['メロ1', 'メロ2', 'メロ3', 'メロ4'],
     gain: 1
   },
   chord: {},
@@ -27,6 +27,9 @@ export const state = (): Music => ({
 export type MusicState = ReturnType<typeof state>
 
 export const getters = getterTree(state, {
+  // blockListの名前のみを返す
+  melodyBlockNames: (state: MusicState): string[] =>
+    Object.keys(state.blocks.melody),
   // メロディーのblocksを返す
   melodyBlocks: (state: MusicState): Block[] =>
     state.melody.blockNames.map((name) => state.blocks.melody[name])
