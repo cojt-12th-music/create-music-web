@@ -154,6 +154,20 @@ export default Vue.extend({
       else if (target.lokey)
         source.playbackRate.value = (2 ** (1 / 12)) ** (key - target.lokey)
 
+      // ループ対応
+      if (target.loop_mode === 'loop_continuous') {
+        const samplingFrequency = 44100
+        source.loop = true
+        source.loopStart =
+          target.loop_start === undefined
+            ? 0
+            : target.loop_start / samplingFrequency
+        source.loopEnd =
+          target.loop_end === undefined
+            ? source.buffer.duration
+            : target.loop_end / samplingFrequency
+      }
+
       nodes.push(source)
 
       // リリース対応
