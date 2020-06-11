@@ -31,9 +31,8 @@
     "int24": "^0.0.1",
     "lamejs": "^1.2.0",
     "nuxt": "^2.0.0",
-    "sfz-parser": "^0.0.8",
-    "vuedraggable": "^2.23.2",
-    "wav": "^1.0.2"
+    "sfz-parser": "^0.0.9",
+    "vuedraggable": "^2.23.2"
   },
   "devDependencies": {
     "@nuxt/typescript-build": "^0.6.0",

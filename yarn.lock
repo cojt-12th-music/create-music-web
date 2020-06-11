@@ -8781,10 +8781,10 @@ setprototypeof@1.1.1:
   resolved "https://registry.yarnpkg.com/setprototypeof/-/setprototypeof-1.1.1.tgz#7e95acb24aa92f5885e0abef5ba131330d4ae683"
   integrity sha512-JvdAWfbXeIGaZ9cILp38HntZSFSo3mWg6xGcJJsd+d4aRMOqauag1C63dJfDw7OaMYwEbHMOxEZ1lqVRYP2OAw==
 
-sfz-parser@^0.0.8:
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/sfz-parser/-/sfz-parser-0.0.8.tgz#a99aaa3b8b6a7e8df173ae06930cd7b1dd60efcc"
-  integrity sha512-49b1BLrHUzBayK3/sWUUebN8CUCJQFgDsukSqmrjihqTKYFfUUCva7fcf4Lr+lQO93lM56tncbMWculVf2XXJg==
+sfz-parser@^0.0.9:
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/sfz-parser/-/sfz-parser-0.0.9.tgz#ef17046fc751f09596e017a2a2ddab2893d8e506"
+  integrity sha512-FZuZSkuaPiIRM9KcM5H22i2FMiUaEP4/TKQk2k+b1Nz2vhD7BaAIun1of9IPQClAiknXN7Gsu5wfdDyfHhlM6g==
 
 sha.js@^2.4.0, sha.js@^2.4.8:
   version "2.4.11"

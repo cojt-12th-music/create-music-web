@@ -148,6 +148,20 @@ export default Vue.extend({
       else if (target.lokey)
         source.playbackRate.value = (2 ** (1 / 12)) ** (key - target.lokey)
 
+      // ループ対応
+      if (target.loop_mode === 'loop_continuous') {
+        const samplingFrequency = 44100
+        source.loop = true
+        source.loopStart =
+          target.loop_start === undefined
+            ? 0
+            : target.loop_start / samplingFrequency
+        source.loopEnd =
+          target.loop_end === undefined
+            ? source.buffer.duration
+            : target.loop_end / samplingFrequency
+      }
+
       nodes.push(source)
 
       // リリース対応
@@ -161,6 +175,35 @@ export default Vue.extend({
             Number(target.ampeg_release)
         )
         nodes.push(releaseGain)
+      }
+
+      // フィルター
+      if (target.fil_type && target.cutoff) {
+        const filter = this.context.createBiquadFilter()
+        let resonance = 1 / Math.sqrt(2)
+        if (target.resonance) resonance = target.resonance
+
+        switch (target.fil_type) {
+          case 'lpf_2p': // 2極ローパスフィルター（12dB /オクターブ）
+            filter.type = 'lowpass'
+            filter.frequency.value = target.cutoff
+            filter.Q.value = resonance
+            break
+          case 'hpf_2p': // 2極ハイパスフィルター（12dB /オクターブ）
+            filter.type = 'highpass'
+            filter.frequency.value = target.cutoff
+            filter.Q.value = resonance
+            break
+          case 'bpf_2p': // 2極バンドパスフィルター（12dB /オクターブ）
+            filter.type = 'bandpass'
+            filter.frequency.value = target.cutoff
+            filter.Q.value = resonance
+            break
+          default:
+            break
+        }
+
+        nodes.push(filter)
       }
 
       return nodes
