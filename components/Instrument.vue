@@ -120,12 +120,16 @@ export default Vue.extend({
      * @param delay 再生までの遅延
      */
     playNote(key: number, delay = 0, duration = 0.5) {
-      const nodes = this.constructGraph(key, delay, duration)
+      const bpm = 180
+      const fixedDelay = (delay * 60) / bpm
+      const fixedDuration = (duration * 60) / bpm
+
+      const nodes = this.constructGraph(key, fixedDelay, fixedDuration)
       nodes.forEach((n, i, nodes) =>
         nodes[i + 1] ? n.connect(nodes[i + 1]) : n.connect(this.node)
       )
       ;(nodes[0] as AudioScheduledSourceNode).start(
-        this.context.currentTime + delay
+        this.context.currentTime + fixedDelay
       )
     },
     constructGraph(key: number, delay = 0, duration = 0.5): AudioNode[] {
