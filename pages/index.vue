@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="component-frame">
     <v-container>
       <div id="musical-score-wrapper">
         <musical-score />
@@ -31,9 +31,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+#component-frame {
+  background-color: #424242;
+}
 #musical-score-wrapper {
   height: 65vh;
   margin-bottom: 3vh;
+  overflow: scroll;
 }
 #block-list-wrapper {
   height: 15vh;

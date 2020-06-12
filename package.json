@@ -10,10 +10,11 @@
     "inst": "ts-node -P ./tools/im/tsconfig.json ./tools/im/command.ts",
     "generate": "nuxt-ts generate",
     "start": "nuxt-ts start",
-    "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
+    "lint": "eslint --ext .js,.ts,.vue --ignore-path .gitignore .",
+    "lint:fix": "eslint --fix --ext .js,.ts,.vue --ignore-path .gitignore ."
   },
   "lint-staged": {
-    "*.{js,vue}": "yarn lint"
+    "*.{js,ts,vue}": "yarn lint"
   },
   "husky": {
     "hooks": {
@@ -30,6 +31,7 @@
     "fs-extra": "^9.0.0",
     "nuxt": "^2.0.0",
     "sfz-parser": "^0.0.9",
+    "nuxt-typed-vuex": "^0.1.18",
     "vuedraggable": "^2.23.2"
   },
   "devDependencies": {
@@ -39,6 +41,7 @@
     "@nuxtjs/vuetify": "^1.0.0",
     "@types/decompress": "^4.2.3",
     "@types/fs-extra": "^9.0.1",
+    "@types/vuedraggable": "^2.23.1",
     "babel-eslint": "^10.0.1",
     "eslint": "^6.1.0",
     "eslint-config-prettier": "^6.10.0",
