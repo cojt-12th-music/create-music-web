@@ -2,6 +2,7 @@
   <div>
     <v-btn @click="demo">demo</v-btn>
     <v-btn @click="demoMelody">demo melody</v-btn>
+    <v-btn @click="stop">stop</v-btn>
   </div>
 </template>
 
@@ -35,6 +36,7 @@ type DataType = {
    * ログ出力用
    */
   logs: string[]
+  playNodes: AudioScheduledSourceNode[]
 }
 
 export default Vue.extend({
@@ -66,7 +68,8 @@ export default Vue.extend({
       sampleDefinition: [],
       samples: {},
       isLoading: false,
-      logs: []
+      logs: [],
+      playNodes: []
     }
   },
   computed: {
@@ -141,6 +144,7 @@ export default Vue.extend({
       ;(nodes[0] as AudioScheduledSourceNode).start(
         this.context.currentTime + fixedDelay
       )
+      this.playNodes.push(nodes[0] as AudioScheduledSourceNode)
     },
     constructGraph(key: number, delay = 0, duration = 0.5): AudioNode[] {
       // 指定された鍵盤番号の音を鳴らすのに必要な音データを探す
@@ -247,6 +251,15 @@ export default Vue.extend({
       this.notes.forEach(({ key, delay, duration }) => {
         this.playNote(key, delay, duration)
       })
+    },
+    /**
+     * 音楽の停止
+     */
+    stop() {
+      this.playNodes.forEach((source) => {
+        source.stop()
+      })
+      this.playNodes = []
     },
     /**
      * urlに直接指定できない文字列をエンコードするヘルパー関数
