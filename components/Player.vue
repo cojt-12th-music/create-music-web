@@ -2,6 +2,7 @@
   <v-container>
     <v-row>
       <v-btn @click="play">Play</v-btn>
+      <v-btn @click="stop">Stop</v-btn>
     </v-row>
     <v-row v-if="context">
       <v-col v-for="s in sfzs" :key="s">
@@ -25,6 +26,7 @@ import { Sound } from '~/types/music'
 
 type InstRef = {
   demoMelody: () => void
+  stop: () => void
 }
 
 type DataType = {
@@ -80,6 +82,11 @@ export default Vue.extend({
     play() {
       this.instRefs.forEach((i) => {
         i.demoMelody()
+      })
+    },
+    stop() {
+      this.instRefs.forEach((i) => {
+        i.stop()
       })
     }
   }

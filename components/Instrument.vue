@@ -36,7 +36,10 @@ type DataType = {
    * ログ出力用
    */
   logs: string[]
-  playNodes: AudioScheduledSourceNode[]
+  /**
+   * 再生する音のソースノード
+   */
+  scheduledSourceNode: AudioScheduledSourceNode[]
 }
 
 export default Vue.extend({
@@ -69,7 +72,7 @@ export default Vue.extend({
       samples: {},
       isLoading: false,
       logs: [],
-      playNodes: []
+      scheduledSourceNode: []
     }
   },
   computed: {
@@ -144,7 +147,7 @@ export default Vue.extend({
       ;(nodes[0] as AudioScheduledSourceNode).start(
         this.context.currentTime + fixedDelay
       )
-      this.playNodes.push(nodes[0] as AudioScheduledSourceNode)
+      this.scheduledSourceNode.push(nodes[0] as AudioScheduledSourceNode)
     },
     constructGraph(key: number, delay = 0, duration = 0.5): AudioNode[] {
       // 指定された鍵盤番号の音を鳴らすのに必要な音データを探す
@@ -256,10 +259,10 @@ export default Vue.extend({
      * 音楽の停止
      */
     stop() {
-      this.playNodes.forEach((source) => {
+      this.scheduledSourceNode.forEach((source) => {
         source.stop()
       })
-      this.playNodes = []
+      this.scheduledSourceNode = []
     },
     /**
      * urlに直接指定できない文字列をエンコードするヘルパー関数
