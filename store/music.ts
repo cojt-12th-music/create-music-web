@@ -13,8 +13,14 @@ export const state = (): Music => ({
     blockNames: ['メロ1', 'メロ2', 'メロ3', 'メロ4'],
     gain: 1
   },
-  chord: {},
-  rhythm: {},
+  chord: {
+    blockNames: ['王道', 'カノン', '小室', 'Let it Be', '下降転調'],
+    gain: 1
+  },
+  rhythm: {
+    blockNames: ['2ビート', '8ビート', '16ビート'],
+    gain: 1
+  },
   blocks: {
     // プリセットはとりあえず @/lib/presets.ts に定義している
     melody: MELODY_PRESETS,
