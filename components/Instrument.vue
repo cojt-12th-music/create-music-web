@@ -55,6 +55,10 @@ export default Vue.extend({
     notes: {
       required: true,
       type: Array as Vue.PropType<Sound[]>
+    },
+    bpm: {
+      required: true,
+      type: Number
     }
   },
   data(): DataType {
@@ -126,7 +130,7 @@ export default Vue.extend({
      * @param delay 再生までの遅延
      */
     playNote(key: number, delay = 0, duration = 0.5) {
-      const bpm = 180
+      const bpm = this.bpm
       const fixedDelay = (delay * 60) / bpm
       const fixedDuration = (duration * 60) / bpm
 
