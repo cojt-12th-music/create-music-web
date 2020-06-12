@@ -6,9 +6,9 @@
           <ul id="rhythm" class="blue darken-1">
             <li>リズム</li>
             <li>
-              <draggable element="ul" class="draggable" group="block">
+              <draggable element="ul" class="draggable" group="rhythm">
                 <li v-for="block in rhythmBlocks" :key="block">
-                  <block :text="block" />
+                  <block :text="block" blockType="#4FC3F7" />
                 </li>
               </draggable>
             </li>
@@ -18,9 +18,9 @@
           <ul id="code" class="green lighten-1">
             <li>コード</li>
             <li>
-              <draggable element="ul" class="draggable">
+              <draggable element="ul" class="draggable" group="chord">
                 <li v-for="block in codeBlocks" :key="block">
-                  <block :text="block" />
+                  <block :text="block" blockType="#81C784" />
                 </li>
               </draggable>
             </li>
@@ -30,9 +30,14 @@
           <ul id="melody" class="pink lighten-1">
             <li>メロディ</li>
             <li>
-              <draggable element="ul" class="draggable" @end="dragEnd">
+              <draggable
+                element="ul"
+                class="draggable"
+                group="melody"
+                @end="dragEnd"
+              >
                 <li v-for="block in melodyBlocks" :key="block">
-                  <block :text="block" />
+                  <block :text="block" blockType="#F06292" />
                 </li>
               </draggable>
             </li>
@@ -58,12 +63,12 @@ export default {
     }
   },
   computed: {
-    melodyBlocks() {
+    melodyBlocks(): Array<string> {
       return this.$accessor.music.melody.blockNames
     }
   },
   methods: {
-    dragEnd(event) {
+    dragEnd(event: { oldIndex: number; newIndex: number }) {
       const oldIndex = event.oldIndex
       const newIndex = event.newIndex
       this.$accessor.music.moveBlock({ oldIndex, newIndex })

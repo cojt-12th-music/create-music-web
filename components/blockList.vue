@@ -8,18 +8,19 @@
       </v-tabs>
 
       <v-tabs-items v-model="tab" :touchless="true">
-        <v-tab-item v-for="item in melodyBlocks" :key="item.tab">
+        <v-tab-item v-for="(block, index) in blocks" :key="index">
           <div class="boxContainer">
             <draggable
-              :group="{ name: 'block', pull: 'clone', put: false }"
+              :group="{ name: musicType[index], pull: 'clone', put: false }"
               v-bind="dragOptions"
               @end="dragEnd"
             >
               <block
-                v-for="element in melodyBlocks"
-                :key="element"
+                v-for="(name, index) in block"
+                :key="index"
                 class="child"
-                :text="element"
+                :text="name"
+                blockType="#8C9EFF"
               />
             </draggable>
           </div>
@@ -45,6 +46,7 @@ export default {
       items: [
         {
           tab: 'リズム',
+          group: 'rythm',
           list: [
             { name: '8ビート', id: 0 },
             { name: '16ビート', id: 1 },
@@ -53,6 +55,7 @@ export default {
         },
         {
           tab: 'コード',
+          group: 'chord',
           list: [
             { name: '王道', id: 0 },
             { name: 'カノン', id: 1 },
@@ -63,6 +66,7 @@ export default {
         },
         {
           tab: 'メロディ',
+          group: 'melody',
           list: [
             { name: 'メロ1', id: 0 },
             { name: 'メロ2', id: 1 },
@@ -72,18 +76,32 @@ export default {
         }
       ],
       enabled: true,
-      dragging: false
+      dragging: false,
+      musicType: ['rhythm', 'chord', 'melody'],
+      rhythm: 'rhythm'
     }
   },
   computed: {
+    rhythmBlocks() {
+      return this.$accessor.music.rhythm.blockNames
+    },
+    chordBlocks() {
+      return this.$accessor.music.chord.blockNames
+    },
     melodyBlocks() {
-      return this.$accessor.music.melodyBlockNames
+      return this.$accessor.music.melody.blockNames
     },
     dragOptions() {
       return {
         animation: 300,
         disabled: false
       }
+    },
+    blocks() {
+      const rhythmBlocks = this.rhythmBlocks
+      const chordBlocks = this.chordBlocks
+      const melodyBlocks = this.melodyBlocks
+      return [rhythmBlocks, chordBlocks, melodyBlocks]
     }
   },
   methods: {
@@ -109,7 +127,7 @@ div#component-frame {
 .child {
   display: inline-block;
   width: 100px;
-  height: 60px;
+  height: 5rem;
   line-height: 30px;
   margin: 10px;
   text-align: center;
