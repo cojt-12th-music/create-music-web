@@ -38,7 +38,11 @@ const config: Configuration = {
   /*
    ** Nuxt.js dev-modules
    */
-  buildModules: ['@nuxt/typescript-build', '@nuxtjs/vuetify'],
+  buildModules: [
+    '@nuxt/typescript-build',
+    '@nuxtjs/vuetify',
+    'nuxt-typed-vuex'
+  ],
   /*
    ** Nuxt.js modules
    */
@@ -101,6 +105,7 @@ const config: Configuration = {
      ** You can extend webpack config here
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    transpile: [/typed-vuex/],
     extend(config, ctx) {
       if (ctx.isClient) {
         if (config.plugins) config.plugins.push(instPlugin)

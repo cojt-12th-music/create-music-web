@@ -30,7 +30,7 @@
           <ul id="melody" class="pink lighten-1">
             <li>メロディ</li>
             <li>
-              <draggable element="ul" class="draggable">
+              <draggable element="ul" class="draggable" @end="dragEnd">
                 <li v-for="block in melodyBlocks" :key="block">
                   <block :text="block" />
                 </li>
@@ -54,8 +54,20 @@ export default {
   data() {
     return {
       rhythmBlocks: ['D', 'E', 'F', 'G', 'A', 'B', 'A'],
-      codeBlocks: ['C', 'D', 'E', 'F', 'G', 'A', 'B'],
-      melodyBlocks: ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+      codeBlocks: ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+    }
+  },
+  computed: {
+    melodyBlocks() {
+      return this.$accessor.music.melody.blockNames
+    }
+  },
+  methods: {
+    dragEnd(event) {
+      const oldIndex = event.oldIndex
+      const newIndex = event.newIndex
+      this.$accessor.music.moveBlock({ oldIndex, newIndex })
+      console.log(this.$accessor.music.melody.blockNames)
     }
   }
 }
