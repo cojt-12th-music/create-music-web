@@ -30,7 +30,7 @@
     "decompress-tarxz": "^3.0.0",
     "fs-extra": "^9.0.0",
     "nuxt": "^2.0.0",
-    "sfz-parser": "^0.0.8",
+    "sfz-parser": "^0.0.9",
     "nuxt-typed-vuex": "^0.1.18",
     "vuedraggable": "^2.23.2"
   },
