@@ -36,7 +36,7 @@ export interface Block {
  * ブロックのnameをキーとするオブジェクト
  */
 interface Preset {
-  [name: string]: Block
+  [blockName: string]: Block
 }
 
 /**
