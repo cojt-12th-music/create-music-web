@@ -1,17 +1,17 @@
 <template>
-  <v-container>
+  <v-container v-show="debugControl">
     <v-row>
-      <v-btn @click="play">Play</v-btn>
+      <v-btn>Play</v-btn>
     </v-row>
     <v-row v-if="context">
-      <v-col v-for="s in sfzs" :key="s">
+      <v-col>
         <instrument
-          :ref="`inst-${s}`"
-          :sfz-path="s"
+          :sfz-path="melodyInstrument"
           :context="context"
           :node="master"
           :notes="melodyNotes"
           :bpm="bpm"
+          :is-playing="isPlaying"
         />
       </v-col>
     </v-row>
@@ -21,38 +21,72 @@
 <script lang="ts">
 import Vue from 'vue'
 import Instrument from '~/components/Instrument.vue'
-import { Sound } from '~/types/music'
-
-type InstRef = {
-  demoMelody: () => void
-}
+import { Sound, Block } from '~/types/music'
 
 type DataType = {
-  master: AudioNode
+  master: AudioNode | null
 }
 export default Vue.extend({
   components: {
     Instrument
   },
   props: {
-    context: {
-      required: true,
-      type: Object as Vue.PropType<AudioContext>
-    },
-    sfzs: {
-      required: true,
-      type: Array as Vue.PropType<string[]>
+    debugControl: {
+      required: false,
+      type: Boolean
     }
   },
   data(): DataType {
     return {
-      master: this.context.createGain()
+      master: null
     }
   },
   computed: {
     melodyNotes(): Sound[] {
+      return this.flatBlock(this.$accessor.music.melodyBlocks)
+    },
+    bpm(): number {
+      return this.$accessor.music.bpm
+    },
+    isPlaying(): boolean {
+      return this.$accessor.player.isPlaying
+    },
+    context(): AudioContext | null {
+      return this.$accessor.player.context
+    },
+    instruments(): string[] {
+      return this.$accessor.player.instruments
+    },
+    melodyInstrument(): string {
+      return this.$accessor.player.melodyInstrument
+    },
+    chordInstrument(): string {
+      return this.$accessor.player.chordInstrument
+    },
+    rythmInstrument(): string {
+      return this.$accessor.player.rythmInstrument
+    }
+  },
+  watch: {
+    context() {
+      if (this.context) {
+        this.master = this.context.createGain()
+        this.master.connect(this.context.destination)
+      }
+    }
+  },
+  mounted() {
+    fetch('/instruments/instruments.json')
+      .then((res) => res.json())
+      .then((res) => {
+        this.$accessor.player.setInstruments(res)
+        this.$accessor.player.setMelodyInstrument(this.instruments[1])
+      })
+  },
+  methods: {
+    flatBlock(block: Block[]) {
       let allDelay = 0
-      return this.$accessor.music.melodyBlocks
+      return block
         .map((block) => {
           // 各soundsのdelayに今までのブロックのdurationを足した
           const sounds = block.sounds.map(({ delay, ...e }) => {
@@ -65,22 +99,6 @@ export default Vue.extend({
           return sounds
         })
         .flat()
-    },
-    instRefs(): InstRef[] {
-      return this.sfzs.map((s) => this.$refs[`inst-${s}`]).flat()
-    },
-    bpm(): number {
-      return this.$accessor.music.bpm
-    }
-  },
-  mounted() {
-    this.master.connect(this.context.destination)
-  },
-  methods: {
-    play() {
-      this.instRefs.forEach((i) => {
-        i.demoMelody()
-      })
     }
   }
 })

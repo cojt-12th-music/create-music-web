@@ -59,6 +59,10 @@ export default Vue.extend({
     bpm: {
       required: true,
       type: Number
+    },
+    isPlaying: {
+      required: true,
+      type: Boolean
     }
   },
   data(): DataType {
