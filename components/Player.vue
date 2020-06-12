@@ -11,6 +11,7 @@
           :context="context"
           :node="master"
           :notes="melodyNotes"
+          :bpm="bpm"
         />
       </v-col>
     </v-row>
@@ -67,6 +68,9 @@ export default Vue.extend({
     },
     instRefs(): InstRef[] {
       return this.sfzs.map((s) => this.$refs[`inst-${s}`]).flat()
+    },
+    bpm(): number {
+      return this.$accessor.music.bpm
     }
   },
   mounted() {
