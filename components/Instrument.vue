@@ -8,6 +8,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { SfzRegion } from 'sfz-parser'
+import { Sound } from '../types/music'
 
 /**
  * Playerコンポーネント
@@ -50,6 +51,10 @@ export default Vue.extend({
     node: {
       required: true,
       type: Object as Vue.PropType<AudioNode>
+    },
+    notes: {
+      required: true,
+      type: Array as Vue.PropType<Sound[]>
     }
   },
   data(): DataType {
@@ -235,15 +240,8 @@ export default Vue.extend({
      * TODO: 音符が増えても影響が出ないよう並列にする
      */
     demoMelody() {
-      let delay = 0
-      this.$accessor.music.melodyBlocks.forEach((block) => {
-        if (!block.sounds.length) return
-
-        block.sounds.forEach((sound) => {
-          this.playNote(sound.key, sound.delay + delay, sound.duration)
-        })
-
-        delay += block.duration
+      this.notes.forEach(({ key, delay, duration }) => {
+        this.playNote(key, delay, duration)
       })
     },
     /**
