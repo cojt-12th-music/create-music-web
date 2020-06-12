@@ -8,6 +8,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { SfzRegion } from 'sfz-parser'
+import { Sound } from '../types/music'
 
 /**
  * Playerコンポーネント
@@ -50,6 +51,14 @@ export default Vue.extend({
     node: {
       required: true,
       type: Object as Vue.PropType<AudioNode>
+    },
+    notes: {
+      required: true,
+      type: Array as Vue.PropType<Sound[]>
+    },
+    bpm: {
+      required: true,
+      type: Number
     }
   },
   data(): DataType {
@@ -121,12 +130,16 @@ export default Vue.extend({
      * @param delay 再生までの遅延
      */
     playNote(key: number, delay = 0, duration = 0.5) {
-      const nodes = this.constructGraph(key, delay, duration)
+      const bpm = this.bpm
+      const fixedDelay = (delay * 60) / bpm
+      const fixedDuration = (duration * 60) / bpm
+
+      const nodes = this.constructGraph(key, fixedDelay, fixedDuration)
       nodes.forEach((n, i, nodes) =>
         nodes[i + 1] ? n.connect(nodes[i + 1]) : n.connect(this.node)
       )
       ;(nodes[0] as AudioScheduledSourceNode).start(
-        this.context.currentTime + delay
+        this.context.currentTime + fixedDelay
       )
     },
     constructGraph(key: number, delay = 0, duration = 0.5): AudioNode[] {
@@ -155,6 +168,20 @@ export default Vue.extend({
       else if (target.lokey)
         source.playbackRate.value = (2 ** (1 / 12)) ** (key - target.lokey)
 
+      // ループ対応
+      if (target.loop_mode === 'loop_continuous') {
+        const samplingFrequency = 44100
+        source.loop = true
+        source.loopStart =
+          target.loop_start === undefined
+            ? 0
+            : target.loop_start / samplingFrequency
+        source.loopEnd =
+          target.loop_end === undefined
+            ? source.buffer.duration
+            : target.loop_end / samplingFrequency
+      }
+
       nodes.push(source)
 
       // リリース対応
@@ -168,6 +195,35 @@ export default Vue.extend({
             Number(target.ampeg_release)
         )
         nodes.push(releaseGain)
+      }
+
+      // フィルター
+      if (target.fil_type && target.cutoff) {
+        const filter = this.context.createBiquadFilter()
+        let resonance = 1 / Math.sqrt(2)
+        if (target.resonance) resonance = target.resonance
+
+        switch (target.fil_type) {
+          case 'lpf_2p': // 2極ローパスフィルター（12dB /オクターブ）
+            filter.type = 'lowpass'
+            filter.frequency.value = target.cutoff
+            filter.Q.value = resonance
+            break
+          case 'hpf_2p': // 2極ハイパスフィルター（12dB /オクターブ）
+            filter.type = 'highpass'
+            filter.frequency.value = target.cutoff
+            filter.Q.value = resonance
+            break
+          case 'bpf_2p': // 2極バンドパスフィルター（12dB /オクターブ）
+            filter.type = 'bandpass'
+            filter.frequency.value = target.cutoff
+            filter.Q.value = resonance
+            break
+          default:
+            break
+        }
+
+        nodes.push(filter)
       }
 
       return nodes
@@ -188,15 +244,8 @@ export default Vue.extend({
      * TODO: 音符が増えても影響が出ないよう並列にする
      */
     demoMelody() {
-      let delay = 0
-      this.$accessor.music.melodyBlocks.forEach((block) => {
-        if (!block.sounds.length) return
-
-        block.sounds.forEach((sound) => {
-          this.playNote(sound.key, sound.delay + delay, sound.duration)
-        })
-
-        delay += block.duration
+      this.notes.forEach(({ key, delay, duration }) => {
+        this.playNote(key, delay, duration)
       })
     },
     /**

@@ -5,12 +5,23 @@
         <v-col cols="4"></v-col>
         <v-col cols="4" align-self="center">
           <div class="iconCenter">
-            <v-icon size="400%" color="#c4c4c4" @click="play">mdi-play</v-icon>
+            <div v-if="isPlaying">
+              <v-btn icon @click="stop">
+                <v-icon size="400%" color="#c4c4c4">mdi-stop</v-icon>
+              </v-btn>
+            </div>
+            <div v-else>
+              <v-btn icon @click="play">
+                <v-icon size="400%" color="#c4c4c4">mdi-play</v-icon>
+              </v-btn>
+            </div>
           </div>
         </v-col>
         <v-col cols="4" align-self="center">
           <div class="iconRight">
-            <v-icon size="300%" color="#c4c4c4" @click="config">mdi-cog</v-icon>
+            <v-btn icon @click="config">
+              <v-icon size="300%" color="#c4c4c4">mdi-cog</v-icon>
+            </v-btn>
           </div>
         </v-col>
       </v-row>
@@ -20,16 +31,29 @@
 
 <script lang="ts">
 import Vue from 'vue'
+
+type DataType = {
+  // 再生中かどうか（ボタンの切り替えに使用）
+  isPlaying: boolean
+}
+
 export default Vue.extend({
+  data(): DataType {
+    return {
+      isPlaying: false
+    }
+  },
   methods: {
     // 音楽を再生
     play() {
-      // console.log('音楽再生')
+      this.isPlaying = true
+    },
+    // 音楽再生をストップ
+    stop() {
+      this.isPlaying = false
     },
     // 設定変更画面(ポップアップ)を表示
-    config() {
-      // console.log('設定変更')
-    }
+    config() {}
   }
 })
 </script>
