@@ -24,7 +24,9 @@ type DataType = {
   /**
    * スピーカーに流すための実際の楽器の波形データを保持
    */
-  samples: { [key: string]: { data: AudioBuffer; offset: number } }
+  samples: {
+    [key: string]: { data: AudioBuffer; offset: number }
+  }
   /**
    * sfzを読み込み中でtrue
    */
@@ -98,9 +100,13 @@ export default Vue.extend({
                   this.base64ToArrayBuffer(sfz.samples[key].data)
                 )
                 .then((buf) => {
+                  const offsetInSamples = buf
+                    .getChannelData(0)
+                    .findIndex((f) => f !== 0)
+
                   this.samples[key] = {
                     data: buf,
-                    offset: sfz.samples[key].offset
+                    offset: offsetInSamples / 44100 - sfz.samples[key].offset
                   }
                 })
             )
@@ -113,7 +119,7 @@ export default Vue.extend({
      * @param key 鍵盤番号
      * @param delay 再生までの遅延
      */
-    playNote(key: number, delay = 0, duration = 0.5) {
+    playNote(key: number, delay = 0, duration = 100) {
       const nodes = this.constructGraph(key, delay, duration)
       nodes.forEach((n, i, nodes) =>
         nodes[i + 1] ? n.connect(nodes[i + 1]) : n.connect(this.node)
@@ -155,11 +161,13 @@ export default Vue.extend({
         source.loopStart =
           target.loop_start === undefined
             ? 0
-            : target.loop_start / samplingFrequency
+            : target.loop_start / samplingFrequency +
+              this.samples[target.sample].offset
         source.loopEnd =
           target.loop_end === undefined
             ? source.buffer.duration
-            : target.loop_end / samplingFrequency
+            : target.loop_end / samplingFrequency +
+              this.samples[target.sample].offset
       }
 
       nodes.push(source)
@@ -214,10 +222,6 @@ export default Vue.extend({
     demo() {
       // 和音を下からなめらかに演奏
       this.playNote(48, 0) // すぐ鳴る
-      this.playNote(60, 0.1) // 0.1秒後に鳴る
-      this.playNote(64, 0.2) // ..
-      this.playNote(67, 0.3)
-      this.playNote(72, 0.4)
     },
     /**
      * urlに直接指定できない文字列をエンコードするヘルパー関数

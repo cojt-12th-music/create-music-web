@@ -55,7 +55,7 @@ function wavToMp3Base64(w: string): Promise<{ data: string; offset: number }> {
           throw new Error(`depth ${fmt.bitDepth} is not supported.`)
         }
         let offset = 0
-        for (let i = 0; i < arr.length; i++) {
+        for (let i = 0; i < arr.length; i += fmt.channels) {
           if (arr[i] !== 0) {
             offset = i / fmt.channels / fmt.sampleRate
             break
