@@ -8,7 +8,7 @@
             <li>
               <draggable element="ul" class="draggable" group="rhythm">
                 <li v-for="block in rhythmBlocks" :key="block">
-                  <block :text="block" blockType="#4FC3F7" />
+                  <block :text="block" block-type="#4FC3F7" />
                 </li>
               </draggable>
             </li>
@@ -20,7 +20,7 @@
             <li>
               <draggable element="ul" class="draggable" group="chord">
                 <li v-for="block in codeBlocks" :key="block">
-                  <block :text="block" blockType="#81C784" />
+                  <block :text="block" block-type="#81C784" />
                 </li>
               </draggable>
             </li>
@@ -37,7 +37,7 @@
                 @end="dragEnd"
               >
                 <li v-for="block in melodyBlocks" :key="block">
-                  <block :text="block" blockType="#F06292" />
+                  <block :text="block" block-type="#F06292" />
                 </li>
               </draggable>
             </li>

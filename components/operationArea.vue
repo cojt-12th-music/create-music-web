@@ -26,27 +26,44 @@
         </v-col>
       </v-row>
     </v-container>
+    <Player v-if="context" ref="player" :context="context" :sfzs="sfzs" />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import Player from '@/components/Player.vue'
 
 type DataType = {
   // 再生中かどうか（ボタンの切り替えに使用）
   isPlaying: boolean
+  context: AudioContext | null
+  sfzs: string[]
 }
 
 export default Vue.extend({
+  components: {
+    Player
+  },
   data(): DataType {
     return {
-      isPlaying: false
+      isPlaying: false,
+      context: null,
+      sfzs: []
     }
+  },
+  mounted() {
+    fetch('/instruments/instruments.json')
+      .then((res) => res.json())
+      .then((res) => (this.sfzs = res))
   },
   methods: {
     // 音楽を再生
-    play() {
+    async play() {
+      this.context = new AudioContext()
       this.isPlaying = true
+      await this.$nextTick()
+      ;(this.$refs.player as any).play()
     },
     // 音楽再生をストップ
     stop() {
