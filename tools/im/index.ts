@@ -57,7 +57,10 @@ export async function main() {
 
   fs.copy(
     path.resolve(__dirname, './instruments'),
-    path.resolve(__dirname, '../../static/instruments/')
+    path.resolve(__dirname, '../../static/instruments/'),
+    {
+      filter: (src) => /(^(?!.*\.).*$|\.(json|jsfz)$)/.test(src)
+    }
   )
   consola.info(`Instruments ready`)
 }
