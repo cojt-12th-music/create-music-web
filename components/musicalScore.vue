@@ -92,7 +92,7 @@ div#component-frame {
 }
 
 ul {
-  display: box;
+  display: block;
   list-style: none;
   text-align: center;
   padding: 0;
