@@ -49,9 +49,10 @@
 </template>
 
 <script lang="ts">
+import Vue from 'vue'
 import draggable from 'vuedraggable'
 import block from '~/components/block.vue'
-export default {
+export default Vue.extend({
   components: {
     draggable,
     block
@@ -82,7 +83,7 @@ export default {
       console.log(this.$accessor.music.melody.blockNames)
     }
   }
-}
+})
 </script>
 
 <style lang="scss" scoped>

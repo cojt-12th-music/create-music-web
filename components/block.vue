@@ -5,7 +5,8 @@
 </template>
 
 <script lang="ts">
-export default {
+import Vue from 'vue'
+export default Vue.extend({
   props: {
     text: {
       type: String,
@@ -13,11 +14,11 @@ export default {
     }
   },
   computed: {
-    styleObject() {
+    styleObject(): string {
       // return this.blockType
       return this.backGroundColor
     },
-    backGroundColor() {
+    backGroundColor(): string {
       switch (this.text) {
         case '16ビート':
           return '#4527A0'
@@ -48,7 +49,7 @@ export default {
       }
     }
   }
-}
+})
 </script>
 
 <style lang="scss" scoped>
