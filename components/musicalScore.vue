@@ -8,7 +8,7 @@
             <li>
               <draggable element="ul" class="draggable" group="rhythm">
                 <li v-for="block in rhythmBlocks" :key="block">
-                  <block :text="block" blockType="#4FC3F7" />
+                  <block :text="block" />
                 </li>
               </draggable>
             </li>
@@ -20,7 +20,7 @@
             <li>
               <draggable element="ul" class="draggable" group="chord">
                 <li v-for="block in codeBlocks" :key="block">
-                  <block :text="block" blockType="#81C784" />
+                  <block :text="block" />
                 </li>
               </draggable>
             </li>
@@ -37,7 +37,7 @@
                 @end="dragEnd"
               >
                 <li v-for="block in melodyBlocks" :key="block">
-                  <block :text="block" blockType="#F06292" />
+                  <block :text="block" />
                 </li>
               </draggable>
             </li>
@@ -49,17 +49,25 @@
 </template>
 
 <script lang="ts">
+import Vue from 'vue'
 import draggable from 'vuedraggable'
 import block from '~/components/block.vue'
-export default {
+export default Vue.extend({
   components: {
     draggable,
     block
   },
   data() {
     return {
-      rhythmBlocks: ['D', 'E', 'F', 'G', 'A', 'B', 'A'],
-      codeBlocks: ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+      rhythmBlocks: [
+        '16ビート',
+        '16ビート',
+        '8ビート',
+        '8ビート',
+        '2ビート',
+        '2ビート'
+      ],
+      codeBlocks: ['王道', '王道', '小室', '小室', 'カノン', 'かノン']
     }
   },
   computed: {
@@ -75,7 +83,7 @@ export default {
       console.log(this.$accessor.music.melody.blockNames)
     }
   }
-}
+})
 </script>
 
 <style lang="scss" scoped>
