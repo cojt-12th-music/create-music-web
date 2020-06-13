@@ -30,14 +30,15 @@
     "decompress-tarxz": "^3.0.0",
     "fs-extra": "^9.0.0",
     "nuxt": "^2.0.0",
-    "sfz-parser": "^0.0.9",
     "nuxt-typed-vuex": "^0.1.18",
+    "sfz-parser": "^0.0.9",
     "vuedraggable": "^2.23.2"
   },
   "devDependencies": {
     "@nuxt/typescript-build": "^0.6.0",
     "@nuxtjs/eslint-config-typescript": "^1.0.0",
     "@nuxtjs/eslint-module": "^1.0.0",
+    "@nuxtjs/style-resources": "^1.0.0",
     "@nuxtjs/vuetify": "^1.0.0",
     "@types/decompress": "^4.2.3",
     "@types/fs-extra": "^9.0.1",

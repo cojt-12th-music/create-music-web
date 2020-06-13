@@ -34,6 +34,12 @@ export default {
 #component-frame {
   background-color: #424242;
 }
+@include pc {
+  #component-frame {
+    background-color: red;
+  }
+}
+
 #musical-score-wrapper {
   height: 65vh;
   margin-bottom: 3vh;

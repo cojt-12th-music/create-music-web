@@ -20,7 +20,7 @@
                 :key="index"
                 class="child"
                 :text="name"
-                blockType="#8C9EFF"
+                block-type="#8C9EFF"
               />
             </draggable>
           </div>
