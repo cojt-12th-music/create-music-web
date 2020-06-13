@@ -1,6 +1,6 @@
-import { Preset } from '@/types/music'
+import { BlockHash } from '@/types/music'
 
-export const MELODY_PRESETS: Preset = {
+export const MELODY_PRESETS: BlockHash = {
   init: { name: 'init', sounds: [], duration: 1 },
   メロ1: {
     name: 'メロ1',
@@ -41,7 +41,3 @@ export const MELODY_PRESETS: Preset = {
     duration: 2
   }
 }
-
-export const CHORD_PRESETS: Preset = {}
-
-export const RHYTHM_PRESETS: Preset = {}
