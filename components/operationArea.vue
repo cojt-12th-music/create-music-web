@@ -1,6 +1,6 @@
 <template>
   <div id="component-frame" class="darken-2 background">
-    <v-container>
+    <v-container class="fill-height">
       <v-row justify="center">
         <v-col cols="4"></v-col>
         <v-col cols="4" align-self="center">
@@ -26,6 +26,121 @@
         </v-col>
       </v-row>
     </v-container>
+
+    <v-navigation-drawer v-model="drawer" temporary absolute>
+      <v-list>
+        <v-list-item>
+          <v-row>
+            <v-col>
+              BPM
+              <v-slider
+                v-model="bpm"
+                class="align-center"
+                :max="120"
+                :min="60"
+                hide-details
+              >
+                <template v-slot:append>
+                  <v-text-field
+                    v-model="bpm"
+                    class="mt-0 pt-0"
+                    hide-details
+                    single-line
+                    type="number"
+                  ></v-text-field>
+                </template>
+              </v-slider>
+            </v-col>
+          </v-row>
+        </v-list-item>
+        <v-list-item>
+          <v-select
+            v-model="selectedTimbre"
+            :items="timbre"
+            label="音色"
+          ></v-select>
+        </v-list-item>
+        <v-list-item>
+          <v-select
+            v-model="selectedColorThema"
+            :items="colorThema"
+            label="色のテーマ"
+          ></v-select>
+        </v-list-item>
+        <v-list-item>
+          <v-row>
+            <v-col>
+              リズムの音量
+              <v-slider
+                v-model="rhythmVolume"
+                class="align-center"
+                :max="100"
+                :min="0"
+                hide-details
+              >
+                <template v-slot:append>
+                  <v-text-field
+                    v-model="rhythmVolume"
+                    class="mt-0 pt-0"
+                    hide-details
+                    single-line
+                    type="number"
+                  ></v-text-field>
+                </template>
+              </v-slider>
+            </v-col>
+          </v-row>
+        </v-list-item>
+        <v-list-item>
+          <v-row>
+            <v-col>
+              コードの音量
+              <v-slider
+                v-model="codeVolume"
+                class="align-center"
+                :max="100"
+                :min="0"
+                hide-details
+              >
+                <template v-slot:append>
+                  <v-text-field
+                    v-model="codeVolume"
+                    class="mt-0 pt-0"
+                    hide-details
+                    single-line
+                    type="number"
+                  ></v-text-field>
+                </template>
+              </v-slider>
+            </v-col>
+          </v-row>
+        </v-list-item>
+        <v-list-item>
+          <v-row>
+            <v-col>
+              メロディの音量
+              <v-slider
+                v-model="melodyVolume"
+                class="align-center"
+                :max="100"
+                :min="0"
+                hide-details
+              >
+                <template v-slot:append>
+                  <v-text-field
+                    v-model="melodyVolume"
+                    class="mt-0 pt-0"
+                    hide-details
+                    single-line
+                    type="number"
+                  ></v-text-field>
+                </template>
+              </v-slider>
+            </v-col>
+          </v-row>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
   </div>
 </template>
 
@@ -35,12 +150,35 @@ import Vue from 'vue'
 type DataType = {
   // 再生中かどうか（ボタンの切り替えに使用）
   isPlaying: boolean
+  // ナビゲーションドロワーの展開用
+  drawer: boolean
+  // 音色選択用
+  timbre: string[]
+  selectedTimbre: string
+  // 色のテーマ用
+  colorThema: string[]
+  selectedColorThema: string
+  // bpmの選択用
+  bpm: number
+  // 音のバランス
+  rhythmVolume: number
+  codeVolume: number
+  melodyVolume: number
 }
 
 export default Vue.extend({
   data(): DataType {
     return {
-      isPlaying: false
+      isPlaying: false,
+      drawer: false,
+      timbre: ['エレキギター', 'アコースティックギター', 'ピアノ'],
+      selectedTimbre: 'エレキギター',
+      colorThema: ['明るい', '暗い'],
+      selectedColorThema: '明るい',
+      bpm: 90,
+      rhythmVolume: 80,
+      codeVolume: 80,
+      melodyVolume: 80
     }
   },
   methods: {
@@ -53,7 +191,9 @@ export default Vue.extend({
       this.isPlaying = false
     },
     // 設定変更画面(ポップアップ)を表示
-    config() {}
+    config() {
+      this.drawer = true
+    }
   }
 })
 </script>
