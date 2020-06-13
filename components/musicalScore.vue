@@ -1,49 +1,43 @@
 <template>
   <div id="component-frame">
     <v-container>
-      <v-row>
-        <v-col cols="4">
-          <ul id="rhythm" class="blue darken-1">
-            <li>リズム</li>
-            <li>
-              <draggable element="ul" class="draggable" group="rhythm">
-                <li v-for="block in rhythmBlocks" :key="block">
-                  <block :text="block" />
-                </li>
-              </draggable>
-            </li>
-          </ul>
-        </v-col>
-        <v-col cols="4">
-          <ul id="code" class="green lighten-1">
-            <li>コード</li>
-            <li>
-              <draggable element="ul" class="draggable" group="chord">
-                <li v-for="block in codeBlocks" :key="block">
-                  <block :text="block" />
-                </li>
-              </draggable>
-            </li>
-          </ul>
-        </v-col>
-        <v-col cols="4">
-          <ul id="melody" class="pink lighten-1">
-            <li>メロディ</li>
-            <li>
-              <draggable
-                element="ul"
-                class="draggable"
-                group="melody"
-                @end="dragEnd"
-              >
-                <li v-for="block in melodyBlocks" :key="block">
-                  <block :text="block" />
-                </li>
-              </draggable>
-            </li>
-          </ul>
-        </v-col>
-      </v-row>
+      <div id="wrapper">
+        <ul id="rhythm" class="blue darken-1">
+          <li class="column-title">リズム</li>
+          <li>
+            <draggable element="ul" class="draggable" group="rhythm">
+              <li v-for="block in rhythmBlocks" :key="block">
+                <block :text="block" block-type="#4FC3F7" />
+              </li>
+            </draggable>
+          </li>
+        </ul>
+        <ul id="code" class="green lighten-1">
+          <li class="column-title">コード</li>
+          <li>
+            <draggable element="ul" class="draggable" group="chord">
+              <li v-for="block in codeBlocks" :key="block">
+                <block :text="block" block-type="#81C784" />
+              </li>
+            </draggable>
+          </li>
+        </ul>
+        <ul id="melody" class="pink lighten-1">
+          <li class="column-title">メロディ</li>
+          <li>
+            <draggable
+              element="ul"
+              class="draggable"
+              group="melody"
+              @end="dragEnd"
+            >
+              <li v-for="block in melodyBlocks" :key="block">
+                <block :text="block" block-type="#F06292" />
+              </li>
+            </draggable>
+          </li>
+        </ul>
+      </div>
     </v-container>
   </div>
 </template>
@@ -51,6 +45,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import draggable from 'vuedraggable'
+
 import block from '~/components/block.vue'
 export default Vue.extend({
   components: {
@@ -90,8 +85,14 @@ export default Vue.extend({
 div#component-frame {
   height: 100%;
 }
+#wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 1em;
+}
 
 ul {
+  display: block;
   list-style: none;
   text-align: center;
   padding: 0;
@@ -101,6 +102,30 @@ ul.draggable {
     margin: 1rem;
     display: block;
     height: 5rem;
+  }
+}
+
+@include pc {
+  #wrapper {
+    display: block;
+  }
+  ul {
+    text-align: left;
+    li {
+      display: inline-block;
+    }
+  }
+  .column-title {
+    width: 5rem;
+  }
+  ul.draggable {
+    text-align: center;
+    li {
+      margin: 1rem;
+      display: inline-block;
+      height: 5rem;
+      width: 5rem;
+    }
   }
 }
 </style>
