@@ -20,7 +20,6 @@
                 :key="index"
                 class="child"
                 :text="name"
-                block-type="#8C9EFF"
               />
             </draggable>
           </div>
@@ -33,9 +32,10 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import draggable from 'vuedraggable'
 import block from './block'
-export default {
+export default Vue.extend({
   components: {
     draggable,
     block
@@ -111,7 +111,7 @@ export default {
       console.log(event.to)
     }
   }
-}
+})
 </script>
 
 <style lang="scss" scoped>

@@ -43,8 +43,9 @@
 </template>
 
 <script lang="ts">
-import draggable from 'vuedraggable'
 import Vue from 'vue'
+import draggable from 'vuedraggable'
+
 import block from '~/components/block.vue'
 export default Vue.extend({
   components: {
@@ -53,8 +54,15 @@ export default Vue.extend({
   },
   data() {
     return {
-      rhythmBlocks: ['D', 'E', 'F', 'G', 'A', 'B', 'A'],
-      codeBlocks: ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+      rhythmBlocks: [
+        '16ビート',
+        '16ビート',
+        '8ビート',
+        '8ビート',
+        '2ビート',
+        '2ビート'
+      ],
+      codeBlocks: ['王道', '王道', '小室', '小室', 'カノン', 'かノン']
     }
   },
   computed: {
