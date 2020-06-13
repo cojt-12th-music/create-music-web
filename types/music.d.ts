@@ -31,34 +31,45 @@ export interface Block {
   duration: number
 }
 
-/**
- * Preset: ブロックをまとめたプリセットに関するデータ型.
- * ブロックのnameをキーとするオブジェクト
- */
-interface Preset {
+// ブロックのnameをキーとするオブジェクト
+interface BlockHash {
   [blockName: string]: Block
 }
 
 /**
  * Melody: 楽譜の内メロディ全体に関するデータ型
+ * instrument: メロディを再生する際の楽器
  * blockNames: メロディを構成するブロック配列
  * gain: メロディ全ての音源のゲイン (楽器の音調節用)
  */
 export interface Melody {
+  instrument: string
   blockNames: string[]
   gain: number
 }
 
 // コードに関するデータ型
 export interface Chord {
+  instrument: string
   blockNames: string[]
   gain: number
 }
 
 // リズムに関するデータ型
 export interface Rhythm {
+  instrument: string
   blockNames: string[]
   gain: number
+}
+
+/**
+ * Preset: プリセットに関するデータ型. コードやリズムにおいて使用?
+ * name: プリセット名
+ * blockNames: プリセットを構成するブロックの並び
+ */
+export interface Preset {
+  name: string
+  blockNames: string[]
 }
 
 /**
@@ -75,8 +86,8 @@ export interface Music {
   chord: Chord
   rhythm: Rhythm
   blocks: {
-    melody: Preset
-    chord: Preset
-    rhythm: Preset
+    melody: BlockHash
+    chord: BlockHash
+    rhythm: BlockHash
   }
 }
