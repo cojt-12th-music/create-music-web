@@ -1,9 +1,5 @@
 <template>
   <v-container v-show="debugControl">
-    <v-row>
-      <v-btn @click="play">Play</v-btn>
-      <v-btn @click="stop">Stop</v-btn>
-    </v-row>
     <v-row v-if="context">
       <v-col>
         <instrument

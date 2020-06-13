@@ -95,6 +95,14 @@ export default Vue.extend({
     sfzPath() {
       // sfzPathが変更された（楽器が変更された）ら新しいsfzをロード
       this.load()
+    },
+
+    isPlaying() {
+      if (!this.isPlaying) {
+        this.stop()
+      } else {
+        this.demoMelody()
+      }
     }
   },
   mounted() {
