@@ -10,9 +10,18 @@
           :bpm="bpm"
           :is-playing="isPlaying"
           :is-ready.sync="isMelodyReady"
+          :gain-value="gainValue"
         />
       </v-col>
     </v-row>
+    <v-slider
+      v-model="gainValue"
+      ticks
+      step="0.1"
+      max="3"
+      lable="Volume"
+      :value="gainValue"
+    ></v-slider>
   </v-container>
 </template>
 
@@ -35,6 +44,11 @@ export default Vue.extend({
     debugControl: {
       required: false,
       type: Boolean
+    },
+    gainValue: {
+      required: false,
+      type: Number,
+      default: 1.0
     }
   },
   data(): DataType {
