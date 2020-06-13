@@ -1,12 +1,14 @@
 <template>
   <div>
     <v-btn @click="demo">demo</v-btn>
+    <v-btn @click="demoMelody">demo melody</v-btn>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import { SfzRegion } from 'sfz-parser'
+import { Sound } from '../types/music'
 
 /**
  * Playerコンポーネント
@@ -51,6 +53,14 @@ export default Vue.extend({
     node: {
       required: true,
       type: Object as Vue.PropType<AudioNode>
+    },
+    notes: {
+      required: true,
+      type: Array as Vue.PropType<Sound[]>
+    },
+    bpm: {
+      required: true,
+      type: Number
     }
   },
   data(): DataType {
@@ -120,12 +130,16 @@ export default Vue.extend({
      * @param delay 再生までの遅延
      */
     playNote(key: number, delay = 0, duration = 0.5) {
-      const nodes = this.constructGraph(key, delay, duration)
+      const bpm = this.bpm
+      const fixedDelay = (delay * 60) / bpm
+      const fixedDuration = (duration * 60) / bpm
+
+      const nodes = this.constructGraph(key, fixedDelay, fixedDuration)
       nodes.forEach((n, i, nodes) =>
         nodes[i + 1] ? n.connect(nodes[i + 1]) : n.connect(this.node)
       )
       ;(nodes[0] as AudioScheduledSourceNode).start(
-        this.context.currentTime + delay
+        this.context.currentTime + fixedDelay
       )
     },
     constructGraph(key: number, delay = 0, duration = 0.5): AudioNode[] {
@@ -226,6 +240,15 @@ export default Vue.extend({
       this.playNote(64, 0.2) // ..
       this.playNote(67, 0.3)
       this.playNote(72, 0.4)
+    },
+    /**
+     * 作ったメロディのデモ再生
+     * TODO: 音符が増えても影響が出ないよう並列にする
+     */
+    demoMelody() {
+      this.notes.forEach(({ key, delay, duration }) => {
+        this.playNote(key, delay, duration)
+      })
     },
     /**
      * urlに直接指定できない文字列をエンコードするヘルパー関数

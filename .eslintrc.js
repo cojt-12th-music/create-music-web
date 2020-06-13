@@ -16,5 +16,12 @@ module.exports = {
   ],
   // add your custom rules here
   rules: {
+    "prettier/prettier": [
+      "error",
+      {
+        semi: false,
+        trailingComma: "none"
+      }
+    ]
   }
 }
