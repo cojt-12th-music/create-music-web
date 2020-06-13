@@ -13,6 +13,7 @@
         <operation-area />
       </div>
     </v-container>
+    <player />
   </div>
 </template>
 
@@ -20,12 +21,14 @@
 import MusicalScore from '@/components/musicalScore.vue'
 import BlockList from '@/components/blockList.vue'
 import OperationArea from '@/components/operationArea.vue'
+import Player from '@/components/Player.vue'
 
 export default {
   components: {
     MusicalScore,
     BlockList,
-    OperationArea
+    OperationArea,
+    Player
   }
 }
 </script>

@@ -2,16 +2,18 @@
   <div id="component-frame" class="darken-2 background">
     <v-container>
       <v-row justify="center">
-        <v-col cols="4"></v-col>
+        <v-col cols="4">
+          <v-btn @click="init">初期化</v-btn>
+        </v-col>
         <v-col cols="4" align-self="center">
           <div class="iconCenter">
             <div v-if="isPlaying">
-              <v-btn icon @click="stop">
+              <v-btn :disabled="!isReady" icon @click="stop">
                 <v-icon size="400%" color="#c4c4c4">mdi-stop</v-icon>
               </v-btn>
             </div>
             <div v-else>
-              <v-btn icon @click="play">
+              <v-btn :disabled="!isReady" icon @click="play">
                 <v-icon size="400%" color="#c4c4c4">mdi-play</v-icon>
               </v-btn>
             </div>
@@ -32,28 +34,29 @@
 <script lang="ts">
 import Vue from 'vue'
 
-type DataType = {
-  // 再生中かどうか（ボタンの切り替えに使用）
-  isPlaying: boolean
-}
-
 export default Vue.extend({
-  data(): DataType {
-    return {
-      isPlaying: false
+  computed: {
+    isPlaying() {
+      return this.$accessor.player.isPlaying
+    },
+    isReady() {
+      return this.$accessor.player.isReady
     }
   },
   methods: {
     // 音楽を再生
     play() {
-      this.isPlaying = true
+      this.$accessor.player.play()
     },
     // 音楽再生をストップ
     stop() {
-      this.isPlaying = false
+      this.$accessor.player.stop()
     },
     // 設定変更画面(ポップアップ)を表示
-    config() {}
+    config() {},
+    init() {
+      this.$accessor.player.setContext(new AudioContext())
+    }
   }
 })
 </script>
