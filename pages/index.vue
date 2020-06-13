@@ -34,11 +34,6 @@ export default {
 #component-frame {
   background-color: #424242;
 }
-@include pc {
-  #component-frame {
-    background-color: red;
-  }
-}
 
 #musical-score-wrapper {
   height: 65vh;
@@ -51,5 +46,35 @@ export default {
 }
 #operation-area-wrapper {
   height: 10vh;
+}
+
+@include pc {
+  // #component-frame {
+  //   display: -webkit-box;
+  //   display: -webkit-flex;
+  //   display: -ms-flexbox;
+  //   display: flex;
+  //   -webkit-flex-wrap: wrap;
+  //   -ms-flex-wrap: wrap;
+  //   flex-wrap: wrap;
+  // }
+  // #musical-score-wrapper {
+  //   -webkit-box-ordinal-group: 2;
+  //   -ms-flex-order: 2;
+  //   -webkit-order: 2;
+  //   order: 2;
+  // }
+  // #block-list-wrapper {
+  //   -webkit-box-ordinal-group: 3;
+  //   -ms-flex-order: 3;
+  //   -webkit-order: 3;
+  //   order: 3;
+  // }
+  // #operation-area-wrapper {
+  //   -webkit-box-ordinal-group: 1;
+  //   -ms-flex-order: 1;
+  //   -webkit-order: 1;
+  //   order: 1;
+  // }
 }
 </style>
