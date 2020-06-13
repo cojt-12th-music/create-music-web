@@ -5,7 +5,12 @@
 
 import { getterTree, mutationTree, actionTree } from 'typed-vuex'
 import { Music, Block, Sound } from '@/types/music'
-import { MELODY_PRESETS, CHORD_PRESETS, RHYTHM_PRESETS } from '@/lib/presets'
+import {
+  MELODY_BLOCKS,
+  CHORD_BLOCKS,
+  CHORD_PRESETS,
+  RHYTHM_BLOCKS
+} from '@/lib/presets'
 
 export const state = (): Music => ({
   melody: {
@@ -15,19 +20,19 @@ export const state = (): Music => ({
   },
   chord: {
     instrument: 'guitar',
-    blockNames: ['王道', 'カノン', '小室', 'Let it Be', '下降転調'],
+    blockNames: [],
     gain: 1
   },
   rhythm: {
     instrument: 'guitar',
-    blockNames: ['2ビート', '8ビート', '16ビート'],
+    blockNames: [],
     gain: 1
   },
   blocks: {
-    // プリセットはとりあえず @/lib/presets.ts に定義している
-    melody: MELODY_PRESETS,
-    chord: CHORD_PRESETS,
-    rhythm: RHYTHM_PRESETS
+    // プリセットなどはとりあえず @/lib/presets.ts に定義している
+    melody: MELODY_BLOCKS,
+    chord: CHORD_BLOCKS,
+    rhythm: RHYTHM_BLOCKS
   },
   bpm: 100
 })
@@ -110,6 +115,15 @@ export const mutations = mutationTree(state, {
       state.melody.blockNames.length,
       ...blockNames
     )
+  },
+  /**
+   * コードのプリセットをセットする
+   * @param presetName セットするプリセット名
+   */
+  SET_CHORD_PRESET(state: MusicState, presetName: string) {
+    const preset = CHORD_PRESETS[presetName]
+    const namesLength = state.chord.blockNames.length
+    state.chord.blockNames.splice(0, namesLength, ...preset.blockNames)
   }
 })
 

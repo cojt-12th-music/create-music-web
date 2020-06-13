@@ -1,6 +1,6 @@
 import { BlockHash } from '@/types/music'
 
-export const MELODY_PRESETS: BlockHash = {
+export const MELODY_BLOCKS: BlockHash = {
   init: { name: 'init', sounds: [], duration: 1 },
   メロ1: {
     name: 'メロ1',
