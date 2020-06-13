@@ -30,10 +30,6 @@ type DataType = {
     [key: string]: { data: AudioBuffer; offset: number }
   }
   /**
-   * sfzを読み込み中でtrue
-   */
-  isLoading: boolean
-  /**
    * ログ出力用
    */
   logs: string[]
@@ -65,13 +61,16 @@ export default Vue.extend({
     isPlaying: {
       required: true,
       type: Boolean
+    },
+    isReady: {
+      required: true,
+      type: Boolean
     }
   },
   data(): DataType {
     return {
       sampleDefinition: [],
       samples: {},
-      isLoading: false,
       logs: []
     }
   },
@@ -100,7 +99,7 @@ export default Vue.extend({
      * sfzファイルをロードする
      */
     async load() {
-      this.isLoading = true
+      this.$emit('update:isLoading', false)
 
       // sfzファイルを取得
       await fetch(this.encodedSfzPath)
@@ -126,7 +125,9 @@ export default Vue.extend({
             )
           )
         })
-        .then(() => (this.isLoading = false))
+        .then(() => {
+          this.$emit('update:isReady', true)
+        })
     },
     /**
      * 音を鳴らす

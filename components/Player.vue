@@ -12,6 +12,7 @@
           :notes="melodyNotes"
           :bpm="bpm"
           :is-playing="isPlaying"
+          :is-ready.sync="isMelodyReady"
         />
       </v-col>
     </v-row>
@@ -25,6 +26,9 @@ import { Sound, Block } from '~/types/music'
 
 type DataType = {
   master: AudioNode | null
+  isMelodyReady: boolean
+  isChordReady: boolean
+  isRythmReady: boolean
 }
 export default Vue.extend({
   components: {
@@ -38,7 +42,10 @@ export default Vue.extend({
   },
   data(): DataType {
     return {
-      master: null
+      master: null,
+      isMelodyReady: false,
+      isChordReady: false,
+      isRythmReady: false
     }
   },
   computed: {
@@ -58,13 +65,13 @@ export default Vue.extend({
       return this.$accessor.player.instruments
     },
     melodyInstrument(): string {
-      return this.$accessor.player.melodyInstrument
+      return this.$accessor.player.instruments[1]
     },
     chordInstrument(): string {
-      return this.$accessor.player.chordInstrument
+      return this.$accessor.player.instruments[2]
     },
     rythmInstrument(): string {
-      return this.$accessor.player.rythmInstrument
+      return this.$accessor.player.instruments[2]
     }
   },
   watch: {
@@ -73,6 +80,15 @@ export default Vue.extend({
         this.master = this.context.createGain()
         this.master.connect(this.context.destination)
       }
+    },
+    isMelodyReady() {
+      this.updateReadyState()
+    },
+    isChordReady() {
+      this.updateReadyState()
+    },
+    isRythmReady() {
+      this.updateReadyState()
     }
   },
   mounted() {
@@ -80,7 +96,6 @@ export default Vue.extend({
       .then((res) => res.json())
       .then((res) => {
         this.$accessor.player.setInstruments(res)
-        this.$accessor.player.setMelodyInstrument(this.instruments[1])
       })
   },
   methods: {
@@ -99,6 +114,9 @@ export default Vue.extend({
           return sounds
         })
         .flat()
+    },
+    updateReadyState() {
+      this.$accessor.player.setIsReady(this.isMelodyReady)
     }
   }
 })
