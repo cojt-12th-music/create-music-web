@@ -2,6 +2,7 @@
   <div>
     <v-btn @click="demo">demo</v-btn>
     <v-btn @click="demoMelody">demo melody</v-btn>
+    <v-btn @click="stop">stop</v-btn>
   </div>
 </template>
 
@@ -33,6 +34,10 @@ type DataType = {
    * ログ出力用
    */
   logs: string[]
+  /**
+   * 再生する音のソースノード
+   */
+  scheduledSourceNode: AudioScheduledSourceNode[]
 }
 
 export default Vue.extend({
@@ -71,7 +76,8 @@ export default Vue.extend({
     return {
       sampleDefinition: [],
       samples: {},
-      logs: []
+      logs: [],
+      scheduledSourceNode: []
     }
   },
   computed: {
@@ -89,6 +95,14 @@ export default Vue.extend({
     sfzPath() {
       // sfzPathが変更された（楽器が変更された）ら新しいsfzをロード
       this.load()
+    },
+
+    isPlaying() {
+      if (!this.isPlaying) {
+        this.stop()
+      } else {
+        this.demoMelody()
+      }
     }
   },
   mounted() {
@@ -146,6 +160,7 @@ export default Vue.extend({
       ;(nodes[0] as AudioScheduledSourceNode).start(
         this.context.currentTime + fixedDelay
       )
+      this.scheduledSourceNode.push(nodes[0] as AudioScheduledSourceNode)
     },
     constructGraph(key: number, delay = 0, duration = 0.5): AudioNode[] {
       // 指定された鍵盤番号の音を鳴らすのに必要な音データを探す
@@ -254,6 +269,15 @@ export default Vue.extend({
       this.notes.forEach(({ key, delay, duration }) => {
         this.playNote(key, delay, duration)
       })
+    },
+    /**
+     * 音楽の停止
+     */
+    stop() {
+      this.scheduledSourceNode.forEach((source) => {
+        source.stop()
+      })
+      this.scheduledSourceNode = []
     },
     /**
      * urlに直接指定できない文字列をエンコードするヘルパー関数
