@@ -119,7 +119,7 @@ export default Vue.extend({
      * @param key 鍵盤番号
      * @param delay 再生までの遅延
      */
-    playNote(key: number, delay = 0, duration = 100) {
+    playNote(key: number, delay = 0, duration = 0.5) {
       const nodes = this.constructGraph(key, delay, duration)
       nodes.forEach((n, i, nodes) =>
         nodes[i + 1] ? n.connect(nodes[i + 1]) : n.connect(this.node)
@@ -222,6 +222,10 @@ export default Vue.extend({
     demo() {
       // 和音を下からなめらかに演奏
       this.playNote(48, 0) // すぐ鳴る
+      this.playNote(60, 0.1) // 0.1秒後に鳴る
+      this.playNote(64, 0.2) // ..
+      this.playNote(67, 0.3)
+      this.playNote(72, 0.4)
     },
     /**
      * urlに直接指定できない文字列をエンコードするヘルパー関数
