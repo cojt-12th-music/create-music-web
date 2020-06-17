@@ -31,7 +31,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import Vue from 'vue'
 import draggable from 'vuedraggable'
 import block from './block'
@@ -89,7 +89,7 @@ export default Vue.extend({
       return this.$accessor.music.chord.blockNames
     },
     melodyBlocks() {
-      return this.$accessor.music.melody.blockNames
+      return this.$accessor.music.melodyBlockNames
     },
     dragOptions() {
       return {
@@ -107,8 +107,12 @@ export default Vue.extend({
   methods: {
     dragEnd(event) {
       console.log(event)
-      console.log(event.from)
-      console.log(event.to)
+      console.log(this.melodyBlocks[event.oldIndex])
+      this.$accessor.music.cloneBlock({
+        blockName: this.melodyBlocks[event.oldIndex],
+        index: event.newIndex
+      })
+      console.log(this.$accessor.music.melody.blockNames)
     }
   }
 })

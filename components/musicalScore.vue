@@ -28,7 +28,7 @@
             <draggable
               element="ul"
               class="draggable"
-              group="melody"
+              group="hoge"
               @end="dragEnd"
             >
               <li v-for="block in melodyBlocks" :key="block">
