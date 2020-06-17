@@ -38,6 +38,10 @@ type DataType = {
    * 再生する音のソースノード
    */
   scheduledSourceNode: AudioScheduledSourceNode[]
+  /**
+   * 音量調節用のgainNode
+   */
+  gainNode: GainNode
 }
 
 export default Vue.extend({
@@ -70,6 +74,11 @@ export default Vue.extend({
     isReady: {
       required: true,
       type: Boolean
+    },
+    gainValue: {
+      required: false,
+      default: 1.0,
+      type: Number
     }
   },
   data(): DataType {
@@ -77,7 +86,8 @@ export default Vue.extend({
       sampleDefinition: [],
       samples: {},
       logs: [],
-      scheduledSourceNode: []
+      scheduledSourceNode: [],
+      gainNode: this.context.createGain()
     }
   },
   computed: {
@@ -96,17 +106,21 @@ export default Vue.extend({
       // sfzPathが変更された（楽器が変更された）ら新しいsfzをロード
       this.load()
     },
-
     isPlaying() {
       if (!this.isPlaying) {
         this.stop()
       } else {
         this.demoMelody()
       }
+    },
+    gainValue() {
+      this.gainNode.gain.value = this.gainValue
     }
   },
   mounted() {
     if (this.sfzPath) this.load()
+    this.gainNode.gain.value = this.gainValue
+    this.gainNode.connect(this.node)
   },
   methods: {
     /**
@@ -155,7 +169,7 @@ export default Vue.extend({
 
       const nodes = this.constructGraph(key, fixedDelay, fixedDuration)
       nodes.forEach((n, i, nodes) =>
-        nodes[i + 1] ? n.connect(nodes[i + 1]) : n.connect(this.node)
+        nodes[i + 1] ? n.connect(nodes[i + 1]) : n.connect(this.gainNode)
       )
       ;(nodes[0] as AudioScheduledSourceNode).start(
         this.context.currentTime + fixedDelay
