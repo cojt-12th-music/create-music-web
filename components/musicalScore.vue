@@ -5,7 +5,12 @@
         <ul id="rhythm" class="blue darken-1">
           <li class="column-title">リズム</li>
           <li>
-            <draggable element="ul" class="draggable" group="rhythm">
+            <draggable
+              element="ul"
+              class="draggable"
+              group="rhythm"
+              v-bind="dragOptions"
+            >
               <li v-for="block in rhythmBlocks" :key="block">
                 <block :text="block" block-type="#4FC3F7" />
               </li>
@@ -15,7 +20,12 @@
         <ul id="code" class="green lighten-1">
           <li class="column-title">コード</li>
           <li>
-            <draggable element="ul" class="draggable" group="chord">
+            <draggable
+              element="ul"
+              class="draggable"
+              group="chord"
+              v-bind="dragOptions"
+            >
               <li v-for="block in codeBlocks" :key="block">
                 <block :text="block" block-type="#81C784" />
               </li>
@@ -29,6 +39,7 @@
               element="ul"
               class="draggable"
               group="melody"
+              v-bind="dragOptions"
               @end="dragEnd"
             >
               <li v-for="block in melodyBlocks" :key="block">
@@ -68,6 +79,12 @@ export default Vue.extend({
   computed: {
     melodyBlocks(): Array<string> {
       return this.$accessor.music.melody.blockNames
+    },
+    dragOptions() {
+      return {
+        animation: 300,
+        disabled: false
+      }
     }
   },
   methods: {
@@ -99,9 +116,11 @@ ul {
 }
 ul.draggable {
   li {
-    margin: 1rem;
+    margin: auto;
+    margin-bottom: 1rem;
     display: block;
-    height: 5rem;
+    height: $smartphone-block-size;
+    width: $smartphone-block-size;
   }
 }
 

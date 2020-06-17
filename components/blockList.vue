@@ -11,16 +11,14 @@
         <v-tab-item v-for="(block, index) in blocks" :key="index">
           <div class="boxContainer">
             <draggable
+              element="ul"
               :group="{ name: musicType[index], pull: 'clone', put: false }"
               v-bind="dragOptions"
               @end="dragEnd"
             >
-              <block
-                v-for="(name, index) in block"
-                :key="index"
-                class="child"
-                :text="name"
-              />
+              <li v-for="(name, index) in block" :key="index" class="child">
+                <block :text="name" />
+              </li>
             </draggable>
           </div>
         </v-tab-item>
@@ -126,10 +124,17 @@ div#component-frame {
 }
 .child {
   display: inline-block;
-  width: 100px;
-  height: 5rem;
-  line-height: 30px;
-  margin: 10px;
+  height: $smartphone-block-size !important;
+  width: $smartphone-block-size;
   text-align: center;
+}
+ul {
+  padding-top: 1rem;
+  padding-left: 0;
+  li {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    margin-bottom: 1rem;
+  }
 }
 </style>
