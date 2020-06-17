@@ -39,6 +39,10 @@ type DataType = {
    */
   scheduledSourceNode: AudioScheduledSourceNode[]
   /**
+   * 再生する音の全てのソースノード
+   */
+  allSourceNode: AudioNode[][]
+  /**
    * 音量調節用のgainNode
    */
   gainNode: GainNode
@@ -87,6 +91,7 @@ export default Vue.extend({
       samples: {},
       logs: [],
       scheduledSourceNode: [],
+      allSourceNode: [],
       gainNode: this.context.createGain()
     }
   },
@@ -175,6 +180,7 @@ export default Vue.extend({
         this.context.currentTime + fixedDelay
       )
       this.scheduledSourceNode.push(nodes[0] as AudioScheduledSourceNode)
+      this.allSourceNode.push(nodes)
     },
     constructGraph(key: number, delay = 0, duration = 0.5): AudioNode[] {
       // 指定された鍵盤番号の音を鳴らすのに必要な音データを探す
@@ -291,7 +297,13 @@ export default Vue.extend({
       this.scheduledSourceNode.forEach((source) => {
         source.stop()
       })
+      this.allSourceNode.forEach((nodes) => {
+        nodes.forEach((node) => {
+          node.disconnect()
+        })
+      })
       this.scheduledSourceNode = []
+      this.allSourceNode = []
     },
     /**
      * urlに直接指定できない文字列をエンコードするヘルパー関数
