@@ -1,0 +1,7 @@
+$pc: 1024px; // PC
+
+@mixin pc {
+  @media (min-width: ($pc)) {
+    @content;
+  }
+}

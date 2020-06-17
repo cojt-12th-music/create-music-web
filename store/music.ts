@@ -13,8 +13,14 @@ export const state = (): Music => ({
     blockNames: ['メロ1', 'メロ2', 'メロ3', 'メロ4'],
     gain: 1
   },
-  chord: {},
-  rhythm: {},
+  chord: {
+    blockNames: ['王道', 'カノン', '小室', 'Let it Be', '下降転調'],
+    gain: 1
+  },
+  rhythm: {
+    blockNames: ['2ビート', '8ビート', '16ビート'],
+    gain: 1
+  },
   blocks: {
     // プリセットはとりあえず @/lib/presets.ts に定義している
     melody: MELODY_PRESETS,
@@ -87,7 +93,9 @@ export const mutations = mutationTree(state, {
     state: MusicState,
     { blockName, sound }: { blockName: string; sound: Sound }
   ) {
-    state.blocks.melody[blockName].sounds.splice((sound.id || 0) - 1, 1, sound)
+    if (sound.id) {
+      state.blocks.melody[blockName].sounds.splice(sound.id - 1, 1, sound)
+    }
   }
 })
 
@@ -120,12 +128,22 @@ export const actions = actionTree(
      * ブロックをブロックリストに追加する
      * @param block 追加するブロック
      */
-    addBlock({ commit }, block: Block) {
+    addBlockToList({ commit }, block: Block) {
+      commit('ADD_BLOCK_TO_LIST', block)
+    },
+    /**
+     * blockをディープコピーし, 新たなblockを追加する
+     * hoge というblockをコピーする場合, hoge' というblockを新しく生成する
+     * @param blockName コピーするブロックの名前
+     */
+    copyBlock({ state, commit }, blockName: string) {
+      const block = JSON.parse(JSON.stringify(state.blocks.melody[blockName]))
+      block.name = `${block.name}'`
       commit('ADD_BLOCK_TO_LIST', block)
     },
     /**
      * ブロックに新しいsoundを追加する
-     * @param blockName 追加するブロックの名前
+     * @param blockName soundを追加するブロックの名前
      * @param sound 追加するsound
      */
     addSound(
@@ -136,7 +154,7 @@ export const actions = actionTree(
     },
     /**
      * ブロックのsoundを変更する
-     * @param blockName 変更する音が存在しているブロックの名前
+     * @param blockName 変更するsoundを持っているブロックの名前
      * @param sound 変更後のsound
      */
     updateSound(
