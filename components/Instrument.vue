@@ -239,7 +239,7 @@ export default Vue.extend({
         nodes.push(releaseGain)
       }
 
-      // フィルター
+      // フィルター対応
       if (target.fil_type && target.cutoff) {
         const filter = this.context.createBiquadFilter()
         let resonance = 1 / Math.sqrt(2)
