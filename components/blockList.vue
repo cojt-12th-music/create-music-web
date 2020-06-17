@@ -34,7 +34,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import draggable from 'vuedraggable'
-import block from './block'
+import block from './block.vue'
+
 export default Vue.extend({
   components: {
     draggable,
@@ -82,13 +83,13 @@ export default Vue.extend({
     }
   },
   computed: {
-    rhythmBlocks() {
+    rhythmBlocks(): string[] {
       return this.$accessor.music.rhythm.blockNames
     },
-    chordBlocks() {
+    chordBlocks(): string[] {
       return this.$accessor.music.chord.blockNames
     },
-    melodyBlocks() {
+    melodyBlocks(): string[] {
       return this.$accessor.music.melodyBlockNames
     },
     dragOptions() {
@@ -97,7 +98,7 @@ export default Vue.extend({
         disabled: false
       }
     },
-    blocks() {
+    blocks(): string[][] {
       const rhythmBlocks = this.rhythmBlocks
       const chordBlocks = this.chordBlocks
       const melodyBlocks = this.melodyBlocks
@@ -105,7 +106,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    dragEnd(event) {
+    dragEnd(event: any) {
       console.log(event)
       console.log(this.melodyBlocks[event.oldIndex])
       this.$accessor.music.cloneBlock({

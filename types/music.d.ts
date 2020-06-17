@@ -50,10 +50,16 @@ export interface Melody {
 }
 
 // コードに関するデータ型
-export interface Chord {}
+export interface Chord {
+  blockNames: string[]
+  gain: number
+}
 
 // リズムに関するデータ型
-export interface Rhythm {}
+export interface Rhythm {
+  blockNames: string[]
+  gain: number
+}
 
 /**
  * Music: 楽譜全体に関するデータ型
