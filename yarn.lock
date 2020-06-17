@@ -1500,18 +1500,20 @@
   dependencies:
     source-map "^0.6.1"
 
-"@types/wav@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@types/wav/-/wav-1.0.0.tgz#727aa6459b26123ffc9457c75e4e5d1e0379a055"
-  integrity sha512-AgF21At/Vsio4WFLGjKif6cNuibYJNL2Pf0mvRA25v20ausHRdKCe8rTe3TypqjzRHtgwWgkxExakQNl4L8hug==
-  dependencies:
-    "@types/node" "*"
 "@types/vuedraggable@^2.23.1":
   version "2.23.1"
   resolved "https://registry.yarnpkg.com/@types/vuedraggable/-/vuedraggable-2.23.1.tgz#3f6aad6d86adc42a9fec5665a41884b4da8d4d61"
   integrity sha512-icDSUwIc1xqtMBxYlaO76ywpzxBumcGV3gC7WVtRl37A+TNuNFg3bMwPpi3M5KZWrIYChBmM9uwMNB7C8hvWWQ==
   dependencies:
     vue ">=2.0.0"
+
+"@types/wav@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@types/wav/-/wav-1.0.0.tgz#727aa6459b26123ffc9457c75e4e5d1e0379a055"
+  integrity sha512-AgF21At/Vsio4WFLGjKif6cNuibYJNL2Pf0mvRA25v20ausHRdKCe8rTe3TypqjzRHtgwWgkxExakQNl4L8hug==
+  dependencies:
+    "@types/node" "*"
+
 "@types/webpack-bundle-analyzer@^2.13.3":
   version "2.13.3"
   resolved "https://registry.yarnpkg.com/@types/webpack-bundle-analyzer/-/webpack-bundle-analyzer-2.13.3.tgz#820c8f734e171f081cbf02d889b9cda687cc89dd"

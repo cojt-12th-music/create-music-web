@@ -1,7 +1,9 @@
 import path from 'path'
 import fs from 'fs-extra'
 import consola from 'consola'
-import list from '../../instruments.json'
+import axios from 'axios'
+import instrumentsList from '../../instruments.json'
+import reverbsList from '../../reverbs.json'
 import { downloadAndUnzip } from './downloader'
 import { transform } from './transform'
 
@@ -31,7 +33,7 @@ export async function main() {
   fs.remove(path.resolve(__dirname, './instruments'))
   await mkdirIfNotExist('./instruments')
   await Promise.all(
-    list.map(async (inst) => {
+    instrumentsList.map(async (inst) => {
       await downloadAndUnzip(inst.url, inst.name)
     })
   )
@@ -63,4 +65,22 @@ export async function main() {
     }
   )
   consola.info(`Instruments ready`)
+
+  consola.info('Preparing reverbs... ')
+
+  await mkdirIfNotExist('../../static/reverbs')
+  await Promise.all(
+    reverbsList.map(async (rev) => {
+      await axios.get(rev.url).then((res) => {
+        fs.writeFile(`static/reverbs/${rev.name}Base64`, res.data)
+      })
+    })
+  )
+
+  fs.writeFile(
+    `static/reverbs/reverbs.json`,
+    JSON.stringify(reverbsList.map((rev) => `reverbs/${rev.name}Base64`))
+  )
+
+  consola.info(`Reverbs ready`)
 }

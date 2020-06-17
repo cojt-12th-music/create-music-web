@@ -3,6 +3,7 @@
     <v-btn @click="demo">demo</v-btn>
     <v-btn @click="demoMelody">demo melody</v-btn>
     <v-btn @click="stop">stop</v-btn>
+    <v-switch v-model="isReverb" label="isReverb"></v-switch>
   </div>
 </template>
 
@@ -38,6 +39,7 @@ type DataType = {
    * 再生する音のソースノード
    */
   scheduledSourceNode: AudioScheduledSourceNode[]
+
   /**
    * 再生する音の全てのソースノード
    */
@@ -46,6 +48,8 @@ type DataType = {
    * 音量調節用のgainNode
    */
   gainNode: GainNode
+
+  reverbNode: ConvolverNode
 }
 
 export default Vue.extend({
@@ -83,6 +87,16 @@ export default Vue.extend({
       required: false,
       default: 1.0,
       type: Number
+    },
+    isReverb: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    reverbPath: {
+      required: false,
+      default: '',
+      type: String
     }
   },
   data(): DataType {
@@ -92,7 +106,8 @@ export default Vue.extend({
       logs: [],
       scheduledSourceNode: [],
       allSourceNode: [],
-      gainNode: this.context.createGain()
+      gainNode: this.context.createGain(),
+      reverbNode: this.context.createConvolver(),
     }
   },
   computed: {
@@ -120,12 +135,17 @@ export default Vue.extend({
     },
     gainValue() {
       this.gainNode.gain.value = this.gainValue
+    },
+    isReverb() {
+      if (this.isReverb) this.setReverb()
     }
   },
   mounted() {
     if (this.sfzPath) this.load()
     this.gainNode.gain.value = this.gainValue
     this.gainNode.connect(this.node)
+    this.reverbNode = this.context.createConvolver()
+    if (this.isReverb) this.setReverb()
   },
   methods: {
     /**
@@ -157,6 +177,23 @@ export default Vue.extend({
                 })
             )
           )
+        })
+        .then(() => {
+          this.$emit('update:isReady', true)
+        })
+    },
+
+    async setReverb() {
+      this.$emit('update:isLoading', false)
+
+      await fetch(this.reverbPath)
+        .then((res) => res.text())
+        .then((b64) => {
+          this.context
+            .decodeAudioData(this.base64ToArrayBuffer(b64))
+            .then((audioBuffer) => {
+              this.reverbNode.buffer = audioBuffer
+            })
         })
         .then(() => {
           this.$emit('update:isReady', true)
@@ -268,6 +305,7 @@ export default Vue.extend({
         nodes.push(filter)
       }
 
+      if (this.isReverb) nodes.push(this.reverbNode)
       return nodes
     },
     /**
