@@ -94,7 +94,12 @@ export default Vue.extend({
     context() {
       if (this.context) {
         this.master = this.context.createGain()
-        this.master.connect(this.context.destination)
+
+        // リミッター対応
+        const limiter = this.context.createDynamicsCompressor()
+        limiter.ratio.value = 20 // 圧縮比率 [1,20] default=12
+        this.master.connect(limiter)
+        limiter.connect(this.context.destination)
       }
     },
     isMelodyReady() {

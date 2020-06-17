@@ -83,10 +83,6 @@ export default Vue.extend({
       required: false,
       default: 1.0,
       type: Number
-    },
-    isLimiter: {
-      required: true,
-      type: Boolean
     }
   },
   data(): DataType {
@@ -270,14 +266,6 @@ export default Vue.extend({
         }
 
         nodes.push(filter)
-      }
-
-      // リミッター対応
-      if (this.isLimiter) {
-        const limiter = this.context.createDynamicsCompressor()
-        limiter.threshold.value = -70 // 閾値 [-100,0] default=-24dB
-        limiter.ratio.value = 20 // 圧縮比率 [1,20] default=12
-        nodes.push(limiter)
       }
 
       return nodes
