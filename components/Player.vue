@@ -11,12 +11,9 @@
           :is-playing="isPlaying"
           :is-ready.sync="isMelodyReady"
           :gain-value="gainValue"
-          :is-limiter="isLimiter"
         />
       </v-col>
     </v-row>
-    <input v-model="isLimiter" type="checkbox" />
-    <label for="checkbox">Limiter</label>
     <v-slider
       v-model="gainValue"
       ticks
