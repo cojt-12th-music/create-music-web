@@ -142,8 +142,8 @@ ul.draggable {
     li {
       margin: 1rem;
       display: inline-block;
-      height: 5rem;
-      width: 5rem;
+      height: $pc-block-size;
+      width: $pc-block-size;
     }
   }
 }

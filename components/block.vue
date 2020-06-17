@@ -62,4 +62,7 @@ div#component-frame {
   -ms-filter: drop-shadow(1px 3px 5px rgba(0, 0, 0, 0.2));
   filter: drop-shadow(1px 3px 5px rgba(0, 0, 0, 0.2));
 }
+p {
+  margin: 0;
+}
 </style>

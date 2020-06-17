@@ -137,4 +137,12 @@ ul {
     margin-bottom: 1rem;
   }
 }
+
+@include pc {
+  .child {
+    height: $pc-block-size !important;
+    width: $pc-block-size;
+    margin: 1rem;
+  }
+}
 </style>
