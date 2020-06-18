@@ -97,7 +97,7 @@ export default Vue.extend({
         return this.$accessor.music.melody.blockNames
       },
       set(blockNames: string[]) {
-        this.$accessor.music.SET_BLOCK_NAMES(blockNames)
+        this.$accessor.music.setBlockNames(blockNames)
       }
     }
   }

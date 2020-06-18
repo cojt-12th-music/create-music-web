@@ -50,17 +50,6 @@ export const getters = getterTree(state, {
 
 export const mutations = mutationTree(state, {
   /**
-   * blockをメロディにクローンする
-   * @param blockName ブロックの名前
-   * @param index 追加する場所
-   */
-  CLONE_BLOCK(
-    state: MusicState,
-    { blockName, index }: { blockName: string; index: number }
-  ) {
-    state.melody.blockNames.splice(index, 0, blockName)
-  },
-  /**
    * ブロックを移動させる
    * @param oldIndex 移動前のindex
    * @param newIndex 移動後のindex
@@ -105,9 +94,9 @@ export const mutations = mutationTree(state, {
     }
   },
   /**
-   * ブロックのsoundを変更する
-   * @param blockName 変更する音が存在しているブロックの名前
-   * @param sound 変更後のsound
+   * 楽譜のブロック配列を置き換える
+   * v-modelで変更を観測したときに呼ぶ
+   * @param blockNames 変更後のブロック配列
    */
   SET_BLOCK_NAMES(state: MusicState, blockNames: string[]) {
     state.melody.blockNames.splice(
@@ -130,17 +119,6 @@ export const mutations = mutationTree(state, {
 export const actions = actionTree(
   { state, getters, mutations },
   {
-    /**
-     * blockをメロディにクローンする
-     * @param blockName ブロックの名前
-     * @param index 追加する場所
-     */
-    cloneBlock(
-      { commit },
-      { blockName, index }: { blockName: string; index: number }
-    ) {
-      commit('CLONE_BLOCK', { blockName, index })
-    },
     /**
      * ブロックを移動させる
      * @param oldIndex 移動前のindex
@@ -190,6 +168,21 @@ export const actions = actionTree(
       { blockName, sound }: { blockName: string; sound: Sound }
     ) {
       commit('UPDATE_SOUND', { blockName, sound })
+    },
+    /**
+     * 楽譜のブロック配列を置き換える
+     * v-modelで変更を観測したときに呼ぶ
+     * @param blockNames 変更後のブロック配列
+     */
+    setBlockNames({ commit }, blockNames: string[]) {
+      commit('SET_BLOCK_NAMES', blockNames)
+    },
+    /**
+     * コードのプリセットをセットする
+     * @param presetName セットするプリセット名
+     */
+    setChordPreset({ commit }, presetName: string) {
+      commit('SET_CHORD_PRESET', presetName)
     }
   }
 )
