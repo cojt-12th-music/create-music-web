@@ -37,12 +37,11 @@
 import Vue from 'vue'
 import draggable from 'vuedraggable'
 import block from './block.vue'
-
-type MusicCategory = 'rhythm' | 'chord' | 'melody'
+import { ScoreCategory } from '@/types/music'
 
 type DataType = {
   currentTab: number
-  tabs: { name: string; category: MusicCategory }[]
+  tabs: { name: string; category: ScoreCategory }[]
   enabled: boolean
   dragging: boolean
 }
@@ -71,7 +70,7 @@ export default Vue.extend({
         disabled: false
       }
     },
-    blockNames(): { [category in MusicCategory]: string[] } {
+    blockNames(): { [category in ScoreCategory]: string[] } {
       return {
         rhythm: this.$accessor.music.rhythm.blockNames,
         chord: this.$accessor.music.chord.blockNames,

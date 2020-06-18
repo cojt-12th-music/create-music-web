@@ -55,7 +55,7 @@ interface PresetHash {
  * Melody: 楽譜の内メロディ全体に関するデータ型
  * instrument: メロディを再生する際の楽器
  * blockNames: メロディを構成するブロック配列
- * gain: メロディ全ての音源のゲイン (楽器の音調節用)
+ * gain: メロディの全音源のゲイン (楽器の音調節用)
  */
 export interface Melody {
   instrument: string
@@ -63,19 +63,31 @@ export interface Melody {
   gain: number
 }
 
-// コードに関するデータ型
+/**
+ * Chord: 楽譜の内コード全体に関するデータ型
+ * blockNames: コードを構成するブロック配列
+ * gain: コードの全音源のゲイン (楽器の音調節用)
+ */
 export interface Chord {
   instrument: string
   blockNames: string[]
   gain: number
 }
 
-// リズムに関するデータ型
+/**
+ * Rhythm: 楽譜の内リズム全体に関するデータ型
+ * blockNames: リズムを構成するブロック配列
+ * gain: リズムの全音源のゲイン (楽器の音調節用)
+ */
 export interface Rhythm {
   instrument: string
   blockNames: string[]
   gain: number
 }
+
+// 楽譜のカテゴリ...?
+// TODO: もっといい名前ないかな
+export type ScoreCategory = 'rhythm' | 'chord' | 'melody'
 
 /**
  * Music: 楽譜全体に関するデータ型
