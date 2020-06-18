@@ -1,30 +1,30 @@
 <template>
   <div id="component-frame">
     <v-card>
-      <v-tabs v-model="tab" background-color="indigo" dark>
-        <v-tab v-for="item in items" :key="item.tab">
-          {{ item.tab }}
+      <v-tabs v-model="currentTab" background-color="indigo" dark>
+        <v-tab v-for="(tab, index) in tabs" :key="index">
+          {{ tab.name }}
         </v-tab>
       </v-tabs>
 
-      <v-tabs-items v-model="tab" :touchless="true">
-        <v-tab-item v-for="(block, tabIndex) in blocks" :key="tabIndex">
+      <v-tabs-items v-model="currentTab" :touchless="true">
+        <v-tab-item v-for="(tab, tabIndex) in tabs" :key="tabIndex">
           <div class="boxContainer">
             <draggable
               class="draggable"
-              :list="melodyBlocks"
-              :group="{ name: musicType[tabIndex], pull: 'clone', put: false }"
+              :list="blockNames[tab.category]"
+              :group="{ name: tab.category, pull: 'clone', put: false }"
               v-bind="dragOptions"
               :clone="disableEvent"
               :move="disableEvent"
               @end="dragEnd"
             >
               <div
-                v-for="(name, blockIndex) in block"
+                v-for="(blockName, blockIndex) in blockNames[tab.category]"
                 :key="blockIndex"
                 class="block-wrapper"
               >
-                <block :text="name" />
+                <block :text="blockName" />
               </div>
             </draggable>
           </div>
@@ -41,50 +41,30 @@ import Vue from 'vue'
 import draggable from 'vuedraggable'
 import block from './block.vue'
 
+type MusicCategory = 'rhythm' | 'chord' | 'melody'
+
+type DataType = {
+  currentTab: number
+  tabs: { name: string; category: MusicCategory }[]
+  enabled: boolean
+  dragging: boolean
+}
+
 export default Vue.extend({
   components: {
     draggable,
     block
   },
-  data() {
+  data(): DataType {
     return {
-      tab: null,
-      items: [
-        {
-          tab: 'リズム',
-          group: 'rythm',
-          list: [
-            { name: '8ビート', id: 0 },
-            { name: '16ビート', id: 1 },
-            { name: '2ビート', id: 2 }
-          ]
-        },
-        {
-          tab: 'コード',
-          group: 'chord',
-          list: [
-            { name: '王道', id: 0 },
-            { name: 'カノン', id: 1 },
-            { name: '小室', id: 2 },
-            { name: 'Let it be', id: 3 },
-            { name: '下降転調', id: 4 }
-          ]
-        },
-        {
-          tab: 'メロディ',
-          group: 'melody',
-          list: [
-            { name: 'メロ1', id: 0 },
-            { name: 'メロ2', id: 1 },
-            { name: 'メロ3', id: 2 },
-            { name: 'メロ4', id: 3 }
-          ]
-        }
+      currentTab: 0,
+      tabs: [
+        { name: 'リズム', category: 'rhythm' },
+        { name: 'コード', category: 'chord' },
+        { name: 'メロディ', category: 'melody' }
       ],
       enabled: true,
-      dragging: false,
-      musicType: ['rhythm', 'chord', 'melody'],
-      rhythm: 'rhythm'
+      dragging: false
     }
   },
   computed: {
@@ -94,20 +74,12 @@ export default Vue.extend({
         disabled: false
       }
     },
-    rhythmBlocks(): string[] {
-      return this.$accessor.music.rhythm.blockNames
-    },
-    chordBlocks(): string[] {
-      return this.$accessor.music.chord.blockNames
-    },
-    melodyBlocks(): string[] {
-      return this.$accessor.music.melodyTemplateNames
-    },
-    blocks(): string[][] {
-      const rhythmBlocks = this.rhythmBlocks
-      const chordBlocks = this.chordBlocks
-      const melodyBlocks = this.melodyBlocks
-      return [rhythmBlocks, chordBlocks, melodyBlocks]
+    blockNames(): { [category in MusicCategory]: string[] } {
+      return {
+        rhythm: this.$accessor.music.rhythm.blockNames,
+        chord: this.$accessor.music.chord.blockNames,
+        melody: this.$accessor.music.melodyTemplateNames
+      }
     }
   },
   methods: {
