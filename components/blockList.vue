@@ -11,18 +11,21 @@
         <v-tab-item v-for="(block, index) in blocks" :key="index">
           <div class="boxContainer">
             <draggable
+              class="draggable"
+              :list="melodyBlocks"
               :group="{ name: musicType[index], pull: 'clone', put: false }"
               v-bind="dragOptions"
               :clone="disableEvent"
               :move="disableEvent"
               @end="dragEnd"
             >
-              <block
+              <div
                 v-for="(name, index) in block"
                 :key="index"
-                class="child"
-                :text="name"
-              />
+                class="block-wrapper"
+              >
+                <block :text="name" />
+              </div>
             </draggable>
           </div>
         </v-tab-item>
@@ -85,6 +88,12 @@ export default Vue.extend({
     }
   },
   computed: {
+    dragOptions() {
+      return {
+        animation: 300,
+        disabled: false
+      }
+    },
     rhythmBlocks(): string[] {
       return this.$accessor.music.rhythm.blockNames
     },
@@ -93,12 +102,6 @@ export default Vue.extend({
     },
     melodyBlocks(): string[] {
       return this.$accessor.music.melodyTemplateNames
-    },
-    dragOptions() {
-      return {
-        animation: 300,
-        disabled: false
-      }
     },
     blocks(): string[][] {
       const rhythmBlocks = this.rhythmBlocks
@@ -124,6 +127,8 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
+@import '~assets/style/draggable.scss';
+
 div#component-frame {
   height: 100%;
 }
@@ -132,13 +137,5 @@ div#component-frame {
   overflow-x: auto;
   white-space: nowrap;
   -webkit-overflow-scrolling: touch;
-}
-.child {
-  display: inline-block;
-  width: 100px;
-  height: 5rem;
-  line-height: 30px;
-  margin: 10px;
-  text-align: center;
 }
 </style>

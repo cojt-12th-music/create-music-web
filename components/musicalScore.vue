@@ -5,20 +5,36 @@
         <ul id="rhythm" class="blue darken-1">
           <li class="column-title">リズム</li>
           <li>
-            <draggable element="ul" class="draggable" group="rhythm">
-              <li v-for="block in rhythmBlocks" :key="block">
+            <draggable
+              class="score-draggable"
+              group="rhythm"
+              v-bind="dragOptions"
+            >
+              <div
+                v-for="(block, index) in rhythmBlocks"
+                :key="index"
+                class="block-wrapper"
+              >
                 <block :text="block" block-type="#4FC3F7" />
-              </li>
+              </div>
             </draggable>
           </li>
         </ul>
         <ul id="code" class="green lighten-1">
           <li class="column-title">コード</li>
           <li>
-            <draggable element="ul" class="draggable" group="chord">
-              <li v-for="block in codeBlocks" :key="block">
+            <draggable
+              class="score-draggable"
+              group="chord"
+              v-bind="dragOptions"
+            >
+              <div
+                v-for="(block, index) in codeBlocks"
+                :key="index"
+                class="block-wrapper"
+              >
                 <block :text="block" block-type="#81C784" />
-              </li>
+              </div>
             </draggable>
           </li>
         </ul>
@@ -27,13 +43,17 @@
           <li>
             <draggable
               v-model="melodyBlocks"
-              element="ul"
-              class="draggable"
+              class="score-draggable"
               group="melody"
+              v-bind="dragOptions"
             >
-              <li v-for="block in melodyBlocks" :key="block">
+              <div
+                v-for="(block, index) in melodyBlocks"
+                :key="index"
+                class="block-wrapper"
+              >
                 <block :text="block" block-type="#F06292" />
-              </li>
+              </div>
             </draggable>
           </li>
         </ul>
@@ -66,6 +86,12 @@ export default Vue.extend({
     }
   },
   computed: {
+    dragOptions() {
+      return {
+        animation: 300,
+        disabled: false
+      }
+    },
     melodyBlocks: {
       get(): string[] {
         return this.$accessor.music.melody.blockNames
@@ -79,6 +105,8 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
+@import '~assets/style/draggable.scss';
+
 div#component-frame {
   height: 100%;
 }
@@ -94,13 +122,6 @@ ul {
   text-align: center;
   padding: 0;
 }
-ul.draggable {
-  li {
-    margin: 1rem;
-    display: block;
-    height: 5rem;
-  }
-}
 
 @include pc {
   #wrapper {
@@ -114,15 +135,6 @@ ul.draggable {
   }
   .column-title {
     width: 5rem;
-  }
-  ul.draggable {
-    text-align: center;
-    li {
-      margin: 1rem;
-      display: inline-block;
-      height: 5rem;
-      width: 5rem;
-    }
   }
 }
 </style>
