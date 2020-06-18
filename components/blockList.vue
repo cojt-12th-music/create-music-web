@@ -15,9 +15,6 @@
               :list="blockNames[tab.category]"
               :group="{ name: tab.category, pull: 'clone', put: false }"
               v-bind="dragOptions"
-              :clone="disableEvent"
-              :move="disableEvent"
-              @end="dragEnd"
             >
               <div
                 v-for="(blockName, blockIndex) in blockNames[tab.category]"
@@ -81,19 +78,6 @@ export default Vue.extend({
         melody: this.$accessor.music.melodyTemplateNames
       }
     }
-  },
-  methods: {
-    dragEnd(event: { oldIndex: number; newIndex: number; pullMode: string }) {
-      if (event.pullMode !== 'clone') {
-        return
-      }
-      this.$accessor.music.cloneBlock({
-        blockName: this.melodyBlocks[event.oldIndex],
-        index: event.newIndex
-      })
-    },
-    // draggableのイベントをキャンセルするためのメソッド
-    disableEvent() {}
   }
 })
 </script>
