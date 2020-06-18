@@ -8,20 +8,20 @@
       </v-tabs>
 
       <v-tabs-items v-model="tab" :touchless="true">
-        <v-tab-item v-for="(block, index) in blocks" :key="index">
+        <v-tab-item v-for="(block, tabIndex) in blocks" :key="tabIndex">
           <div class="boxContainer">
             <draggable
               class="draggable"
               :list="melodyBlocks"
-              :group="{ name: musicType[index], pull: 'clone', put: false }"
+              :group="{ name: musicType[tabIndex], pull: 'clone', put: false }"
               v-bind="dragOptions"
               :clone="disableEvent"
               :move="disableEvent"
               @end="dragEnd"
             >
               <div
-                v-for="(name, index) in block"
-                :key="index"
+                v-for="(name, blockIndex) in block"
+                :key="blockIndex"
                 class="block-wrapper"
               >
                 <block :text="name" />

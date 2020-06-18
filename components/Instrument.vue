@@ -114,7 +114,6 @@ export default Vue.extend({
      */
     async load() {
       this.$emit('update:isLoading', false)
-      console.log(this.encodedSfzPath)
 
       // sfzファイルを取得
       await fetch(this.encodedSfzPath)
