@@ -26,10 +26,10 @@
           <li class="column-title">メロディ</li>
           <li>
             <draggable
+              v-model="melodyBlocks"
               element="ul"
               class="draggable"
-              group="hoge"
-              @end="dragEnd"
+              group="melody"
             >
               <li v-for="block in melodyBlocks" :key="block">
                 <block :text="block" block-type="#F06292" />
@@ -66,16 +66,13 @@ export default Vue.extend({
     }
   },
   computed: {
-    melodyBlocks(): Array<string> {
-      return this.$accessor.music.melody.blockNames
-    }
-  },
-  methods: {
-    dragEnd(event: { oldIndex: number; newIndex: number }) {
-      const oldIndex = event.oldIndex
-      const newIndex = event.newIndex
-      this.$accessor.music.moveBlock({ oldIndex, newIndex })
-      console.log(this.$accessor.music.melody.blockNames)
+    melodyBlocks: {
+      get(): string[] {
+        return this.$accessor.music.melody.blockNames
+      },
+      set(blockNames: string[]) {
+        this.$accessor.music.SET_BLOCK_NAMES(blockNames)
+      }
     }
   }
 })

@@ -34,7 +34,7 @@ export type MusicState = ReturnType<typeof state>
 
 export const getters = getterTree(state, {
   // blockListの名前のみを返す
-  melodyBlockNames: (state: MusicState): string[] =>
+  melodyTemplateNames: (state: MusicState): string[] =>
     Object.keys(state.blocks.melody),
   // メロディーのblocksを返す
   melodyBlocks: (state: MusicState): Block[] =>
@@ -96,6 +96,18 @@ export const mutations = mutationTree(state, {
     if (sound.id) {
       state.blocks.melody[blockName].sounds.splice(sound.id - 1, 1, sound)
     }
+  },
+  /**
+   * ブロックのsoundを変更する
+   * @param blockName 変更する音が存在しているブロックの名前
+   * @param sound 変更後のsound
+   */
+  SET_BLOCK_NAMES(state: MusicState, blockNames: string[]) {
+    state.melody.blockNames.splice(
+      0,
+      state.melody.blockNames.length,
+      ...blockNames
+    )
   }
 })
 

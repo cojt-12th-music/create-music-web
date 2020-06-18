@@ -13,6 +13,8 @@
             <draggable
               :group="{ name: musicType[index], pull: 'clone', put: false }"
               v-bind="dragOptions"
+              :clone="disableEvent"
+              :move="disableEvent"
               @end="dragEnd"
             >
               <block
@@ -90,7 +92,7 @@ export default Vue.extend({
       return this.$accessor.music.chord.blockNames
     },
     melodyBlocks(): string[] {
-      return this.$accessor.music.melodyBlockNames
+      return this.$accessor.music.melodyTemplateNames
     },
     dragOptions() {
       return {
@@ -106,15 +108,17 @@ export default Vue.extend({
     }
   },
   methods: {
-    dragEnd(event: any) {
-      console.log(event)
-      console.log(this.melodyBlocks[event.oldIndex])
+    dragEnd(event: { oldIndex: number; newIndex: number; pullMode: string }) {
+      if (event.pullMode !== 'clone') {
+        return
+      }
       this.$accessor.music.cloneBlock({
         blockName: this.melodyBlocks[event.oldIndex],
         index: event.newIndex
       })
-      console.log(this.$accessor.music.melody.blockNames)
-    }
+    },
+    // draggableのイベントをキャンセルするためのメソッド
+    disableEvent() {}
   }
 })
 </script>
