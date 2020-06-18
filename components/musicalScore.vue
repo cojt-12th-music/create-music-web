@@ -6,6 +6,7 @@
           <li class="column-title">リズム</li>
           <li>
             <draggable
+              v-model="rhythmBlocks"
               class="score-draggable"
               group="rhythm"
               v-bind="dragOptions"
@@ -24,12 +25,13 @@
           <li class="column-title">コード</li>
           <li>
             <draggable
+              v-model="chordBlocks"
               class="score-draggable"
               group="chord"
               v-bind="dragOptions"
             >
               <div
-                v-for="(block, index) in codeBlocks"
+                v-for="(block, index) in chordBlocks"
                 :key="index"
                 class="block-wrapper"
               >
@@ -72,19 +74,6 @@ export default Vue.extend({
     draggable,
     block
   },
-  data() {
-    return {
-      rhythmBlocks: [
-        '16ビート',
-        '16ビート',
-        '8ビート',
-        '8ビート',
-        '2ビート',
-        '2ビート'
-      ],
-      codeBlocks: ['王道', '王道', '小室', '小室', 'カノン', 'かノン']
-    }
-  },
   computed: {
     dragOptions() {
       return {
@@ -92,12 +81,28 @@ export default Vue.extend({
         disabled: false
       }
     },
+    rhythmBlocks: {
+      get(): string[] {
+        return this.$accessor.music.rhythm.blockNames
+      },
+      set(blockNames: string[]) {
+        this.$accessor.music.setBlockNames({ category: 'rhythm', blockNames })
+      }
+    },
+    chordBlocks: {
+      get(): string[] {
+        return this.$accessor.music.chord.blockNames
+      },
+      set(blockNames: string[]) {
+        this.$accessor.music.setBlockNames({ category: 'chord', blockNames })
+      }
+    },
     melodyBlocks: {
       get(): string[] {
         return this.$accessor.music.melody.blockNames
       },
       set(blockNames: string[]) {
-        this.$accessor.music.setBlockNames(blockNames)
+        this.$accessor.music.setBlockNames({ category: 'melody', blockNames })
       }
     }
   }

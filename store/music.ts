@@ -4,7 +4,7 @@
  */
 
 import { getterTree, mutationTree, actionTree } from 'typed-vuex'
-import { Music, Block, Sound } from '@/types/music'
+import { Music, Block, Sound, ScoreCategory } from '@/types/music'
 import {
   MELODY_BLOCKS,
   CHORD_BLOCKS,
@@ -20,12 +20,12 @@ export const state = (): Music => ({
   },
   chord: {
     instrument: 'guitar',
-    blockNames: [],
+    blockNames: ['王道', '王道', '小室', '小室', 'カノン', 'かノン'],
     gain: 1
   },
   rhythm: {
     instrument: 'guitar',
-    blockNames: [],
+    blockNames: ['16ビート', '8ビート', '8ビート', '2ビート', '2ビート'],
     gain: 1
   },
   blocks: {
@@ -118,12 +118,12 @@ export const mutations = mutationTree(state, {
    * v-modelで変更を観測したときに呼ぶ
    * @param blockNames 変更後のブロック配列
    */
-  SET_BLOCK_NAMES(state: MusicState, blockNames: string[]) {
-    state.melody.blockNames.splice(
-      0,
-      state.melody.blockNames.length,
-      ...blockNames
-    )
+  SET_BLOCK_NAMES(
+    state: MusicState,
+    { category, blockNames }: { category: ScoreCategory; blockNames: string[] }
+  ) {
+    const blocksCount = state[category].blockNames.length
+    state[category].blockNames.splice(0, blocksCount, ...blockNames)
   },
   /**
    * コードのプリセットをセットする
@@ -194,8 +194,14 @@ export const actions = actionTree(
      * v-modelで変更を観測したときに呼ぶ
      * @param blockNames 変更後のブロック配列
      */
-    setBlockNames({ commit }, blockNames: string[]) {
-      commit('SET_BLOCK_NAMES', blockNames)
+    setBlockNames(
+      { commit },
+      {
+        category,
+        blockNames
+      }: { category: ScoreCategory; blockNames: string[] }
+    ) {
+      commit('SET_BLOCK_NAMES', { category, blockNames })
     },
     /**
      * コードのプリセットをセットする
