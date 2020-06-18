@@ -110,6 +110,7 @@ export default Vue.extend({
 div#component-frame {
   height: 100%;
 }
+
 #wrapper {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;

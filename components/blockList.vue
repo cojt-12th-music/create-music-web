@@ -132,6 +132,7 @@ export default Vue.extend({
 div#component-frame {
   height: 100%;
 }
+
 .boxContainer {
   width: 100%;
   overflow-x: auto;
