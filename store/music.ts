@@ -40,12 +40,32 @@ export const state = (): Music => ({
 export type MusicState = ReturnType<typeof state>
 
 export const getters = getterTree(state, {
-  // blockListの名前のみを返す
+  /**
+   * テンプレートやプリセットの名前のみを返す系のgetters
+   * 編集時に使用する
+   */
+  // リズム
+  rhythmTemplateNames: (state: MusicState): string[] =>
+    Object.keys(state.blocks.rhythm),
+  // コード
+  chordPresetNames: (_: MusicState): string[] => Object.keys(CHORD_PRESETS),
+  // メロディー
   melodyTemplateNames: (state: MusicState): string[] =>
     Object.keys(state.blocks.melody),
+
+  /**
+   * 実際に再生する順番でblocksを返す系のgetters
+   * 音源の再生時に使用する
+   */
   // メロディーのblocksを返す
   melodyBlocks: (state: MusicState): Block[] =>
-    state.melody.blockNames.map((name) => state.blocks.melody[name])
+    state.melody.blockNames.map((name) => state.blocks.melody[name]),
+  // メロディーのblocksを返す
+  chordBlocks: (state: MusicState): Block[] =>
+    state.chord.blockNames.map((name) => state.blocks.chord[name]),
+  // メロディーのblocksを返す
+  rhythmBlocks: (state: MusicState): Block[] =>
+    state.rhythm.blockNames.map((name) => state.blocks.rhythm[name])
 })
 
 export const mutations = mutationTree(state, {

@@ -72,8 +72,8 @@ export default Vue.extend({
     },
     blockNames(): { [category in ScoreCategory]: string[] } {
       return {
-        rhythm: this.$accessor.music.rhythm.blockNames,
-        chord: this.$accessor.music.chord.blockNames,
+        rhythm: this.$accessor.music.rhythmTemplateNames,
+        chord: this.$accessor.music.chordPresetNames,
         melody: this.$accessor.music.melodyTemplateNames
       }
     }
