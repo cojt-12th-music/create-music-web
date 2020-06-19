@@ -70,18 +70,6 @@ export const getters = getterTree(state, {
 
 export const mutations = mutationTree(state, {
   /**
-   * ブロックを移動させる
-   * @param oldIndex 移動前のindex
-   * @param newIndex 移動後のindex
-   */
-  MOVE_BLOCK(
-    state: MusicState,
-    { oldIndex, newIndex }: { oldIndex: number; newIndex: number }
-  ) {
-    const names = state.melody.blockNames.splice(oldIndex, 1)
-    state.melody.blockNames.splice(newIndex, 0, names[0])
-  },
-  /**
    * ブロックをブロックリストに追加する
    * @param block 追加するブロック
    */
@@ -139,17 +127,6 @@ export const mutations = mutationTree(state, {
 export const actions = actionTree(
   { state, getters, mutations },
   {
-    /**
-     * ブロックを移動させる
-     * @param oldIndex 移動前のindex
-     * @param newIndex 移動後のindex
-     */
-    moveBlock(
-      { commit },
-      { oldIndex, newIndex }: { oldIndex: number; newIndex: number }
-    ) {
-      commit('MOVE_BLOCK', { oldIndex, newIndex })
-    },
     /**
      * ブロックをブロックリストに追加する
      * @param block 追加するブロック
