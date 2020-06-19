@@ -70,6 +70,21 @@ export const getters = getterTree(state, {
 
 export const mutations = mutationTree(state, {
   /**
+   * blockをメロディにクローンする
+   * @param blockName ブロックの名前
+   * @param index 追加する場所
+   */
+  CLONE_BLOCK(
+    state: MusicState,
+    {
+      part,
+      blockName,
+      index
+    }: { part: ScorePart; blockName: string; index: number }
+  ) {
+    state[part].blockNames.splice(index, 0, blockName)
+  },
+  /**
    * ブロックをブロックリストに追加する
    * @param block 追加するブロック
    */
@@ -138,6 +153,21 @@ export const mutations = mutationTree(state, {
 export const actions = actionTree(
   { state, getters, mutations },
   {
+    /**
+     * blockをメロディにクローンする
+     * @param blockName ブロックの名前
+     * @param index 追加する場所
+     */
+    cloneBlock(
+      { commit },
+      {
+        part,
+        blockName,
+        index
+      }: { part: ScorePart; blockName: string; index: number }
+    ) {
+      commit('CLONE_BLOCK', { part, blockName, index })
+    },
     /**
      * ブロックをブロックリストに追加する
      * @param block 追加するブロック
