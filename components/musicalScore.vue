@@ -86,7 +86,7 @@ export default Vue.extend({
         return this.$accessor.music.rhythm.blockNames
       },
       set(blockNames: string[]) {
-        this.$accessor.music.setBlockNames({ category: 'rhythm', blockNames })
+        this.$accessor.music.setBlockNames({ part: 'rhythm', blockNames })
       }
     },
     chordBlocks: {
@@ -94,7 +94,7 @@ export default Vue.extend({
         return this.$accessor.music.chord.blockNames
       },
       set(blockNames: string[]) {
-        this.$accessor.music.setBlockNames({ category: 'chord', blockNames })
+        this.$accessor.music.setBlockNames({ part: 'chord', blockNames })
       }
     },
     melodyBlocks: {
@@ -102,7 +102,7 @@ export default Vue.extend({
         return this.$accessor.music.melody.blockNames
       },
       set(blockNames: string[]) {
-        this.$accessor.music.setBlockNames({ category: 'melody', blockNames })
+        this.$accessor.music.setBlockNames({ part: 'melody', blockNames })
       }
     }
   }

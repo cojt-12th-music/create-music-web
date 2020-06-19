@@ -87,7 +87,7 @@ export interface Rhythm {
 
 // 楽譜のカテゴリ...?
 // TODO: もっといい名前ないかな
-export type ScoreCategory = 'rhythm' | 'chord' | 'melody'
+export type ScorePart = 'rhythm' | 'chord' | 'melody'
 
 /**
  * Music: 楽譜全体に関するデータ型
@@ -103,8 +103,6 @@ export interface Music {
   chord: Chord
   rhythm: Rhythm
   blocks: {
-    melody: BlockHash
-    chord: BlockHash
-    rhythm: BlockHash
+    [part in ScorePart]: BlockHash
   }
 }

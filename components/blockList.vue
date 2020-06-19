@@ -12,12 +12,12 @@
           <div class="boxContainer">
             <draggable
               class="draggable"
-              :list="blockNames[tab.category]"
-              :group="{ name: tab.category, pull: 'clone', put: false }"
+              :list="blockNames[tab.part]"
+              :group="{ name: tab.part, pull: 'clone', put: false }"
               v-bind="dragOptions"
             >
               <div
-                v-for="(blockName, blockIndex) in blockNames[tab.category]"
+                v-for="(blockName, blockIndex) in blockNames[tab.part]"
                 :key="blockIndex"
                 class="block-wrapper"
               >
@@ -37,11 +37,11 @@
 import Vue from 'vue'
 import draggable from 'vuedraggable'
 import block from './block.vue'
-import { ScoreCategory } from '@/types/music'
+import { ScorePart } from '@/types/music'
 
 type DataType = {
   currentTab: number
-  tabs: { name: string; category: ScoreCategory }[]
+  tabs: { name: string; part: ScorePart }[]
   enabled: boolean
   dragging: boolean
 }
@@ -55,9 +55,9 @@ export default Vue.extend({
     return {
       currentTab: 0,
       tabs: [
-        { name: 'リズム', category: 'rhythm' },
-        { name: 'コード', category: 'chord' },
-        { name: 'メロディ', category: 'melody' }
+        { name: 'リズム', part: 'rhythm' },
+        { name: 'コード', part: 'chord' },
+        { name: 'メロディ', part: 'melody' }
       ],
       enabled: true,
       dragging: false
@@ -70,7 +70,7 @@ export default Vue.extend({
         disabled: false
       }
     },
-    blockNames(): { [category in ScoreCategory]: string[] } {
+    blockNames(): { [part in ScorePart]: string[] } {
       return {
         rhythm: this.$accessor.music.rhythmTemplateNames,
         chord: this.$accessor.music.chordPresetNames,

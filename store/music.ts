@@ -4,7 +4,7 @@
  */
 
 import { getterTree, mutationTree, actionTree } from 'typed-vuex'
-import { Music, Block, Sound, ScoreCategory } from '@/types/music'
+import { Music, Block, Sound, ScorePart } from '@/types/music'
 import {
   MELODY_BLOCKS,
   CHORD_BLOCKS,
@@ -108,10 +108,10 @@ export const mutations = mutationTree(state, {
    */
   SET_BLOCK_NAMES(
     state: MusicState,
-    { category, blockNames }: { category: ScoreCategory; blockNames: string[] }
+    { part, blockNames }: { part: ScorePart; blockNames: string[] }
   ) {
-    const blocksCount = state[category].blockNames.length
-    state[category].blockNames.splice(0, blocksCount, ...blockNames)
+    const blocksCount = state[part].blockNames.length
+    state[part].blockNames.splice(0, blocksCount, ...blockNames)
   },
   /**
    * コードのプリセットをセットする
@@ -173,12 +173,9 @@ export const actions = actionTree(
      */
     setBlockNames(
       { commit },
-      {
-        category,
-        blockNames
-      }: { category: ScoreCategory; blockNames: string[] }
+      { part, blockNames }: { part: ScorePart; blockNames: string[] }
     ) {
-      commit('SET_BLOCK_NAMES', { category, blockNames })
+      commit('SET_BLOCK_NAMES', { part, blockNames })
     },
     /**
      * コードのプリセットをセットする
