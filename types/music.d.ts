@@ -85,8 +85,7 @@ export interface Rhythm {
   gain: number
 }
 
-// 楽譜のカテゴリ...?
-// TODO: もっといい名前ないかな
+// 楽譜のパート
 export type ScorePart = 'rhythm' | 'chord' | 'melody'
 
 /**

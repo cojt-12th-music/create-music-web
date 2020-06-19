@@ -73,8 +73,11 @@ export const mutations = mutationTree(state, {
    * ブロックをブロックリストに追加する
    * @param block 追加するブロック
    */
-  ADD_BLOCK_TO_LIST(state: MusicState, block: Block) {
-    state.blocks.melody[block.name] = block
+  ADD_BLOCK_TO_LIST(
+    state: MusicState,
+    { part, block }: { part: ScorePart; block: Block }
+  ) {
+    state.blocks[part][block.name] = block
   },
   /**
    * ブロックに新しいsoundを追加する
@@ -83,10 +86,14 @@ export const mutations = mutationTree(state, {
    */
   ADD_SOUND(
     state: MusicState,
-    { blockName, sound }: { blockName: string; sound: Sound }
+    {
+      part,
+      blockName,
+      sound
+    }: { part: ScorePart; blockName: string; sound: Sound }
   ) {
-    sound.id = state.blocks.melody[blockName].sounds.length + 1
-    state.blocks.melody[blockName].sounds.push(sound)
+    sound.id = state.blocks[part][blockName].sounds.length + 1
+    state.blocks[part][blockName].sounds.push(sound)
   },
   /**
    * ブロックのsoundを変更する
@@ -95,10 +102,14 @@ export const mutations = mutationTree(state, {
    */
   UPDATE_SOUND(
     state: MusicState,
-    { blockName, sound }: { blockName: string; sound: Sound }
+    {
+      part,
+      blockName,
+      sound
+    }: { part: ScorePart; blockName: string; sound: Sound }
   ) {
     if (sound.id) {
-      state.blocks.melody[blockName].sounds.splice(sound.id - 1, 1, sound)
+      state.blocks[part][blockName].sounds.splice(sound.id - 1, 1, sound)
     }
   },
   /**
@@ -131,18 +142,24 @@ export const actions = actionTree(
      * ブロックをブロックリストに追加する
      * @param block 追加するブロック
      */
-    addBlockToList({ commit }, block: Block) {
-      commit('ADD_BLOCK_TO_LIST', block)
+    addBlockToList(
+      { commit },
+      { part, block }: { part: ScorePart; block: Block }
+    ) {
+      commit('ADD_BLOCK_TO_LIST', { part, block })
     },
     /**
      * blockをディープコピーし, 新たなblockを追加する
      * hoge というblockをコピーする場合, hoge' というblockを新しく生成する
      * @param blockName コピーするブロックの名前
      */
-    copyBlock({ state, commit }, blockName: string) {
-      const block = JSON.parse(JSON.stringify(state.blocks.melody[blockName]))
+    copyBlock(
+      { state, commit },
+      { part, blockName }: { part: ScorePart; blockName: string }
+    ) {
+      const block = JSON.parse(JSON.stringify(state.blocks[part][blockName]))
       block.name = `${block.name}'`
-      commit('ADD_BLOCK_TO_LIST', block)
+      commit('ADD_BLOCK_TO_LIST', { part, block })
     },
     /**
      * ブロックに新しいsoundを追加する
@@ -151,9 +168,13 @@ export const actions = actionTree(
      */
     addSound(
       { commit },
-      { blockName, sound }: { blockName: string; sound: Sound }
+      {
+        part,
+        blockName,
+        sound
+      }: { part: ScorePart; blockName: string; sound: Sound }
     ) {
-      commit('ADD_SOUND', { blockName, sound })
+      commit('ADD_SOUND', { part, blockName, sound })
     },
     /**
      * ブロックのsoundを変更する
@@ -162,9 +183,13 @@ export const actions = actionTree(
      */
     updateSound(
       { commit },
-      { blockName, sound }: { blockName: string; sound: Sound }
+      {
+        part,
+        blockName,
+        sound
+      }: { part: ScorePart; blockName: string; sound: Sound }
     ) {
-      commit('UPDATE_SOUND', { blockName, sound })
+      commit('UPDATE_SOUND', { part, blockName, sound })
     },
     /**
      * 楽譜のブロック配列を置き換える
