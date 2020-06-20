@@ -5,20 +5,38 @@
         <ul id="rhythm" class="blue darken-1">
           <li class="column-title">リズム</li>
           <li>
-            <draggable element="ul" class="draggable" group="rhythm">
-              <li v-for="block in rhythmBlocks" :key="block">
+            <draggable
+              v-model="rhythmBlocks"
+              class="score-draggable"
+              group="rhythm"
+              v-bind="dragOptions"
+            >
+              <div
+                v-for="(block, index) in rhythmBlocks"
+                :key="index"
+                class="block-wrapper"
+              >
                 <block :text="block" block-type="#4FC3F7" />
-              </li>
+              </div>
             </draggable>
           </li>
         </ul>
         <ul id="code" class="green lighten-1">
           <li class="column-title">コード</li>
           <li>
-            <draggable element="ul" class="draggable" group="chord">
-              <li v-for="block in codeBlocks" :key="block">
+            <draggable
+              v-model="chordBlocks"
+              class="score-draggable"
+              group="chord"
+              v-bind="dragOptions"
+            >
+              <div
+                v-for="(block, index) in chordBlocks"
+                :key="index"
+                class="block-wrapper"
+              >
                 <block :text="block" block-type="#81C784" />
-              </li>
+              </div>
             </draggable>
           </li>
         </ul>
@@ -26,14 +44,18 @@
           <li class="column-title">メロディ</li>
           <li>
             <draggable
-              element="ul"
-              class="draggable"
+              v-model="melodyBlocks"
+              class="score-draggable"
               group="melody"
-              @end="dragEnd"
+              v-bind="dragOptions"
             >
-              <li v-for="block in melodyBlocks" :key="block">
+              <div
+                v-for="(block, index) in melodyBlocks"
+                :key="index"
+                class="block-wrapper"
+              >
                 <block :text="block" block-type="#F06292" />
-              </li>
+              </div>
             </draggable>
           </li>
         </ul>
@@ -52,39 +74,48 @@ export default Vue.extend({
     draggable,
     block
   },
-  data() {
-    return {
-      rhythmBlocks: [
-        '16ビート',
-        '16ビート',
-        '8ビート',
-        '8ビート',
-        '2ビート',
-        '2ビート'
-      ],
-      codeBlocks: ['王道', '王道', '小室', '小室', 'カノン', 'かノン']
-    }
-  },
   computed: {
-    melodyBlocks(): Array<string> {
-      return this.$accessor.music.melody.blockNames
-    }
-  },
-  methods: {
-    dragEnd(event: { oldIndex: number; newIndex: number }) {
-      const oldIndex = event.oldIndex
-      const newIndex = event.newIndex
-      this.$accessor.music.moveBlock({ oldIndex, newIndex })
-      console.log(this.$accessor.music.melody.blockNames)
+    dragOptions() {
+      return {
+        animation: 300,
+        disabled: false
+      }
+    },
+    rhythmBlocks: {
+      get(): string[] {
+        return this.$accessor.music.rhythm.blockNames
+      },
+      set(blockNames: string[]) {
+        this.$accessor.music.setBlockNames({ part: 'rhythm', blockNames })
+      }
+    },
+    chordBlocks: {
+      get(): string[] {
+        return this.$accessor.music.chord.blockNames
+      },
+      set(blockNames: string[]) {
+        this.$accessor.music.setBlockNames({ part: 'chord', blockNames })
+      }
+    },
+    melodyBlocks: {
+      get(): string[] {
+        return this.$accessor.music.melody.blockNames
+      },
+      set(blockNames: string[]) {
+        this.$accessor.music.setBlockNames({ part: 'melody', blockNames })
+      }
     }
   }
 })
 </script>
 
 <style lang="scss" scoped>
+@import '~assets/style/draggable.scss';
+
 div#component-frame {
   height: 100%;
 }
+
 #wrapper {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -96,13 +127,6 @@ ul {
   list-style: none;
   text-align: center;
   padding: 0;
-}
-ul.draggable {
-  li {
-    margin: 1rem;
-    display: block;
-    height: 5rem;
-  }
 }
 
 @include pc {
@@ -117,15 +141,6 @@ ul.draggable {
   }
   .column-title {
     width: 5rem;
-  }
-  ul.draggable {
-    text-align: center;
-    li {
-      margin: 1rem;
-      display: inline-block;
-      height: 5rem;
-      width: 5rem;
-    }
   }
 }
 </style>

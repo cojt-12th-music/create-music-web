@@ -1,0 +1,31 @@
+.score-draggable {
+  .block-wrapper {
+    margin: 1rem;
+    display: block;
+    height: 5rem;
+  }
+}
+
+.draggable {
+  display: flex;
+  .block-wrapper {
+    display: inline-block;
+    width: 100px;
+    height: 5rem;
+    line-height: 30px;
+    margin: 10px;
+    text-align: center;
+  }
+}
+
+@include pc {
+  .score-draggable {
+    text-align: center;
+    .block-wrapper {
+      margin: 1rem;
+      display: inline-block;
+      height: 5rem;
+      width: 5rem;
+    }
+  }
+}

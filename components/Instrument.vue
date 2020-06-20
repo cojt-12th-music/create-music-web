@@ -117,7 +117,9 @@ export default Vue.extend({
 
       // sfzファイルを取得
       await fetch(this.encodedSfzPath)
-        .then((res) => res.json())
+        .then((res) => {
+          return res.json()
+        })
         .then((sfz) => {
           this.sampleDefinition = sfz.sfz
           return Promise.all(
