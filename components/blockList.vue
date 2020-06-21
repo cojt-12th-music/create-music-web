@@ -82,8 +82,6 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-@import '~assets/style/draggable.scss';
-
 div#component-frame {
   height: 100%;
 }
