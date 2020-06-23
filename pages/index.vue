@@ -5,9 +5,17 @@
         <musical-score />
       </div>
 
-      <div id="block-list-wrapper">
-        <block-list />
-      </div>
+      <v-dialog v-model="dialog" width="500">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn color="red lighten-2" dark v-bind="attrs" v-on="on">
+            Click Me
+          </v-btn>
+        </template>
+
+        <v-card>
+          <block-list />
+        </v-card>
+      </v-dialog>
 
       <div id="operation-area-wrapper">
         <operation-area />
@@ -23,12 +31,21 @@ import BlockList from '@/components/blockList.vue'
 import OperationArea from '@/components/operationArea.vue'
 import Player from '@/components/Player.vue'
 
+type DataType = {
+  dialog: boolean
+}
+
 export default {
   components: {
     MusicalScore,
     BlockList,
     OperationArea,
     Player
+  },
+  data(): DataType {
+    return {
+      dialog: false
+    }
   }
 }
 </script>
