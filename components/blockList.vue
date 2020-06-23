@@ -1,6 +1,6 @@
 <template>
   <div id="component-frame">
-    <v-card class="mx-auto" max-width="400">
+    <v-card class="mx-auto">
       <v-card-title class="headline grey lighten-2">
         <h2 class="display-1">コードの選択</h2>
       </v-card-title>
