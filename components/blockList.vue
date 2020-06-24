@@ -123,9 +123,14 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
+<<<<<<< HEAD
 .v-card__title {
   background-color: #0a0a0a;
   color: #f0f0f0;
+=======
+div#component-frame {
+  height: 100%;
+>>>>>>> takonasu/newUiUx
 }
 .v-card__text {
   color: #f0f0f0;
