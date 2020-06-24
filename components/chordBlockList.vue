@@ -60,12 +60,17 @@ export default Vue.extend({
 .v-card__title {
   background-color: $-gray-900;
   color: $-gray-50;
+  p {
+    margin: 0;
+  }
 }
 div#component-frame {
   height: 100%;
 }
 .v-card__text {
   color: $-gray-50;
+  padding: 0;
+  margin: 5px 5px 5px 10px;
 }
 .v-item-group {
   background-color: $-gray-700;
@@ -76,5 +81,17 @@ div#component-frame {
 }
 .v-card__actions {
   background-color: $-gray-900;
+  padding: 10px;
+}
+.v-chip-group .v-chip--active {
+  color: $-gray-300;
+}
+.theme--light.v-chip--active:hover::before,
+.theme--light.v-chip--active::before {
+  opacity: 0.2;
+}
+.v-divider {
+  background-color: $-gray-500;
+  margin-bottom: 5px;
 }
 </style>
