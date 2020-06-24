@@ -19,7 +19,7 @@
           >mdi-plus-circle-outline</v-icon
         >
         <v-dialog v-model="rythmDialog">
-          <block-list />
+          <RhythmBlockList />
         </v-dialog>
       </li>
     </ul>
@@ -41,8 +41,8 @@
         <v-icon large="true" color="#F96500" @click.stop="chrodDialog = true"
           >mdi-plus-circle-outline</v-icon
         >
-        <v-dialog v-model="chrodDialog" max-width="290">
-          <block-list />
+        <v-dialog v-model="chrodDialog">
+          <ChordBlockList />
         </v-dialog>
       </li>
     </ul>
@@ -68,8 +68,8 @@
         <v-icon large="true" color="#F96500" @click.stop="melodyDialog = true"
           >mdi-plus-circle-outline</v-icon
         >
-        <v-dialog v-model="melodyDialog" max-width="290">
-          <block-list />
+        <v-dialog v-model="melodyDialog">
+          <MelodyBlockList />
         </v-dialog>
       </li>
     </ul>
@@ -79,13 +79,17 @@
 <script lang="ts">
 import Vue from 'vue'
 import draggable from 'vuedraggable'
-import BlockList from '@/components/blockList.vue'
+import RhythmBlockList from '@/components/rhythmBlockList.vue'
+import ChordBlockList from '@/components/chordBlockList.vue'
+import MelodyBlockList from '@/components/melodyBlockList.vue'
 
 import block from '~/components/block.vue'
 export default Vue.extend({
   components: {
     draggable,
-    BlockList,
+    RhythmBlockList,
+    ChordBlockList,
+    MelodyBlockList,
     block
   },
   data() {

@@ -9,34 +9,19 @@
         <v-card-text>
           <v-card-text>王道</v-card-text>
           <v-divider></v-divider>
-          <v-chip
-            v-for="(name, index) in rhythmBlocks"
-            :key="index"
-            label
-            large
-          >
+          <v-chip v-for="(name, index) in chordBlocks" :key="index" label large>
             <block :text="name" />
           </v-chip>
 
           <v-card-text>邪道</v-card-text>
           <v-divider></v-divider>
-          <v-chip
-            v-for="(name, index) in rhythmBlocks"
-            :key="index"
-            label
-            large
-          >
+          <v-chip v-for="(name, index) in chordBlocks" :key="index" label large>
             <block :text="name" />
           </v-chip>
 
           <v-card-text>元気いっぱい</v-card-text>
           <v-divider></v-divider>
-          <v-chip
-            v-for="(name, index) in rhythmBlocks"
-            :key="index"
-            label
-            large
-          >
+          <v-chip v-for="(name, index) in chordBlocks" :key="index" label large>
             <block :text="name" />
           </v-chip>
         </v-card-text>
@@ -65,8 +50,8 @@ export default Vue.extend({
     }
   },
   computed: {
-    rhythmBlocks() {
-      return this.$accessor.music.rhythmTemplateNames
+    chordBlocks() {
+      return this.$accessor.music.chordPresetNames
     }
   }
 })
