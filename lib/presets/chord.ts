@@ -1,9 +1,8 @@
-import { Preset } from '@/types/music'
+import { BlockHash, PresetHash } from '@/types/music'
 
-export const MELODY_PRESETS: Preset = {
-  init: { name: 'init', sounds: [], duration: 1 },
-  メロ1: {
-    name: 'メロ1',
+export const CHORD_BLOCKS: BlockHash = {
+  コード1: {
+    name: 'コード1',
     sounds: [
       { id: 1, key: 48, delay: 0.0, duration: 0.5 },
       { id: 2, key: 60, delay: 0.5, duration: 0.5 },
@@ -12,8 +11,8 @@ export const MELODY_PRESETS: Preset = {
     ],
     duration: 2
   },
-  メロ2: {
-    name: 'メロ2',
+  コード2: {
+    name: 'コード2',
     sounds: [
       { id: 1, key: 48, delay: 0.0, duration: 0.5 },
       { id: 2, key: 67, delay: 0.5, duration: 0.5 },
@@ -21,8 +20,8 @@ export const MELODY_PRESETS: Preset = {
     ],
     duration: 2
   },
-  メロ3: {
-    name: 'メロ3',
+  コード3: {
+    name: 'コード3',
     sounds: [
       { id: 1, key: 48, delay: 0.0, duration: 0.5 },
       { id: 2, key: 60, delay: 0.5, duration: 0.5 },
@@ -31,8 +30,8 @@ export const MELODY_PRESETS: Preset = {
     ],
     duration: 2
   },
-  メロ4: {
-    name: 'メロ4',
+  コード4: {
+    name: 'コード4',
     sounds: [
       { id: 1, key: 48, delay: 0.5, duration: 0.5 },
       { id: 2, key: 72, delay: 1.0, duration: 0.5 },
@@ -42,6 +41,25 @@ export const MELODY_PRESETS: Preset = {
   }
 }
 
-export const CHORD_PRESETS: Preset = {}
-
-export const RHYTHM_PRESETS: Preset = {}
+export const CHORD_PRESETS: PresetHash = {
+  王道: {
+    name: '王道',
+    blockNames: []
+  },
+  カノン: {
+    name: 'カノン',
+    blockNames: []
+  },
+  小室: {
+    name: '小室',
+    blockNames: []
+  },
+  'Let it Be': {
+    name: 'Let it Be',
+    blockNames: []
+  },
+  下降転調: {
+    name: '下降転調',
+    blockNames: []
+  }
+}

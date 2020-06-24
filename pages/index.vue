@@ -5,7 +5,7 @@
         <musical-score />
       </div>
 
-      <v-dialog v-model="dialog" max-width="600" dark="true">
+      <v-dialog v-model="dialog" max-width="600">
         <template v-slot:activator="{ on, attrs }">
           <v-btn color="purple darken-4" dark v-bind="attrs" v-on="on">
             Click Me

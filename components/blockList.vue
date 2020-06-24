@@ -122,7 +122,7 @@ export default Vue.extend({
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .v-card__title {
   background-color: #0a0a0a;
   color: #f0f0f0;
