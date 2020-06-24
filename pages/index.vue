@@ -7,7 +7,7 @@
 
       <v-dialog v-model="dialog" max-width="600">
         <template v-slot:activator="{ on, attrs }">
-          <v-btn color="purple darken-4" dark v-bind="attrs" v-on="on">
+          <v-btn color="purple darken-4" v-bind="attrs" v-on="on">
             Click Me
           </v-btn>
         </template>
