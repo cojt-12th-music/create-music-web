@@ -9,7 +9,7 @@
         <v-card-text>
           <v-card-text>王道</v-card-text>
           <v-divider></v-divider>
-          <v-chip label large>王道1</v-chip>
+          <v-chip label large><block :text="text"/></v-chip>
           <v-chip label large>王道2</v-chip>
           <v-chip label large>王道3</v-chip>
           <v-chip label large>王道4</v-chip>
@@ -41,6 +41,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import Block from '@/components/block.vue'
 export default Vue.extend({
   // data() {
   //   return {
@@ -83,10 +84,13 @@ export default Vue.extend({
   //     rhythm: 'rhythm'
   //   }
   // },
-
+  components: {
+    Block
+  },
   data() {
     return {
-      selection: 0
+      selection: 0,
+      text: 'aaa'
     }
   }
   // computed: {
@@ -111,26 +115,18 @@ export default Vue.extend({
   //     const melodyBlocks = this.melodyBlocks
   //     return [rhythmBlocks, chordBlocks, melodyBlocks]
   //   }
-  // },
-  // methods: {
-  //   dragEnd(event) {
-  //     console.log(event)
-  //     console.log(event.from)
-  //     console.log(event.to)
-  //   },
+  // }
   // }
 })
 </script>
 
 <style lang="scss" scoped>
-<<<<<<< HEAD
 .v-card__title {
   background-color: #0a0a0a;
   color: #f0f0f0;
-=======
+}
 div#component-frame {
   height: 100%;
->>>>>>> takonasu/newUiUx
 }
 .v-card__text {
   color: #f0f0f0;
@@ -138,11 +134,9 @@ div#component-frame {
 .v-item-group {
   background-color: #333333;
 }
-.v-chip {
-  border: 1px solid #f96500;
-}
-.v-chip {
-  background-color: red;
+.v-chip.v-size--large {
+  padding: 0;
+  height: 70px;
 }
 .v-card__actions {
   background-color: #0a0a0a;
