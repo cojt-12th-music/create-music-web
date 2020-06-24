@@ -51,6 +51,26 @@
   </div>
 </template>
 
+<script lang="ts">
+import Vue from 'vue'
+import Block from '@/components/block.vue'
+export default Vue.extend({
+  components: {
+    Block
+  },
+  data() {
+    return {
+      selection: 0
+    }
+  },
+  computed: {
+    melodyBlocks() {
+      return this.$accessor.music.melodyTemplateNames
+    }
+  }
+})
+</script>
+
 <style lang="scss" scoped>
 .v-card__title {
   background-color: $-gray-900;
