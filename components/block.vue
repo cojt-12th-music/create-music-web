@@ -1,5 +1,5 @@
 <template>
-  <div id="component-frame">
+  <div id="block-component-frame">
     <p>{{ text }}</p>
   </div>
 </template>
@@ -18,7 +18,7 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-div#component-frame {
+div#block-component-frame {
   background-color: $-gray-700;
   border-radius: 4px;
   border: 1px solid $-primary-500;
@@ -26,5 +26,11 @@ div#component-frame {
   box-sizing: border-box;
   width: 4rem;
   height: 4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  p {
+    margin: 0;
+  }
 }
 </style>
