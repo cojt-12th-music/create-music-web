@@ -1,41 +1,37 @@
 <template>
   <div id="component-frame">
     <v-card class="mx-auto">
-      <v-card-title class="headline grey lighten-2">
-        <h2 class="display-1">コードの選択</h2>
+      <v-card-title>
+        <h2>コードの選択</h2>
       </v-card-title>
 
-      <v-chip-group
-        v-model="selection"
-        active-class="deep-purple--text text--accent-4"
-        column
-      >
+      <v-chip-group v-model="selection" column>
         <v-card-text>
           <v-card-text>王道</v-card-text>
           <v-divider></v-divider>
-          <v-chip>王道1</v-chip>
-          <v-chip>王道2</v-chip>
-          <v-chip>王道3</v-chip>
-          <v-chip>王道4</v-chip>
+          <v-chip label large>王道1</v-chip>
+          <v-chip label large>王道2</v-chip>
+          <v-chip label large>王道3</v-chip>
+          <v-chip label large>王道4</v-chip>
 
           <v-card-text>邪道</v-card-text>
           <v-divider></v-divider>
-          <v-chip>邪道1</v-chip>
-          <v-chip>邪道2</v-chip>
-          <v-chip>邪道3</v-chip>
-          <v-chip>邪道4</v-chip>
+          <v-chip label large>邪道1</v-chip>
+          <v-chip label large>邪道2</v-chip>
+          <v-chip label large>邪道3</v-chip>
+          <v-chip label large>邪道4</v-chip>
 
           <v-card-text>元気いっぱい</v-card-text>
           <v-divider></v-divider>
-          <v-chip>元気いっぱい1</v-chip>
-          <v-chip>元気いっぱい2</v-chip>
-          <v-chip>元気いっぱい3</v-chip>
-          <v-chip>元気いっぱい4</v-chip>
+          <v-chip label large>元気いっぱい1</v-chip>
+          <v-chip label large>元気いっぱい2</v-chip>
+          <v-chip label large>元気いっぱい3</v-chip>
+          <v-chip label large>元気いっぱい4</v-chip>
         </v-card-text>
       </v-chip-group>
 
       <v-card-actions>
-        <v-btn block class="white--text" color="deep-purple accent-4">
+        <v-btn block class="white--text " color="#333333">
           Add to Score
         </v-btn>
       </v-card-actions>
@@ -125,3 +121,25 @@ export default Vue.extend({
   // }
 })
 </script>
+
+<style lang="scss">
+.v-card__title {
+  background-color: #0a0a0a;
+  color: #f0f0f0;
+}
+.v-card__text {
+  color: #f0f0f0;
+}
+.v-item-group {
+  background-color: #333333;
+}
+.v-chip {
+  border: 1px solid #f96500;
+}
+.v-chip {
+  background-color: red;
+}
+.v-card__actions {
+  background-color: #0a0a0a;
+}
+</style>
