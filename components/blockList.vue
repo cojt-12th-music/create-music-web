@@ -9,24 +9,36 @@
         <v-card-text>
           <v-card-text>王道</v-card-text>
           <v-divider></v-divider>
-          <v-chip label large><block :text="text"/></v-chip>
-          <v-chip label large>王道2</v-chip>
-          <v-chip label large>王道3</v-chip>
-          <v-chip label large>王道4</v-chip>
+          <v-chip
+            v-for="(name, index) in rhythmBlocks"
+            :key="index"
+            label
+            large
+          >
+            <block :text="name" />
+          </v-chip>
 
           <v-card-text>邪道</v-card-text>
           <v-divider></v-divider>
-          <v-chip label large>邪道1</v-chip>
-          <v-chip label large>邪道2</v-chip>
-          <v-chip label large>邪道3</v-chip>
-          <v-chip label large>邪道4</v-chip>
+          <v-chip
+            v-for="(name, index) in rhythmBlocks"
+            :key="index"
+            label
+            large
+          >
+            <block :text="name" />
+          </v-chip>
 
           <v-card-text>元気いっぱい</v-card-text>
           <v-divider></v-divider>
-          <v-chip label large>元気いっぱい1</v-chip>
-          <v-chip label large>元気いっぱい2</v-chip>
-          <v-chip label large>元気いっぱい3</v-chip>
-          <v-chip label large>元気いっぱい4</v-chip>
+          <v-chip
+            v-for="(name, index) in rhythmBlocks"
+            :key="index"
+            label
+            large
+          >
+            <block :text="name" />
+          </v-chip>
         </v-card-text>
       </v-chip-group>
 
@@ -91,6 +103,11 @@ export default Vue.extend({
     return {
       selection: 0,
       text: 'aaa'
+    }
+  },
+  computed: {
+    rhythmBlocks() {
+      return this.$accessor.music.rhythmTemplateNames
     }
   }
   // computed: {
