@@ -106,7 +106,7 @@ export interface Music {
   melody: Melody
   chord: Chord
   rhythm: Rhythm
-  blocks?: {
+  blocks: {
     [part in ScorePart]: BlockHash
   }
 }

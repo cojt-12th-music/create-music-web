@@ -15,6 +15,8 @@
 import MusicalScore from '@/components/musicalScore.vue'
 import OperationArea from '@/components/operationArea.vue'
 import Player from '@/components/Player.vue'
+import { Music } from '@/types/music'
+import { db } from '@/plugins/firebase'
 
 type DataType = {
   dialog: boolean
@@ -29,8 +31,15 @@ export default {
   async fetch({ route, store }) {
     const scoreId = route.query.id
     if (scoreId && typeof scoreId === 'string') {
+      // scoreIdをidとする楽譜データを持ってくる
+      const doc = await db
+        .collection('scores')
+        .doc(scoreId)
+        .get()
+      const data = doc.data() as Music
+
       // fetchのときは直接dispatchせざるを得ない屈辱
-      await store.dispatch('music/setScore', scoreId)
+      store.commit('SET_SCORE', { ...data, id: doc.id })
     }
   },
   data(): DataType {
