@@ -379,6 +379,8 @@ export const actions = actionTree(
      */
     addScore({ commit, state }) {
       const data = { ...state }
+      // blocksはデカいのでとりあえず全て除外
+      // TODO: 初期のプリセットのみ除外するように
       data.blocks = {
         rhythm: {},
         chord: {},
