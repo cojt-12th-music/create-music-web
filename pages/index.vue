@@ -26,6 +26,13 @@ export default {
     OperationArea,
     Player
   },
+  async fetch({ route, store }) {
+    const scoreId = route.query.id
+    if (scoreId && typeof scoreId === 'string') {
+      // fetchのときは直接dispatchせざるを得ない屈辱
+      await store.dispatch('music/setScore', scoreId)
+    }
+  },
   data(): DataType {
     return {
       dialog: false

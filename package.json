@@ -27,6 +27,7 @@
     "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/dotenv": "^1.4.0",
     "@nuxtjs/pwa": "^3.0.0-0",
+    "@types/firebase": "^3.2.1",
     "decompress": "^4.2.1",
     "decompress-tarxz": "^3.0.0",
     "firebase": "^7.15.4",

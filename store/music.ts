@@ -11,6 +11,7 @@ import {
   CHORD_PRESETS,
   RHYTHM_BLOCKS
 } from '@/lib/presets'
+import { db } from '@/plugins/firebase'
 
 export const state = (): Music => ({
   title: '無題のタイトル',
@@ -201,6 +202,14 @@ export const mutations = mutationTree(state, {
   },
   SET_COMPOSER(state: MusicState, input: string) {
     state.composer = input
+  },
+  /**
+   * コードのプリセットをセットする
+   * @param presetName セットするプリセット名
+   */
+  SET_SCORE(state: MusicState, data: Music) {
+    Object.assign(state, data)
+    console.log(state)
   }
 })
 
@@ -344,6 +353,33 @@ export const actions = actionTree(
     },
     setComposer({ commit }, Input: string) {
       commit('SET_COMPOSER', Input)
+    },
+    /**
+     * コードのプリセットをセットする
+     * @param presetName セットするプリセット名
+     */
+    async setScore({ commit }, scoreId: string) {
+      const doc = await db
+        .collection('scores')
+        .doc(scoreId)
+        .get()
+      const data = doc.data() as Music
+      data.id = doc.id
+      commit('SET_SCORE', data)
+    },
+    /**
+     * コードのプリセットをセットする
+     * @param presetName セットするプリセット名
+     */
+    uploadScore({ commit, state }) {
+      const data = { ...state }
+      delete data.blocks
+
+      db.collection('scores')
+        .add(data)
+        .then((ref) => {
+          commit('SET_SCORE', { ...data, id: ref.id })
+        })
     }
   }
 )
