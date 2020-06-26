@@ -33,7 +33,7 @@
         </div>
       </draggable>
       <div class="button-wrapper">
-        <v-icon x-large class="dialog-button" @click.stop="showsDialog = true">
+        <v-icon x-large class="dialog-button" @click.stop="showDialog()">
           mdi-plus-circle-outline
         </v-icon>
       </div>
@@ -56,13 +56,16 @@ export default Vue.extend({
     part: {
       required: true,
       type: String as Vue.PropType<ScorePart>
+    },
+    showsDialog: {
+      required: true,
+      type: Boolean
     }
   },
   data() {
     return {
       // TODO: store setting
-      enabled: true,
-      showsDialog: false
+      enabled: true
     }
   },
   computed: {
@@ -102,6 +105,11 @@ export default Vue.extend({
         const blockNames = blocks.map((block) => block.name)
         this.$accessor.music.setBlockNames({ part: this.part, blockNames })
       }
+    }
+  },
+  methods: {
+    showDialog() {
+      this.$emit('update:showsDialog', true)
     }
   }
 })

@@ -7,175 +7,19 @@
       </div>
 
       <div class="score-container">
-        <score-part part="rhythm" />
-        <score-part part="chord" />
-        <score-part part="melody" />
+        <score-part-editor part="rhythm" :shows-dialog.sync="rhythmDialog" />
+        <score-part-editor part="chord" :shows-dialog.sync="chordDialog" />
+        <score-part-editor part="melody" :shows-dialog.sync="melodyDialog" />
 
-          <div class="HOGE">
-            <draggable
-              v-model="rhythmBlocks"
-              class="score-draggable"
-              group="rhythm"
-              v-bind="dragOptions"
-            >
-              <div
-                v-for="(block, index) in rhythmBlocks"
-                :key="index"
-                class="block-item-wrapper"
-              >
-                <block-item :block="block" />
-              </div>
-            </draggable>
-            <div class="button-wrapper">
-              <v-icon
-                :large="true"
-                color="#F96500"
-                @click.stop="rythmDialog = true"
-              >
-                mdi-plus-circle-outline
-              </v-icon>
-            </div>
-          </div>
-        </div>
-        <div id="chord" class="UL">
-          <div class="column-title">
-            <div class="title-container">
-              <v-icon :large="true" color="#C2C2C2">fas fa-guitar</v-icon>
-              <div>コード</div>
-            </div>
-          </div>
-          <div class="GUIDE" :style="{ width: 5 * maxDuration + 5 + 'rem' }">
-            <div v-for="i in maxDuration" :key="i" class="guide"></div>
-          </div>
-          <div class="HOGE">
-            <draggable
-              v-model="chordBlocks"
-              class="score-draggable"
-              group="chord"
-              v-bind="dragOptions"
-            >
-              <div
-                v-for="(block, index) in chordBlocks"
-                :key="index"
-                class="block-item-wrapper"
-              >
-                <block-item :block="block" />
-              </div>
-            </draggable>
-            <div class="button-wrapper">
-              <v-icon
-                :large="true"
-                color="#F96500"
-                @click.stop="chrodDialog = true"
-                >mdi-plus-circle-outline</v-icon
-              >
-            </div>
-          </div>
-        </div>
-        <div id="melody" class="UL">
-          <div class="column-title">
-            <div class="title-container">
-              <v-icon :large="true" color="#C2C2C2">music_note</v-icon>
-              <div>メロディ</div>
-            </div>
-          </div>
-          <div class="GUIDE" :style="{ width: 5 * maxDuration + 5 + 'rem' }">
-            <div v-for="i in maxDuration" :key="i" class="guide"></div>
-          </div>
-          <div class="HOGE">
-            <draggable
-              v-model="melodyBlocks"
-              class="score-draggable"
-              group="melody"
-              v-bind="dragOptions"
-            >
-              <div
-                v-for="(block, index) in melodyBlocks"
-                :key="index"
-                class="block-item-wrapper"
-              >
-                <block-item :block="block" />
-              </div>
-            </draggable>
-            <div class="button-wrapper">
-              <v-icon
-                :large="true"
-                color="#F96500"
-                @click.stop="melodyDialog = true"
-                >mdi-plus-circle-outline</v-icon
-              >
-            </div>
-          </div>
-        </div>
-        <li class="open-blocklist">
-          <v-icon :large="true" color="#F96500" @click.stop="rythmDialog = true"
-            >mdi-plus-circle-outline</v-icon
-          >
-          <v-dialog v-model="rythmDialog" max-width="800">
-            <rhythm-block-list />
+        <div class="open-blocklist">
+          <v-dialog v-model="rhythmDialog">
+            <block-list />
           </v-dialog>
-        </li>
-      </ul>
-      <ul id="chord">
-        <li class="column-title">
-          <div>
-            <v-icon :large="true" color="#C2C2C2">fas fa-guitar</v-icon>
-            <div><p>コード</p></div>
-          </div>
-        </li>
-        <li>
-          <draggable
-            v-model="chordBlocks"
-            class="score-draggable"
-            group="chord"
-            v-bind="dragOptions"
-          >
-            <div v-for="(block, index) in chordBlocks" :key="index">
-              <block-item :block="block" />
-            </div>
-          </draggable>
-        </li>
-        <li class="open-blocklist">
-          <v-icon :large="true" color="#F96500" @click.stop="chrodDialog = true"
-            >mdi-plus-circle-outline</v-icon
-          >
-          <v-dialog v-model="chrodDialog" max-width="800">
-            <chord-block-list />
+          <v-dialog v-model="chordDialog" max-width="290">
+            <block-list />
           </v-dialog>
-        </li>
-      </ul>
-      <ul id="melody">
-        <li class="column-title">
-          <div>
-            <v-icon :large="true" color="#C2C2C2">music_note</v-icon>
-            <div><p>メロディ</p></div>
-          </div>
-        </li>
-        <li>
-          <draggable
-            v-model="melodyBlocks"
-            class="score-draggable"
-            group="melody"
-            v-bind="dragOptions"
-          >
-            <div
-              v-for="(block, index) in melodyBlocks"
-              :key="index"
-              class="block-wrapper"
-            >
-              <block-item :block="block" @click.native="melodyEditModal = true" />
-            </div>
-          </draggable>
-        </li>
-        <li class="open-blocklist">
-          <v-icon
-            :large="true"
-            color="#F96500"
-            @click.stop="melodyDialog = true"
-            >mdi-plus-circle-outline</v-icon
-          >
-          <v-dialog v-model="melodyDialog" max-width="800">
-            <melody-block-list />
+          <v-dialog v-model="melodyDialog" max-width="290">
+            <block-list />
           </v-dialog>
         </div>
       </div>
@@ -195,7 +39,8 @@ import ChordBlockList from '@/components/chordBlockList.vue'
 import MelodyBlockList from '@/components/melodyBlockList.vue'
 import MelodyModal from '@/components/melodyModal.vue'
 import BlockItem from '@/components/block.vue'
-import ScorePart from '@/components/ScorePart.vue'
+import BlockList from '@/components/blockList.vue'
+import ScorePartEditor from '@/components/ScorePartEditor.vue'
 import { Block } from '@/types/music'
 
 export default Vue.extend({
@@ -206,51 +51,16 @@ export default Vue.extend({
     MelodyBlockList,
     MelodyModal,
     BlockItem,
-    ScorePart
+    ScorePartEditor,
+    BlockList
   },
   data() {
     return {
-      rythmDialog: false,
-      chrodDialog: false,
+      rhythmDialog: false,
+      chordDialog: false,
       melodyDialog: false,
       melodyEditModal: false,
       maxDuration: 10
-    }
-  },
-  computed: {
-    dragOptions() {
-      return {
-        animation: 300,
-        disabled: false
-      }
-    },
-    rhythmBlocks: {
-      get(): Block[] {
-        console.log(this.$accessor.music.rhythmBlocks)
-        return this.$accessor.music.rhythmBlocks
-      },
-      set(blocks: Block[]) {
-        const blockNames = blocks.map((block) => block.name)
-        this.$accessor.music.setBlockNames({ part: 'rhythm', blockNames })
-      }
-    },
-    chordBlocks: {
-      get(): Block[] {
-        return this.$accessor.music.chordBlocks
-      },
-      set(blocks: Block[]) {
-        const blockNames = blocks.map((block) => block.name)
-        this.$accessor.music.setBlockNames({ part: 'chord', blockNames })
-      }
-    },
-    melodyBlocks: {
-      get(): Block[] {
-        return this.$accessor.music.melodyBlocks
-      },
-      set(blocks: Block[]) {
-        const blockNames = blocks.map((block) => block.name)
-        this.$accessor.music.setBlockNames({ part: 'melody', blockNames })
-      }
     }
   },
   computed: {
