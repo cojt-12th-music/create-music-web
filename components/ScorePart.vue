@@ -62,44 +62,30 @@ export default Vue.extend({
       }
     },
     maxDuration(): number {
+      // TODO: fetch from store
       return 10
     },
     partTitle(): string {
-      switch (this.part) {
-        case 'rhythm':
-          return 'リズム'
-        case 'chord':
-          return 'コード'
-        case 'melody':
-          return 'メロディ'
-        default:
-          return ''
-      }
+      return {
+        rhythm: 'リズム',
+        chord: 'コード',
+        melody: 'メロディ'
+      }[this.part]
     },
     partIcon(): string {
-      switch (this.part) {
-        case 'rhythm':
-          return 'fas fa-drum'
-        case 'chord':
-          return 'fas fa-guitar'
-        case 'melody':
-          return 'music_note'
-        default:
-          return ''
-      }
+      return {
+        rhythm: 'fas fa-drum',
+        chord: 'fas fa-guitar',
+        melody: 'music_note'
+      }[this.part]
     },
     blocks: {
       get(): Block[] {
-        switch (this.part) {
-          case 'rhythm':
-            return this.$accessor.music.rhythmBlocks
-          case 'chord':
-            return this.$accessor.music.chordBlocks
-          case 'melody':
-            return this.$accessor.music.melodyBlocks
-          default:
-            return []
-        }
+        return {
+          rhythm: this.$accessor.music.rhythmBlocks,
+          chord: this.$accessor.music.chordBlocks,
+          melody: this.$accessor.music.melodyBlocks
+        }[this.part]
       },
       set(blocks: Block[]) {
         const blockNames = blocks.map((block) => block.name)

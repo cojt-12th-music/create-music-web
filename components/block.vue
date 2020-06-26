@@ -1,7 +1,10 @@
 <template>
   <div
     id="block-component-frame"
-    :style="{ width: block.duration * 4 + (block.duration - 1) * 1 + 'rem' }"
+    :style="{
+      width: block.duration * baseWidth + (block.duration - 1) * 1 + 'rem'
+    }"
+    :class="{ highlight: isHighlighted }"
     @click.stop="melodyDialog = true"
   >
     {{ block.name }}
@@ -18,10 +21,15 @@ export default Vue.extend({
     block: {
       type: Object as Vue.PropType<Block>,
       required: true
+    },
+    isHighlighted: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
+      baseWidth: 4,
       melodyDialog: false
     }
   },
@@ -40,7 +48,8 @@ div#block-component-frame {
   display: flex;
   justify-content: center;
   align-items: center;
-  .highlighted {
+
+  &.highlight {
     -webkit-filter: drop-shadow(0px 0px 5px $-primary-500);
     -filter: drop-shadow(0px 0px 5px $-primary-500);
   }
