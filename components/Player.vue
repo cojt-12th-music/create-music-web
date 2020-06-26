@@ -121,7 +121,7 @@ export default Vue.extend({
       .then((res) => {
         this.$accessor.player.setInstruments(res)
       })
-    fetch('/reverb/reverbs.json')
+    fetch('/reverbs/reverbs.json')
       .then((res) => res.json())
       .then((res) => {
         this.$accessor.player.setReverbs(res)

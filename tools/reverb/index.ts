@@ -19,7 +19,9 @@ export const main = async () => {
         await axios.get(rev.url).then((res) => {
           fs.writeFile(`static/reverbs/${rev.name}Base64`, res.data)
         })
-      } catch (e) {}
+      } catch (e) {
+        consola.error(e)
+      }
     })
   )
 
@@ -30,5 +32,3 @@ export const main = async () => {
 
   consola.info(`Reverbs ready`)
 }
-
-main()
