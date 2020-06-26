@@ -1,9 +1,13 @@
 <template>
   <div class="score-part-container">
     <div class="column-title">
-      <div class="part-title-container">
-        <v-icon class="icon" :large="true">{{ partIcon }}</v-icon>
-        <div class="part-title">{{ partTitle }}</div>
+      <div class="part-title-container" @click="enabled = !enabled">
+        <v-icon class="icon" :class="{ disabled: !enabled }" :large="true">{{
+          partIcon
+        }}</v-icon>
+        <div class="part-title" :class="{ disabled: !enabled }">
+          {{ partTitle }}
+        </div>
       </div>
     </div>
     <div
@@ -29,7 +33,7 @@
         </div>
       </draggable>
       <div class="button-wrapper">
-        <v-icon :large="true" color="#F96500" @click.stop="rythmDialog = true">
+        <v-icon x-large class="dialog-button" @click.stop="showsDialog = true">
           mdi-plus-circle-outline
         </v-icon>
       </div>
@@ -52,6 +56,13 @@ export default Vue.extend({
     part: {
       required: true,
       type: String as Vue.PropType<ScorePart>
+    }
+  },
+  data() {
+    return {
+      // TODO: store setting
+      enabled: true,
+      showsDialog: false
     }
   },
   computed: {
@@ -124,12 +135,18 @@ export default Vue.extend({
 
     .part-title {
       width: 4rem;
+      &.disabled {
+        color: $-gray-500;
+      }
     }
     i.icon {
       color: $-gray-200;
       display: block;
       margin: auto;
       width: 3rem;
+      &.disabled {
+        color: $-gray-500;
+      }
     }
   }
 }
@@ -172,6 +189,10 @@ export default Vue.extend({
     width: 4rem;
     text-align: center;
     vertical-align: middle;
+  }
+
+  .dialog-button {
+    color: $-primary-500;
   }
 }
 
