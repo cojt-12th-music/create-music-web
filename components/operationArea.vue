@@ -9,12 +9,12 @@
           <div class="iconCenter">
             <div v-if="isPlaying">
               <v-btn :disabled="!isReady" icon @click="stop">
-                <v-icon size="400%" color="#c4c4c4">mdi-stop</v-icon>
+                <v-icon size="400%" color="#F96500">mdi-stop</v-icon>
               </v-btn>
             </div>
             <div v-else>
               <v-btn :disabled="!isReady" icon @click="play">
-                <v-icon size="400%" color="#c4c4c4">mdi-play</v-icon>
+                <v-icon size="400%" color="#F96500">mdi-play</v-icon>
               </v-btn>
             </div>
           </div>
@@ -22,7 +22,7 @@
         <v-col cols="4" align-self="center">
           <div class="iconRight">
             <v-btn icon @click="config">
-              <v-icon size="300%" color="#c4c4c4">mdi-cog</v-icon>
+              <v-icon size="300%" color="#F96500">mdi-cog</v-icon>
             </v-btn>
           </div>
         </v-col>
@@ -213,9 +213,7 @@ div#component-frame {
   height: 100%;
   display: flex;
   align-items: center;
-}
-div.background {
-  background-color: #424242;
+  background-color: $-gray-900;
 }
 div.iconCenter {
   text-align: center;

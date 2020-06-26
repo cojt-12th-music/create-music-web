@@ -1,78 +1,103 @@
 <template>
   <div id="component-frame">
-    <v-container>
-      <div id="wrapper">
-        <ul id="rhythm" class="blue darken-1">
-          <li class="column-title">リズム</li>
-          <li>
-            <draggable
-              v-model="rhythmBlocks"
-              class="score-draggable"
-              group="rhythm"
-              v-bind="dragOptions"
-            >
-              <div
-                v-for="(block, index) in rhythmBlocks"
-                :key="index"
-                class="block-wrapper"
-              >
-                <block :text="block" block-type="#4FC3F7" />
-              </div>
-            </draggable>
-          </li>
-        </ul>
-        <ul id="code" class="green lighten-1">
-          <li class="column-title">コード</li>
-          <li>
-            <draggable
-              v-model="chordBlocks"
-              class="score-draggable"
-              group="chord"
-              v-bind="dragOptions"
-            >
-              <div
-                v-for="(block, index) in chordBlocks"
-                :key="index"
-                class="block-wrapper"
-              >
-                <block :text="block" block-type="#81C784" />
-              </div>
-            </draggable>
-          </li>
-        </ul>
-        <ul id="melody" class="pink lighten-1">
-          <li class="column-title">メロディ</li>
-          <li>
-            <draggable
-              v-model="melodyBlocks"
-              class="score-draggable"
-              group="melody"
-              v-bind="dragOptions"
-            >
-              <div
-                v-for="(block, index) in melodyBlocks"
-                :key="index"
-                class="block-wrapper"
-              >
-                <block :text="block" block-type="#F06292" />
-              </div>
-            </draggable>
-          </li>
-        </ul>
-      </div>
-    </v-container>
+    <ul id="rhythm">
+      <li class="column-title">リズム</li>
+      <li>
+        <draggable
+          v-model="rhythmBlocks"
+          class="score-draggable"
+          group="rhythm"
+          v-bind="dragOptions"
+        >
+          <div v-for="(block, index) in rhythmBlocks" :key="index">
+            <block :text="block" />
+          </div>
+        </draggable>
+      </li>
+      <li>
+        <v-icon large="true" color="#F96500" @click.stop="rythmDialog = true"
+          >mdi-plus-circle-outline</v-icon
+        >
+        <v-dialog v-model="rythmDialog">
+          <RhythmBlockList />
+        </v-dialog>
+      </li>
+    </ul>
+    <ul id="chord">
+      <li class="column-title">コード</li>
+      <li>
+        <draggable
+          v-model="chordBlocks"
+          class="score-draggable"
+          group="chord"
+          v-bind="dragOptions"
+        >
+          <div v-for="(block, index) in chordBlocks" :key="index">
+            <block :text="block" />
+          </div>
+        </draggable>
+      </li>
+      <li>
+        <v-icon large="true" color="#F96500" @click.stop="chrodDialog = true"
+          >mdi-plus-circle-outline</v-icon
+        >
+        <v-dialog v-model="chrodDialog">
+          <ChordBlockList />
+        </v-dialog>
+      </li>
+    </ul>
+    <ul id="melody">
+      <li class="column-title">メロディ</li>
+      <li>
+        <draggable
+          v-model="melodyBlocks"
+          class="score-draggable"
+          group="melody"
+          v-bind="dragOptions"
+        >
+          <div
+            v-for="(block, index) in melodyBlocks"
+            :key="index"
+            class="block-wrapper"
+          >
+            <block :text="block" />
+          </div>
+        </draggable>
+      </li>
+      <li>
+        <v-icon large="true" color="#F96500" @click.stop="melodyDialog = true"
+          >mdi-plus-circle-outline</v-icon
+        >
+        <v-dialog v-model="melodyDialog">
+          <MelodyBlockList />
+        </v-dialog>
+      </li>
+    </ul>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import draggable from 'vuedraggable'
+import RhythmBlockList from '@/components/rhythmBlockList.vue'
+import ChordBlockList from '@/components/chordBlockList.vue'
+import MelodyBlockList from '@/components/melodyBlockList.vue'
 
 import block from '~/components/block.vue'
 export default Vue.extend({
   components: {
     draggable,
+    RhythmBlockList,
+    ChordBlockList,
+    MelodyBlockList,
     block
+  },
+  data() {
+    return {
+      rythmDialog: false,
+      chrodDialog: false,
+      melodyDialog: false
+    }
   },
   computed: {
     dragOptions() {
@@ -116,31 +141,19 @@ div#component-frame {
   height: 100%;
 }
 
-#wrapper {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 1em;
-}
-
 ul {
-  display: block;
-  list-style: none;
-  text-align: center;
   padding: 0;
+  list-style: none;
+  display: flex;
+  border: 1px solid $-gray-500;
+  padding: 1rem;
+
+  div {
+    display: flex;
+    margin-left: 1rem;
+  }
 }
 
 @include pc {
-  #wrapper {
-    display: block;
-  }
-  ul {
-    text-align: left;
-    li {
-      display: inline-block;
-    }
-  }
-  .column-title {
-    width: 5rem;
-  }
 }
 </style>
