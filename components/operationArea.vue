@@ -34,7 +34,7 @@
       </v-row>
     </v-container>
 
-    <v-dialog v-model="configDialog" max-width="80%" persistent>
+    <v-dialog v-model="configDialog" max-width="80%">
       <v-card color="#0A0A0A">
         <v-card-title class="justify-center">
           <div class="textColoring">
@@ -166,11 +166,11 @@
             </v-row>
           </v-list-item>
         </v-list>
-        <v-card-actions>
+        <!-- <v-card-actions>
           <v-btn @click="configDialog = false">
             閉じる
           </v-btn>
-        </v-card-actions>
+        </v-card-actions> -->
       </v-card>
     </v-dialog>
   </div>
