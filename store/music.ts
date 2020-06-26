@@ -13,6 +13,9 @@ import {
 } from '@/lib/presets'
 
 export const state = (): Music => ({
+  title: '無題のタイトル',
+  composer: '名無しの作曲者',
+  bpm: 100,
   melody: {
     instrument: 'guitar',
     blockNames: ['メロ1', 'メロ2', 'メロ3', 'メロ4'],
@@ -33,8 +36,7 @@ export const state = (): Music => ({
     melody: MELODY_BLOCKS,
     chord: CHORD_BLOCKS,
     rhythm: RHYTHM_BLOCKS
-  },
-  bpm: 100
+  }
 })
 
 export type MusicState = ReturnType<typeof state>

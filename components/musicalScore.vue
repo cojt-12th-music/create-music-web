@@ -1,6 +1,11 @@
 <template>
   <div id="component-frame">
     <v-container>
+      <div class="score-header">
+        <h2 class="score-header-title">{{ scoreTitle }}</h2>
+        <div class="score-header-creator">{{ scoreComposer }}</div>
+      </div>
+
       <div class="score-container">
         <score-part part="rhythm" />
         <score-part part="chord" />
@@ -247,6 +252,14 @@ export default Vue.extend({
         this.$accessor.music.setBlockNames({ part: 'melody', blockNames })
       }
     }
+  },
+  computed: {
+    scoreTitle(): string {
+      return this.$accessor.music.title
+    },
+    scoreComposer(): string {
+      return this.$accessor.music.composer
+    }
   }
 })
 </script>
@@ -254,6 +267,20 @@ export default Vue.extend({
 <style lang="scss" scoped>
 div#component-frame {
   height: 100%;
+}
+
+.score-header {
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+
+  .score-header-title {
+    color: $-gray-50;
+    margin-right: 1rem;
+  }
+  .score-header-creator {
+    color: $-gray-100;
+  }
 }
 
 .score-container {
