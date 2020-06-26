@@ -4,4 +4,5 @@ export interface PlayerState {
   isReady: boolean
   loadingProgress: number
   instruments: string[]
+  reverbs: string[]
 }
