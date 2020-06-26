@@ -12,6 +12,26 @@
           :is-ready.sync="isMelodyReady"
           :gain-value="gainValue"
         />
+        <instrument
+          :sfz-path="chordInstrument"
+          :context="context"
+          :node="master"
+          :notes="chordNotes"
+          :bpm="bpm"
+          :is-playing="isPlaying"
+          :is-ready.sync="isChordReady"
+          :gain-value="gainValue"
+        />
+        <instrument
+          :sfz-path="rythmInstrument"
+          :context="context"
+          :node="master"
+          :notes="rythmNotes"
+          :bpm="bpm"
+          :is-playing="isPlaying"
+          :is-ready.sync="isRythmReady"
+          :gain-value="gainValue"
+        />
       </v-col>
     </v-row>
     <v-slider
@@ -63,6 +83,14 @@ export default Vue.extend({
   },
   computed: {
     melodyNotes(): Sound[] {
+      if (this.$accessor.player.previewPreset.part === 'melody')
+        return this.$accessor.music.chord
+      return this.flatBlock(this.$accessor.music.melodyBlocks)
+    },
+    chordNotes(): Sound[] {
+      return this.flatBlock(this.$accessor.music.chordBlocks)
+    },
+    rythmNotes(): Sound[] {
       return this.flatBlock(this.$accessor.music.melodyBlocks)
     },
     bpm(): number {
