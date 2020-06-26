@@ -10,34 +10,37 @@
           <v-card-text>王道</v-card-text>
           <v-divider></v-divider>
           <v-chip
-            v-for="(name, index) in rhythmBlocks"
+            v-for="(block, index) in rhythmBlocks"
             :key="index"
             label
             large
+            class="block-wrapper"
           >
-            <block :text="name" />
+            <block :block="block" />
           </v-chip>
 
           <v-card-text>邪道</v-card-text>
           <v-divider></v-divider>
           <v-chip
-            v-for="(name, index) in rhythmBlocks"
+            v-for="(block, index) in rhythmBlocks"
             :key="index"
             label
             large
+            class="block-wrapper"
           >
-            <block :text="name" />
+            <block :block="block" />
           </v-chip>
 
           <v-card-text>元気いっぱい</v-card-text>
           <v-divider></v-divider>
           <v-chip
-            v-for="(name, index) in rhythmBlocks"
+            v-for="(block, index) in rhythmBlocks"
             :key="index"
             label
             large
+            class="block-wrapper"
           >
-            <block :text="name" />
+            <block :block="block" />
           </v-chip>
         </v-card-text>
       </v-chip-group>
@@ -53,10 +56,19 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import Block from '@/components/block.vue'
+import block from '@/components/block.vue'
+import { Block, ScorePart } from '@/types/music'
+
+type DataType = {
+  currentTab: number
+  tabs: { name: string; part: ScorePart }[]
+  enabled: boolean
+  dragging: boolean
+}
+
 export default Vue.extend({
   components: {
-    Block
+    block
   },
   data() {
     return {
@@ -67,6 +79,12 @@ export default Vue.extend({
   computed: {
     rhythmBlocks() {
       return this.$accessor.music.rhythmTemplateNames
+    },
+    dragOptions() {
+      return {
+        animation: 300,
+        disabled: false
+      }
     }
   }
 })

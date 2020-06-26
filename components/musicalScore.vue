@@ -16,7 +16,7 @@
             v-bind="dragOptions"
           >
             <div v-for="(block, index) in rhythmBlocks" :key="index">
-              <block :text="block" />
+              <block-item :block="block" />
             </div>
           </draggable>
         </li>
@@ -44,7 +44,7 @@
             v-bind="dragOptions"
           >
             <div v-for="(block, index) in chordBlocks" :key="index">
-              <block :text="block" />
+              <block-item :block="block" />
             </div>
           </draggable>
         </li>
@@ -76,7 +76,7 @@
               :key="index"
               class="block-wrapper"
             >
-              <block :text="block" @click.native="melodyEditModal = true" />
+              <block-item :block="block" @click.native="melodyEditModal = true" />
             </div>
           </draggable>
         </li>
@@ -107,15 +107,17 @@ import RhythmBlockList from '@/components/rhythmBlockList.vue'
 import ChordBlockList from '@/components/chordBlockList.vue'
 import MelodyBlockList from '@/components/melodyBlockList.vue'
 import MelodyModal from '@/components/melodyModal.vue'
-import block from '~/components/block.vue'
+import BlockItem from '@/components/block.vue'
+import { Block } from '@/types/music'
+
 export default Vue.extend({
   components: {
     draggable,
     RhythmBlockList,
     ChordBlockList,
     MelodyBlockList,
-    block,
-    MelodyModal
+    MelodyModal,
+    BlockItem
   },
   data() {
     return {
@@ -133,26 +135,30 @@ export default Vue.extend({
       }
     },
     rhythmBlocks: {
-      get(): string[] {
-        return this.$accessor.music.rhythm.blockNames
+      get(): Block[] {
+        console.log(this.$accessor.music.rhythmBlocks)
+        return this.$accessor.music.rhythmBlocks
       },
-      set(blockNames: string[]) {
+      set(blocks: Block[]) {
+        const blockNames = blocks.map((block) => block.name)
         this.$accessor.music.setBlockNames({ part: 'rhythm', blockNames })
       }
     },
     chordBlocks: {
-      get(): string[] {
-        return this.$accessor.music.chord.blockNames
+      get(): Block[] {
+        return this.$accessor.music.chordBlocks
       },
-      set(blockNames: string[]) {
+      set(blocks: Block[]) {
+        const blockNames = blocks.map((block) => block.name)
         this.$accessor.music.setBlockNames({ part: 'chord', blockNames })
       }
     },
     melodyBlocks: {
-      get(): string[] {
-        return this.$accessor.music.melody.blockNames
+      get(): Block[] {
+        return this.$accessor.music.melodyBlocks
       },
-      set(blockNames: string[]) {
+      set(blocks: Block[]) {
+        const blockNames = blocks.map((block) => block.name)
         this.$accessor.music.setBlockNames({ part: 'melody', blockNames })
       }
     }

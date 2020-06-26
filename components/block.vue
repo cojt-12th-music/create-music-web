@@ -1,17 +1,18 @@
 <template>
   <div id="block-component-frame" @click.stop="melodyDialog = true">
-    <p>{{ text }}</p>
+    <p>{{ block.name }}</p>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import { Block } from '@/types/music'
 
 export default Vue.extend({
   components: {},
   props: {
-    text: {
-      type: String,
+    block: {
+      type: Object as Vue.PropType<Block>,
       required: true
     }
   },
