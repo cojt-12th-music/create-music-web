@@ -1,16 +1,19 @@
 <template>
-  <div id="rhythm" class="UL">
+  <div class="score-part-container">
     <div class="column-title">
-      <div class="title-container">
-        <v-icon :large="true" color="#C2C2C2">{{ partIcon }}</v-icon>
-        <div>{{ partTitle }}</div>
+      <div class="part-title-container">
+        <v-icon class="icon" :large="true">{{ partIcon }}</v-icon>
+        <div class="part-title">{{ partTitle }}</div>
       </div>
     </div>
-    <div class="GUIDE" :style="{ width: 5 * maxDuration + 5 + 'rem' }">
-      <div v-for="i in maxDuration" :key="i" class="guide"></div>
+    <div
+      class="block-area-container"
+      :style="{ width: 5 * maxDuration + 5 + 'rem' }"
+    >
+      <div v-for="i in maxDuration" :key="i" class="block-area"></div>
     </div>
 
-    <div class="HOGE">
+    <div class="draggable-wrapper">
       <draggable
         v-model="blocks"
         class="score-draggable"
@@ -108,99 +111,82 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-div#component-frame {
-  height: 100%;
-}
-
-.score-container {
-  box-sizing: border-box;
+.score-part-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: left;
   width: max-content;
-  border-color: $-gray-500;
-  border-style: solid solid none solid;
-  border-width: 1px;
+  height: 7rem;
+  box-sizing: border-box;
+  border-bottom: 1px solid $-gray-500;
 }
 
 .column-title {
-  box-sizing: border-box;
-  margin: 0;
-  color: $-gray-200;
-  padding: 1rem;
-  border-right: 1px solid $-gray-500;
-  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  color: $-gray-200;
+  height: 100%;
+  margin: 0;
+  padding: 1rem;
+  box-sizing: border-box;
+  border-right: 1px solid $-gray-500;
 
-  .title-container {
+  .part-title-container {
     text-align: center;
-    div {
+
+    .part-title {
       width: 4rem;
     }
-    i {
+    i.icon {
+      color: $-gray-200;
       display: block;
-      width: 3rem;
       margin: auto;
+      width: 3rem;
     }
   }
 }
 
-.GUIDE {
+.block-area-container {
   display: flex;
   height: 100%;
-  .guide {
-    box-sizing: border-box;
+
+  .block-area {
     border-right: 1px dashed $-gray-500;
+    box-sizing: border-box;
     width: 5rem;
     height: 100%;
+
     &:nth-child(odd) {
-      border-color: $-gray-700;
+      border-color: $-gray-600;
     }
   }
 }
 
 .score-draggable {
-  margin: 0;
   display: flex;
   align-items: center;
+  margin: 0;
 
   .block-item-wrapper {
     margin-right: 1rem;
   }
 }
 
-.UL {
-  box-sizing: border-box;
-  width: max-content;
-  height: 7rem;
-  position: relative;
-  display: flex;
-  align-items: center;
-  text-align: left;
-  list-style: none;
-  border-bottom: 1px solid $-gray-500;
-}
-
-.open-blocklist {
-  margin-left: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transform: translateY(-0.5rem);
-}
-
-.HOGE {
-  display: flex;
+.draggable-wrapper {
   position: absolute;
+  display: flex;
+  align-items: center;
+  height: 100%;
   top: 0;
   left: 6.5rem;
-  height: 100%;
-  align-items: center;
-}
 
-.button-wrapper {
-  width: 4rem;
-  text-align: center;
-  vertical-align: middle;
+  .button-wrapper {
+    width: 4rem;
+    text-align: center;
+    vertical-align: middle;
+  }
 }
 
 @include pc {
