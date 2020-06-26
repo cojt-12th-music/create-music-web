@@ -107,7 +107,7 @@ export default Vue.extend({
       scheduledSourceNode: [],
       allSourceNode: [],
       gainNode: this.context.createGain(),
-      reverbNode: this.context.createConvolver(),
+      reverbNode: this.context.createConvolver()
     }
   },
   computed: {
@@ -143,7 +143,6 @@ export default Vue.extend({
   mounted() {
     if (this.sfzPath) this.load()
     this.gainNode.gain.value = this.gainValue
-    this.gainNode.connect(this.node)
     this.reverbNode = this.context.createConvolver()
     if (this.isReverb) this.setReverb()
   },
@@ -213,6 +212,15 @@ export default Vue.extend({
       nodes.forEach((n, i, nodes) =>
         nodes[i + 1] ? n.connect(nodes[i + 1]) : n.connect(this.gainNode)
       )
+
+      if (this.isReverb) {
+        this.gainNode.connect(this.reverbNode)
+        this.reverbNode.connect(this.node)
+      } else {
+        this.reverbNode.disconnect()
+        this.gainNode.connect(this.node)
+      }
+
       ;(nodes[0] as AudioScheduledSourceNode).start(
         this.context.currentTime + fixedDelay
       )
@@ -305,7 +313,6 @@ export default Vue.extend({
         nodes.push(filter)
       }
 
-      if (this.isReverb) nodes.push(this.reverbNode)
       return nodes
     },
     /**
