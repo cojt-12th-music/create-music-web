@@ -24,7 +24,7 @@
           <v-icon :large="true" color="#F96500" @click.stop="rythmDialog = true"
             >mdi-plus-circle-outline</v-icon
           >
-          <v-dialog v-model="rythmDialog">
+          <v-dialog v-model="rythmDialog" max-width="800">
             <rhythm-block-list />
           </v-dialog>
         </li>
@@ -52,7 +52,7 @@
           <v-icon :large="true" color="#F96500" @click.stop="chrodDialog = true"
             >mdi-plus-circle-outline</v-icon
           >
-          <v-dialog v-model="chrodDialog" max-width="290">
+          <v-dialog v-model="chrodDialog" max-width="800">
             <chord-block-list />
           </v-dialog>
         </li>
@@ -87,7 +87,7 @@
             @click.stop="melodyDialog = true"
             >mdi-plus-circle-outline</v-icon
           >
-          <v-dialog v-model="melodyDialog" max-width="290">
+          <v-dialog v-model="melodyDialog" max-width="800">
             <melody-block-list />
           </v-dialog>
         </li>
