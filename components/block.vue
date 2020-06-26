@@ -1,6 +1,10 @@
 <template>
-  <div id="block-component-frame" @click.stop="melodyDialog = true">
-    <p>{{ block.name }}</p>
+  <div
+    id="block-component-frame"
+    :style="{ width: block.duration * 4 + (block.duration - 1) * 1 + 'rem' }"
+    @click.stop="melodyDialog = true"
+  >
+    {{ block.name }}
   </div>
 </template>
 
@@ -32,13 +36,13 @@ div#block-component-frame {
   border: 1px solid $-primary-500;
   color: $-primary-500;
   box-sizing: border-box;
-  width: 4rem;
   height: 4rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  p {
-    margin: 0;
+  .highlighted {
+    -webkit-filter: drop-shadow(0px 0px 5px $-primary-500);
+    -filter: drop-shadow(0px 0px 5px $-primary-500);
   }
 }
 </style>
