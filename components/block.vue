@@ -1,22 +1,14 @@
 <template>
   <div id="block-component-frame" @click.stop="melodyDialog = true">
     <p>{{ text }}</p>
-
-    <!-- ブロックが押されたら編集画面表示 -->
-    <v-dialog v-model="melodyDialog" fullscreen hide-overlay>
-      <melody-modal @dialog="melodyDialog = $event" />
-    </v-dialog>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import MelodyModal from '@/components/melodyModal.vue'
 
 export default Vue.extend({
-  components: {
-    MelodyModal
-  },
+  components: {},
   props: {
     text: {
       type: String,
