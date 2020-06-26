@@ -1,16 +1,23 @@
 <template>
-  <div id="block-component-frame">
+  <div id="block-component-frame" @click.stop="melodyDialog = true">
     <p>{{ text }}</p>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+
 export default Vue.extend({
+  components: {},
   props: {
     text: {
       type: String,
       required: true
+    }
+  },
+  data() {
+    return {
+      melodyDialog: false
     }
   },
   computed: {}

@@ -76,7 +76,7 @@
               :key="index"
               class="block-wrapper"
             >
-              <block :text="block" />
+              <block :text="block" @click.native="melodyEditModal = true" />
             </div>
           </draggable>
         </li>
@@ -93,6 +93,10 @@
         </li>
       </ul>
     </v-container>
+    <!-- ブロックが押されたら編集画面表示 -->
+    <v-dialog v-model="melodyEditModal" fullscreen hide-overlay>
+      <melody-modal @dialog="melodyEditModal = $event" />
+    </v-dialog>
   </div>
 </template>
 
@@ -102,7 +106,7 @@ import draggable from 'vuedraggable'
 import RhythmBlockList from '@/components/rhythmBlockList.vue'
 import ChordBlockList from '@/components/chordBlockList.vue'
 import MelodyBlockList from '@/components/melodyBlockList.vue'
-
+import MelodyModal from '@/components/melodyModal.vue'
 import block from '~/components/block.vue'
 export default Vue.extend({
   components: {
@@ -110,13 +114,15 @@ export default Vue.extend({
     RhythmBlockList,
     ChordBlockList,
     MelodyBlockList,
-    block
+    block,
+    MelodyModal
   },
   data() {
     return {
       rythmDialog: false,
       chrodDialog: false,
-      melodyDialog: false
+      melodyDialog: false,
+      melodyEditModal: false
     }
   },
   computed: {
