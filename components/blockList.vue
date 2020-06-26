@@ -1,26 +1,28 @@
 <template>
   <div id="component-frame">
     <v-card>
-      <v-tabs v-model="tab" background-color="indigo" dark>
-        <v-tab v-for="item in items" :key="item.tab">
-          {{ item.tab }}
+      <v-tabs v-model="currentTab" background-color="indigo" dark>
+        <v-tab v-for="(tab, index) in tabs" :key="index">
+          {{ tab.name }}
         </v-tab>
       </v-tabs>
 
-      <v-tabs-items v-model="tab" :touchless="true">
-        <v-tab-item v-for="item in items" :key="item.tab">
+      <v-tabs-items v-model="currentTab" :touchless="true">
+        <v-tab-item v-for="(tab, tabIndex) in tabs" :key="tabIndex">
           <div class="boxContainer">
             <draggable
-              :group="{ name: 'block', pull: 'clone', put: false }"
+              class="draggable"
+              :list="blockNames[tab.part]"
+              :group="{ name: tab.part, pull: 'clone', put: false }"
               v-bind="dragOptions"
-              @end="dragEnd"
             >
-              <block
-                v-for="element in item.list"
-                :key="element.id"
-                class="child"
-                :text="element.name"
-              />
+              <div
+                v-for="(blockName, blockIndex) in blockNames[tab.part]"
+                :key="blockIndex"
+                class="block-wrapper"
+              >
+                <block :text="blockName" />
+              </div>
             </draggable>
           </div>
         </v-tab-item>
@@ -31,45 +33,31 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue'
 import draggable from 'vuedraggable'
-import block from './block'
-export default {
+import block from './block.vue'
+import { ScorePart } from '@/types/music'
+
+type DataType = {
+  currentTab: number
+  tabs: { name: string; part: ScorePart }[]
+  enabled: boolean
+  dragging: boolean
+}
+
+export default Vue.extend({
   components: {
     draggable,
     block
   },
-  data() {
+  data(): DataType {
     return {
-      tab: null,
-      items: [
-        {
-          tab: 'リズム',
-          list: [
-            { name: '8ビート', id: 0 },
-            { name: '16ビート', id: 1 },
-            { name: '2ビート', id: 2 }
-          ]
-        },
-        {
-          tab: 'コード',
-          list: [
-            { name: '王道', id: 0 },
-            { name: 'カノン', id: 1 },
-            { name: '小室', id: 2 },
-            { name: 'Let it be', id: 3 },
-            { name: '下降転調', id: 4 }
-          ]
-        },
-        {
-          tab: 'メロディ',
-          list: [
-            { name: 'メロ1', id: 0 },
-            { name: 'メロ2', id: 1 },
-            { name: 'メロ3', id: 2 },
-            { name: 'メロ4', id: 3 }
-          ]
-        }
+      currentTab: 0,
+      tabs: [
+        { name: 'リズム', part: 'rhythm' },
+        { name: 'コード', part: 'chord' },
+        { name: 'メロディ', part: 'melody' }
       ],
       enabled: true,
       dragging: false
@@ -81,34 +69,29 @@ export default {
         animation: 300,
         disabled: false
       }
-    }
-  },
-  methods: {
-    dragEnd(event) {
-      console.log(event)
-      console.log(event.from)
-      console.log(event.to)
+    },
+    blockNames(): { [part in ScorePart]: string[] } {
+      return {
+        rhythm: this.$accessor.music.rhythmTemplateNames,
+        chord: this.$accessor.music.chordPresetNames,
+        melody: this.$accessor.music.melodyTemplateNames
+      }
     }
   }
-}
+})
 </script>
 
 <style lang="scss" scoped>
+@import '~assets/style/draggable.scss';
+
 div#component-frame {
   height: 100%;
 }
+
 .boxContainer {
   width: 100%;
   overflow-x: auto;
   white-space: nowrap;
   -webkit-overflow-scrolling: touch;
-}
-.child {
-  display: inline-block;
-  width: 100px;
-  height: 60px;
-  line-height: 30px;
-  margin: 10px;
-  text-align: center;
 }
 </style>

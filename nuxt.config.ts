@@ -51,7 +51,8 @@ const config: Configuration = {
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
     // Doc: https://github.com/nuxt-community/dotenv-module
-    '@nuxtjs/dotenv'
+    '@nuxtjs/dotenv',
+    '@nuxtjs/style-resources'
   ],
   /*
    ** Axios module configuration
@@ -96,6 +97,9 @@ const config: Configuration = {
         }
       }
     }
+  },
+  styleResources: {
+    scss: ['@/assets/style/main.scss']
   },
   /*
    ** Build configuration

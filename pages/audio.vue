@@ -48,7 +48,7 @@ export default Vue.extend({
       const delay =
         this.$accessor.music.blocks.melody[blockName].sounds.length * 0.1
       const sound: Sound = { key, delay, duration: 1 }
-      this.$accessor.music.addSound({ blockName, sound })
+      this.$accessor.music.addSound({ part: 'melody', blockName, sound })
     }
   }
 })
