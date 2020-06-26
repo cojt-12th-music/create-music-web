@@ -52,11 +52,11 @@
       "url": "https://raw.githubusercontent.com/burnson/Reverb.js/master/Library/HamiltonMausoleum.m4a.base64"
     },
     {
-      "name": "InsidePiano.m4a.base64",
+      "name": "InsidePianobase64",
       "url": "https://raw.githubusercontent.com/burnson/Reverb.js/master/Library/InsidePiano.m4a.base64"
     },
     {
-      "name": "KinoullAisle.m4a.base64",
+      "name": "KinoullAislebase64",
       "url": "https://raw.githubusercontent.com/burnson/Reverb.js/master/Library/KinoullAisle.m4a.base64"
     },
     {
@@ -64,7 +64,7 @@
       "url": "https://raw.githubusercontent.com/burnson/Reverb.js/master/Library/LadyChapelStAlbansCathedral.m4a.base64"
     },
     {
-      "name": "MaesHowe.m4a.base64",
+      "name": "MaesHowebase64",
       "url": "https://raw.githubusercontent.com/burnson/Reverb.js/master/Library/MaesHowe.m4a.base64"
     },
     {
@@ -76,11 +76,11 @@
       "url": "https://raw.githubusercontent.com/burnson/Reverb.js/master/Library/PerthCityHallBalcony.m4a.base64"
     },
     {
-      "name": "PurnodesRailroadTunnel.m4a.base64",
+      "name": "PurnodesRailroadTunnel",
       "url": "https://raw.githubusercontent.com/burnson/Reverb.js/master/Library/PurnodesRailroadTunnel.m4a.base64"
     },
     {
-      "name": "R1NuclearReactorHall.m4a.base64",
+      "name": "R1NuclearReactorHall",
       "url": "https://raw.githubusercontent.com/burnson/Reverb.js/master/Library/R1NuclearReactorHall.m4a.base64"
     },
     {
