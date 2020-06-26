@@ -1,6 +1,6 @@
 <template>
   <div id="component-frame" class="darken-2 background">
-    <v-container class="fill-height">
+    <v-container>
       <v-row justify="center">
         <v-col>
           <v-btn @click="init">初期化</v-btn>
