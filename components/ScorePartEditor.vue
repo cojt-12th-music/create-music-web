@@ -122,7 +122,7 @@ export default Vue.extend({
   align-items: center;
   justify-content: left;
   width: max-content;
-  height: 7rem;
+  height: calc(100% / 3);
   box-sizing: border-box;
   border-bottom: 1px solid $-gray-500;
 }
@@ -137,6 +137,7 @@ export default Vue.extend({
   padding: 1rem;
   box-sizing: border-box;
   border-right: 1px solid $-gray-500;
+  width: 6rem;
 
   .part-title-container {
     text-align: center;

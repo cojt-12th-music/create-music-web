@@ -11,6 +11,8 @@
         <score-part-editor part="chord" :shows-dialog.sync="chordDialog" />
         <score-part-editor part="melody" :shows-dialog.sync="melodyDialog" />
 
+        <div class="seek-bar" />
+
         <div class="open-blocklist">
           <v-dialog v-model="rhythmDialog">
             <block-list />
@@ -94,11 +96,23 @@ div#component-frame {
 }
 
 .score-container {
+  position: relative;
   box-sizing: border-box;
   width: max-content;
   border-color: $-gray-500;
   border-style: solid solid none solid;
   border-width: 1px;
+  height: 21rem;
+
+  .seek-bar {
+    position: absolute;
+    top: 0;
+    left: calc(6rem + 1px);
+    width: 2px;
+    height: 100%;
+    background-color: red;
+    opacity: 0.5;
+  }
 }
 
 .open-blocklist {
