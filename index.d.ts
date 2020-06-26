@@ -1,4 +1,5 @@
-import { accessorType } from '~/store'
+import { accessorType } from '@/store'
+import { firestoreAccessor } from '@/plugins/firebase'
 
 /**
  * nuxt-typed-vuex用
@@ -6,11 +7,13 @@ import { accessorType } from '~/store'
 declare module 'vue/types/vue' {
   interface Vue {
     $accessor: typeof accessorType
+    $firebase: typeof firestoreAccessor
   }
 }
 
 declare module '@nuxt/types' {
   interface NuxtAppOptions {
     $accessor: typeof accessorType
+    $firebase: typeof firestoreAccessor
   }
 }

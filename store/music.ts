@@ -11,7 +11,7 @@ import {
   CHORD_PRESETS,
   RHYTHM_BLOCKS
 } from '@/lib/presets'
-import { db } from '@/plugins/firebase'
+import { firestoreAccessor } from '@/plugins/firebase'
 
 export const state = (): Music => ({
   title: '無題のタイトル',
@@ -387,11 +387,9 @@ export const actions = actionTree(
         melody: {}
       }
 
-      db.collection('scores')
-        .add(data)
-        .then((ref) => {
-          commit('SET_SCORE', { ...data, id: ref.id })
-        })
+      firestoreAccessor.scores
+        .create(data)
+        .then((score) => commit('SET_SCORE', score))
     }
   }
 )

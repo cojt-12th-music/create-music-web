@@ -28,6 +28,13 @@
             </v-btn>
           </div>
         </v-col>
+        <v-col cols="4" align-self="center">
+          <div class="iconRight">
+            <v-btn icon @click="upload">
+              <v-icon size="300%" color="#c4c4c4">upload</v-icon>
+            </v-btn>
+          </div>
+        </v-col>
       </v-row>
     </v-container>
 
@@ -359,6 +366,9 @@ export default Vue.extend({
     // メロディの音量変更時
     melodhyVolumeChanged() {
       this.$accessor.music.setMelodyGain(this.melodyVolume / 80)
+    },
+    upload() {
+      this.$accessor.music.addScore()
     }
   }
 })

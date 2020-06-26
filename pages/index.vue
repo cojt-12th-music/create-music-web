@@ -12,11 +12,13 @@
 </template>
 
 <script lang="ts">
+import { Context } from '@nuxt/types'
+
 import MusicalScore from '@/components/musicalScore.vue'
 import OperationArea from '@/components/operationArea.vue'
 import Player from '@/components/Player.vue'
+import { firebaseAuth, firestoreAccessor } from '@/plugins/firebase'
 import { Music } from '@/types/music'
-import { db } from '@/plugins/firebase'
 
 type DataType = {
   dialog: boolean
@@ -28,18 +30,30 @@ export default {
     OperationArea,
     Player
   },
-  async fetch({ route, store }) {
-    const scoreId = route.query.id
-    if (scoreId && typeof scoreId === 'string') {
-      // scoreIdをidとする楽譜データを持ってくる
-      const doc = await db
-        .collection('scores')
-        .doc(scoreId)
-        .get()
-      const data = doc.data() as Music
+  fetch({ route, store }: Context) {
+    firebaseAuth.onAuthStateChanged((user) => {
+      if (user) {
+        // User is signed in.
+        console.log(user.isAnonymous)
+        console.log(user.uid)
+      } else {
+        // User is signed out.
+      }
+    })
 
-      // fetchのときは直接dispatchせざるを得ない屈辱
-      store.commit('SET_SCORE', { ...data, id: doc.id })
+    firebaseAuth.signInAnonymously().catch((error) => {
+      // Handle Errors here.
+      console.log(error.code)
+      console.log(error.message)
+    })
+
+    const scoreId = route.query.id
+
+    if (scoreId && typeof scoreId === 'string') {
+      firestoreAccessor.scores.show(scoreId).then((score: Music) => {
+        // fetchのときは直接dispatchせざるを得ない屈辱
+        store.commit('music/SET_SCORE', score)
+      })
     }
   },
   data(): DataType {
