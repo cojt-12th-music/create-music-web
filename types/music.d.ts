@@ -22,11 +22,13 @@ export interface Sound {
 /**
  * Block: ブロックに関するデータ型. 編集画面のブロックの部分である.
  * name: ブロックのラベル (Firestoreにおける主キー)
+ * category: ブロックのカテゴリ
  * sounds: ブロックの構成する音
  * duration: ブロックを再生するのにかかる時間
  */
 export interface Block {
   name: string
+  category: string
   sounds: Sound[]
   duration: number
 }
