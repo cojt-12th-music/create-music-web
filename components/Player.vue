@@ -11,6 +11,7 @@
           :is-playing="isPlaying"
           :is-ready.sync="isMelodyReady"
           :gain-value="gainValue"
+          :reverb-path="null"
         />
         <instrument
           :sfz-path="chordInstrument"
@@ -56,6 +57,7 @@ type DataType = {
   isChordReady: boolean
   isRythmReady: boolean
   isLimiter: boolean
+  isReverb: boolean
 }
 export default Vue.extend({
   components: {
@@ -78,7 +80,8 @@ export default Vue.extend({
       isMelodyReady: false,
       isChordReady: false,
       isRythmReady: false,
-      isLimiter: false
+      isLimiter: false,
+      isReverb: false
     }
   },
   computed: {
@@ -113,6 +116,9 @@ export default Vue.extend({
     },
     rythmInstrument(): string {
       return this.$accessor.player.instruments[2]
+    },
+    reverbPath(): string {
+      return '/reverbs/x06y06Base64'
     }
   },
   watch: {
@@ -142,6 +148,11 @@ export default Vue.extend({
       .then((res) => res.json())
       .then((res) => {
         this.$accessor.player.setInstruments(res)
+      })
+    fetch('/reverbs/reverbs.json')
+      .then((res) => res.json())
+      .then((res) => {
+        this.$accessor.player.setReverbs(res)
       })
   },
   methods: {

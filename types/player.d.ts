@@ -10,4 +10,5 @@ export interface PlayerState {
     part: ScorePart | null
     name: string | null
   }
+  reverbs: string[]
 }

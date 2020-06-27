@@ -38,6 +38,7 @@ type DataType = {
    * 再生する音のソースノード
    */
   scheduledSourceNode: AudioScheduledSourceNode[]
+
   /**
    * 再生する音の全てのソースノード
    */
@@ -46,6 +47,8 @@ type DataType = {
    * 音量調節用のgainNode
    */
   gainNode: GainNode
+
+  reverbNode: ConvolverNode
 }
 
 export default Vue.extend({
@@ -83,6 +86,11 @@ export default Vue.extend({
       required: false,
       default: 1.0,
       type: Number
+    },
+    reverbPath: {
+      required: false,
+      default: null,
+      type: Object as Vue.PropType<string | null>
     }
   },
   data(): DataType {
@@ -92,7 +100,8 @@ export default Vue.extend({
       logs: [],
       scheduledSourceNode: [],
       allSourceNode: [],
-      gainNode: this.context.createGain()
+      gainNode: this.context.createGain(),
+      reverbNode: this.context.createConvolver()
     }
   },
   computed: {
@@ -101,6 +110,9 @@ export default Vue.extend({
     },
     encodedSfzParentPath(): string {
       return this.encodePath(this.parentDir(this.sfzPath))
+    },
+    isReverb() {
+      return this.reverbPath !== null
     }
   },
   watch: {
@@ -120,12 +132,16 @@ export default Vue.extend({
     },
     gainValue() {
       this.gainNode.gain.value = this.gainValue
+    },
+    isReverb() {
+      if (this.isReverb) this.setReverb()
     }
   },
   mounted() {
     if (this.sfzPath) this.load()
     this.gainNode.gain.value = this.gainValue
-    this.gainNode.connect(this.node)
+    this.reverbNode = this.context.createConvolver()
+    if (this.isReverb) this.setReverb()
   },
   methods: {
     /**
@@ -164,6 +180,23 @@ export default Vue.extend({
           this.$emit('update:isReady', true)
         })
     },
+
+    async setReverb() {
+      this.$emit('update:isLoading', false)
+      if (!this.reverbPath) return
+      await fetch(this.reverbPath)
+        .then((res) => res.text())
+        .then((b64) => {
+          this.context
+            .decodeAudioData(this.base64ToArrayBuffer(b64))
+            .then((audioBuffer) => {
+              this.reverbNode.buffer = audioBuffer
+            })
+        })
+        .then(() => {
+          this.$emit('update:isReady', true)
+        })
+    },
     /**
      * 音を鳴らす
      * @param key 鍵盤番号
@@ -178,6 +211,15 @@ export default Vue.extend({
       nodes.forEach((n, i, nodes) =>
         nodes[i + 1] ? n.connect(nodes[i + 1]) : n.connect(this.gainNode)
       )
+
+      if (this.isReverb) {
+        this.gainNode.connect(this.reverbNode)
+        this.reverbNode.connect(this.node)
+      } else {
+        this.reverbNode.disconnect()
+        this.gainNode.connect(this.node)
+      }
+
       ;(nodes[0] as AudioScheduledSourceNode).start(
         this.context.currentTime + fixedDelay
       )

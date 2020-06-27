@@ -1,7 +1,7 @@
 import path from 'path'
 import fs from 'fs-extra'
 import consola from 'consola'
-import list from '../../instruments.json'
+import instrumentsList from '../../instruments.json'
 import { downloadAndUnzip } from './downloader'
 import { transform } from './transform'
 
@@ -31,7 +31,7 @@ export async function main() {
   fs.remove(path.resolve(__dirname, './instruments'))
   await mkdirIfNotExist('./instruments')
   await Promise.all(
-    list.map(async (inst) => {
+    instrumentsList.map(async (inst) => {
       await downloadAndUnzip(inst.url, inst.name)
     })
   )
