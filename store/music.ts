@@ -149,7 +149,6 @@ export const mutations = mutationTree(state, {
     state.chord.blockNames.splice(0, namesLength, ...preset.blockNames)
   },
   /**
-<<<<<<< HEAD
    * リズムの音量を変更する
    * @param rhythmGain セットするゲインの値
    */
@@ -205,12 +204,7 @@ export const mutations = mutationTree(state, {
     state.composer = input
   },
   /**
-   * コードのプリセットをセットする
-||||||| parent of 3a0944b... update: refactor initializing
-   * コードのプリセットをセットする
-=======
    * 楽譜データをFirestoreからfetchしてstateにセットする
->>>>>>> 3a0944b... update: refactor initializing
    * @param presetName セットするプリセット名
    */
   SET_SCORE(state: MusicState, data: Music) {
@@ -359,19 +353,6 @@ export const actions = actionTree(
     },
     setComposer({ commit }, Input: string) {
       commit('SET_COMPOSER', Input)
-    },
-    /**
-     * コードのプリセットをセットする
-     * @param presetName セットするプリセット名
-     */
-    async setScore({ commit }, scoreId: string) {
-      const doc = await db
-        .collection('scores')
-        .doc(scoreId)
-        .get()
-      const data = doc.data() as Music
-      data.id = doc.id
-      commit('SET_SCORE', data)
     },
     /**
      * コードのプリセットをセットする
