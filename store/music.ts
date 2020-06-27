@@ -150,6 +150,34 @@ export const mutations = mutationTree(state, {
     const preset = CHORD_PRESETS[presetName]
     const namesLength = state.chord.blockNames.length
     state.chord.blockNames.splice(0, namesLength, ...preset.blockNames)
+  },
+  /**
+   * リズムの音量を変更する
+   * @param rhythmGain セットするゲインの値
+   */
+  SET_RHYTHM_GAIN(state: MusicState, rhythmGain: number) {
+    state.rhythm.gain = rhythmGain
+  },
+  /**
+   * コードの音量を変更する
+   * @param chordGain セットするゲインの値
+   */
+  SET_CHORD_GAIN(state: MusicState, chordGain: number) {
+    state.chord.gain = chordGain
+  },
+  /**
+   * メロディの音量を変更する
+   * @param melodyGain セットするゲインの値
+   */
+  SET_MELODY_GAIN(state: MusicState, melodyGain: number) {
+    state.melody.gain = melodyGain
+  },
+  /**
+   * BPMを変更する
+   * @param bpm セットするBPMの値
+   */
+  SET_BPM(state: MusicState, bpm: number) {
+    state.bpm = bpm
   }
 })
 
@@ -241,6 +269,34 @@ export const actions = actionTree(
      */
     setChordPreset({ commit }, presetName: string) {
       commit('SET_CHORD_PRESET', presetName)
+    },
+    /**
+     * リズムの音量を変更する
+     * @param rhythmGain セットするゲインの値
+     */
+    setRhythmGain({ commit }, rhythmGain: number) {
+      commit('SET_RHYTHM_GAIN', rhythmGain)
+    },
+    /**
+     * コードの音量を変更する
+     * @param chordGain セットするゲインの値
+     */
+    setChordGain({ commit }, chordGain: number) {
+      commit('SET_CHORD_GAIN', chordGain)
+    },
+    /**
+     * メロディの音量を変更する
+     * @param melodyGain セットするゲインの値
+     */
+    setMelodyGain({ commit }, melodyGain: number) {
+      commit('SET_MELODY_GAIN', melodyGain)
+    },
+    /**
+     * BPMを変更する
+     * @param bpm セットするBPMの値
+     */
+    setBpm({ commit }, bpm: number) {
+      commit('SET_BPM', bpm)
     }
   }
 )
