@@ -9,20 +9,35 @@
         <v-card-text>
           <v-card-text>王道</v-card-text>
           <v-divider></v-divider>
-          <v-chip v-for="(name, index) in chordBlocks" :key="index" label large>
-            <block :text="name" />
+          <v-chip
+            v-for="(block, index) in chordBlocks"
+            :key="index"
+            label
+            large
+          >
+            <block-item :block="block" />
           </v-chip>
 
           <v-card-text>邪道</v-card-text>
           <v-divider></v-divider>
-          <v-chip v-for="(name, index) in chordBlocks" :key="index" label large>
-            <block :text="name" />
+          <v-chip
+            v-for="(block, index) in chordBlocks"
+            :key="index"
+            label
+            large
+          >
+            <block-item :block="block" />
           </v-chip>
 
           <v-card-text>元気いっぱい</v-card-text>
           <v-divider></v-divider>
-          <v-chip v-for="(name, index) in chordBlocks" :key="index" label large>
-            <block :text="name" />
+          <v-chip
+            v-for="(block, index) in chordBlocks"
+            :key="index"
+            label
+            large
+          >
+            <block-item :block="block" />
           </v-chip>
         </v-card-text>
       </v-chip-group>
@@ -38,10 +53,12 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import Block from '@/components/block.vue'
+import BlockItem from '@/components/BlockItem.vue'
+import { Block } from '@/types/music'
+
 export default Vue.extend({
   components: {
-    Block
+    BlockItem
   },
   data() {
     return {
@@ -49,8 +66,8 @@ export default Vue.extend({
     }
   },
   computed: {
-    chordBlocks() {
-      return this.$accessor.music.chordPresetNames
+    chordBlocks(): Block[] {
+      return this.$accessor.music.chordTemplates
     }
   }
 })
