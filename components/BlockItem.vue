@@ -5,7 +5,6 @@
       width: blockLength * baseWidth + (blockLength - 1) * blockInterval + 'rem'
     }"
     :class="{ highlight: isHighlighted }"
-    @click.stop="melodyDialog = true"
   >
     {{ block.name }}
   </div>
