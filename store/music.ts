@@ -175,6 +175,27 @@ export const mutations = mutationTree(state, {
    */
   SET_BPM(state: MusicState, bpm: number) {
     state.bpm = bpm
+  },
+  /**
+   * リズムの楽器を変更する
+   * @param rhythmInst セットする楽器名
+   */
+  SET_RHYTHM_INSTRUMENT(state: MusicState, rhythmInst: string) {
+    state.rhythm.instrument = rhythmInst
+  },
+  /**
+   * コードの楽器を変更する
+   * @param chordInst セットする楽器名
+   */
+  SET_CHORD_INSTRUMENT(state: MusicState, chordInst: string) {
+    state.chord.instrument = chordInst
+  },
+  /**
+   * メロディの楽器を変更する
+   * @param melodyInst セットする楽器名
+   */
+  SET_MELODY_INSTRUMENT(state: MusicState, melodyInst: string) {
+    state.melody.instrument = melodyInst
   }
 })
 
@@ -294,6 +315,27 @@ export const actions = actionTree(
      */
     setBpm({ commit }, bpm: number) {
       commit('SET_BPM', bpm)
+    },
+    /**
+     * リズムの楽器を変更する
+     * @param rhythmInst セットする楽器名
+     */
+    setRhythmInstrument({ commit }, rhythmInst: string) {
+      commit('SET_RHYTHM_INSTRUMENT', rhythmInst)
+    },
+    /**
+     * コードの楽器を変更する
+     * @param chordInst セットする楽器名
+     */
+    setChordInstrument({ commit }, chordInst: string) {
+      commit('SET_CHORD_INSTRUMENT', chordInst)
+    },
+    /**
+     * メロディの楽器を変更する
+     * @param melodyInst セットする楽器名
+     */
+    setMelodyInstrument({ commit }, MelodyInst: string) {
+      commit('SET_MELODY_INSTRUMENT', MelodyInst)
     }
   }
 )
