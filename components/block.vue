@@ -2,7 +2,7 @@
   <div
     id="block-component-frame"
     :style="{
-      width: block.duration * baseWidth + (block.duration - 1) * 1 + 'rem'
+      width: blockLength * baseWidth + (blockLength - 1) * blockInterval + 'rem'
     }"
     :class="{ highlight: isHighlighted }"
     @click.stop="melodyDialog = true"
@@ -30,24 +30,30 @@ export default Vue.extend({
   data() {
     return {
       baseWidth: 4,
+      blockInterval: 1,
       melodyDialog: false
     }
   },
-  computed: {}
+  computed: {
+    blockLength(): number {
+      return this.block.duration / 2
+    }
+  }
 })
 </script>
 
 <style lang="scss" scoped>
 div#block-component-frame {
-  background-color: $-gray-700;
-  border-radius: 4px;
-  border: 1px solid $-primary-500;
-  color: $-primary-500;
-  box-sizing: border-box;
-  height: 4rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  box-sizing: border-box;
+  height: 4rem;
+  background-color: $-gray-700;
+  border: 1px solid $-primary-500;
+  border-radius: 4px;
+  color: $-primary-500;
+  font-size: 15px;
 
   &.highlight {
     -webkit-filter: drop-shadow(0px 0px 5px $-primary-500);

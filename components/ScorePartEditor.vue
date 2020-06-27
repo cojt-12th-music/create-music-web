@@ -12,9 +12,9 @@
     </div>
     <div
       class="block-area-container"
-      :style="{ width: 5 * maxDuration + 5 + 'rem' }"
+      :style="{ width: 5 * (maxLength + 1) + 'rem' }"
     >
-      <div v-for="i in maxDuration" :key="i" class="block-area"></div>
+      <div v-for="i in maxLength" :key="i" class="block-area"></div>
     </div>
 
     <div class="draggable-wrapper">
@@ -75,9 +75,10 @@ export default Vue.extend({
         disabled: false
       }
     },
-    maxDuration(): number {
+    maxLength(): number {
+      // 各partにおけるdurationの合計の最大値 / 2 + 1 (追加ボタン分)
       // TODO: fetch from store
-      return 10
+      return Math.floor(13 / 2) + 1
     },
     partTitle(): string {
       return {
