@@ -58,6 +58,17 @@ export default Vue.extend({
         return acc
       }, {} as BlockGroup)
     }
+  },
+  watch: {
+    async selection(newIndex: number) {
+      if (newIndex === undefined) return
+      this.$accessor.player.stopPresetPreview()
+      await this.$nextTick()
+      this.$accessor.player.playPresetPreview({
+        part: 'melody',
+        name: 'メロ1'
+      })
+    }
   }
 })
 </script>
