@@ -92,7 +92,7 @@ div#component-frame {
 }
 .v-chip.v-size--large {
   padding: 0;
-  height: 70px;
+  height: 64px;
 }
 .v-card__actions {
   background-color: $-gray-900;
