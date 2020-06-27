@@ -3,7 +3,6 @@
     <v-btn @click="demo">demo</v-btn>
     <v-btn @click="demoMelody">demo melody</v-btn>
     <v-btn @click="stop">stop</v-btn>
-    <v-switch v-model="isReverb" label="isReverb"></v-switch>
   </div>
 </template>
 
@@ -88,15 +87,10 @@ export default Vue.extend({
       default: 1.0,
       type: Number
     },
-    isReverb: {
-      required: false,
-      type: Boolean,
-      default: false
-    },
     reverbPath: {
       required: false,
-      default: '',
-      type: String
+      default: null,
+      type: Object as Vue.PropType<string | null>
     }
   },
   data(): DataType {
@@ -116,6 +110,9 @@ export default Vue.extend({
     },
     encodedSfzParentPath(): string {
       return this.encodePath(this.parentDir(this.sfzPath))
+    },
+    isReverb() {
+      return this.reverbPath !== null
     }
   },
   watch: {
@@ -184,7 +181,7 @@ export default Vue.extend({
 
     async setReverb() {
       this.$emit('update:isLoading', false)
-
+      if (!this.reverbPath) return
       await fetch(this.reverbPath)
         .then((res) => res.text())
         .then((b64) => {

@@ -11,8 +11,7 @@
           :is-playing="isPlaying"
           :is-ready.sync="isMelodyReady"
           :gain-value="gainValue"
-          :is-reverb="isReverb"
-          :reverb-path="reverbPath"
+          :reverb-path="null"
         />
       </v-col>
     </v-row>
@@ -121,6 +120,11 @@ export default Vue.extend({
       .then((res) => res.json())
       .then((res) => {
         this.$accessor.player.setInstruments(res)
+      })
+    fetch('/reverbs/reverbs.json')
+      .then((res) => res.json())
+      .then((res) => {
+        this.$accessor.player.setReverbs(res)
       })
   },
   methods: {

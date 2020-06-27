@@ -6,7 +6,8 @@ export const state = (): PlayerState => ({
   isPlaying: false,
   isReady: false,
   loadingProgress: 0,
-  instruments: []
+  instruments: [],
+  reverbs: []
 })
 
 export const mutations = mutationTree(state, {
@@ -24,6 +25,9 @@ export const mutations = mutationTree(state, {
   },
   SET_INSTRUMENTS(state: PlayerState, insts: string[]) {
     state.instruments = insts
+  },
+  SET_REVERBS(state: PlayerState, rvs: string[]) {
+    state.reverbs = rvs
   }
 })
 
@@ -47,6 +51,9 @@ export const actions = actionTree(
     },
     setInstruments({ commit }, insts: string[]) {
       commit('SET_INSTRUMENTS', insts)
+    },
+    setReverbs({ commit }, rvs: string[]) {
+      commit('SET_REVERBS', rvs)
     }
   }
 )
