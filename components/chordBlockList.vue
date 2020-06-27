@@ -6,34 +6,15 @@
       </v-card-title>
 
       <v-chip-group v-model="selection" column>
-        <v-card-text>
-          <v-card-text>王道</v-card-text>
+        <v-card-text
+          v-for="(blocks, category, categoryIndex) in chordBlocks"
+          :key="categoryIndex"
+        >
+          <v-card-text>{{ category }}</v-card-text>
           <v-divider></v-divider>
           <v-chip
-            v-for="(block, index) in chordBlocks"
-            :key="index"
-            label
-            large
-          >
-            <block-item :block="block" />
-          </v-chip>
-
-          <v-card-text>邪道</v-card-text>
-          <v-divider></v-divider>
-          <v-chip
-            v-for="(block, index) in chordBlocks"
-            :key="index"
-            label
-            large
-          >
-            <block-item :block="block" />
-          </v-chip>
-
-          <v-card-text>元気いっぱい</v-card-text>
-          <v-divider></v-divider>
-          <v-chip
-            v-for="(block, index) in chordBlocks"
-            :key="index"
+            v-for="(block, index) in blocks"
+            :key="category + index"
             label
             large
           >
@@ -56,6 +37,8 @@ import Vue from 'vue'
 import BlockItem from '@/components/BlockItem.vue'
 import { Block } from '@/types/music'
 
+type BlockGroup = { [category: string]: Block[] }
+
 export default Vue.extend({
   components: {
     BlockItem
@@ -66,8 +49,14 @@ export default Vue.extend({
     }
   },
   computed: {
-    chordBlocks(): Block[] {
-      return this.$accessor.music.chordTemplates
+    chordBlocks(): BlockGroup {
+      return this.$accessor.music.chordTemplates.reduce((acc, cur) => {
+        if (!acc[cur.category]) {
+          acc[cur.category] = []
+        }
+        acc[cur.category].push(cur)
+        return acc
+      }, {} as BlockGroup)
     }
   }
 })
