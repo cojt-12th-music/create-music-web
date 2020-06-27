@@ -1,12 +1,18 @@
 import { mutationTree, actionTree } from 'typed-vuex'
 import { PlayerState } from '~/types/player'
+import { ScorePart } from '~/types/music'
 
 export const state = (): PlayerState => ({
   context: null,
   isPlaying: false,
   isReady: false,
   loadingProgress: 0,
-  instruments: []
+  instruments: [],
+  previewPreset: {
+    part: null,
+    name: null
+  },
+  reverbs: []
 })
 
 export const mutations = mutationTree(state, {
@@ -24,6 +30,15 @@ export const mutations = mutationTree(state, {
   },
   SET_INSTRUMENTS(state: PlayerState, insts: string[]) {
     state.instruments = insts
+  },
+  SET_PREVIEW_PRESET(
+    state: PlayerState,
+    previewPreset: { part: ScorePart | null; name: string | null }
+  ) {
+    state.previewPreset = { ...previewPreset }
+  },
+  SET_REVERBS(state: PlayerState, rvs: string[]) {
+    state.reverbs = rvs
   }
 })
 
@@ -47,6 +62,15 @@ export const actions = actionTree(
     },
     setInstruments({ commit }, insts: string[]) {
       commit('SET_INSTRUMENTS', insts)
+    },
+    playPresetPreview({ commit }, p: { part: ScorePart; name: string }) {
+      commit('SET_PREVIEW_PRESET', p)
+    },
+    stopPresetPreview({ commit }) {
+      commit('SET_PREVIEW_PRESET', { part: null, name: null })
+    },
+    setReverbs({ commit }, rvs: string[]) {
+      commit('SET_REVERBS', rvs)
     }
   }
 )
