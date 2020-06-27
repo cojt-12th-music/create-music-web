@@ -37,7 +37,7 @@
     <v-dialog v-model="configDialog" max-width="80%">
       <v-card color="#0A0A0A">
         <v-card-title class="justify-center">
-          <div class="textColoring">
+          <div class="textColoring" style="text-align: center;">
             設定
           </div>
         </v-card-title>
@@ -50,7 +50,7 @@
                 <v-slider
                   v-model="bpm"
                   class="align-center"
-                  :max="120"
+                  :max="180"
                   :min="60"
                   hide-details
                   dark
@@ -200,11 +200,11 @@ export default Vue.extend({
   data(): DataType {
     return {
       configDialog: false,
-      timbre: ['エレキギター', 'アコースティックギター', 'ピアノ'],
-      selectedTimbre: 'エレキギター',
+      timbre: ['クラシックギター', 'エレキギター', 'ピアノ'],
+      selectedTimbre: 'クラシックギター',
       colorThema: ['ダークモード', 'ライトモード'],
       selectedColorThema: 'ダークモード',
-      bpm: 90,
+      bpm: 100,
       rhythmVolume: 80,
       chordVolume: 80,
       melodyVolume: 80
@@ -250,27 +250,61 @@ export default Vue.extend({
       this.configDialog = true
     },
     share() {
-      alert('シェア画面の表示')
+      alert('仮')
     },
     init() {
       this.$accessor.player.setContext(new AudioContext())
     },
     // 音色選択
     selectTimbre() {
-      // 仮
-      // 引数はstring[],[1]はメロディ，[2]はコードとリズム(player.vue参照)
-      // this.$accessor.player.setInstruments(this.selectedTimbre);
+      // 現在はメロディのみ変更可能
+      // storeの引数はstring[],[1]はメロディ，[2]はコードとリズム(player.vue参照)
+      let timbres = ['']
+
+      switch (this.selectedTimbre) {
+        case 'クラシックギター':
+          timbres = [
+            '',
+            'instruments/SpanishClassicalGuitar-SFZ-20190618/SpanishClassicalGuitar-20190618.jsfz',
+            ''
+          ]
+          break
+        case 'エレキギター':
+          timbres = [
+            '',
+            'instruments/FSFT-EGuitarDistorted-SFZ-20200321/FSFT-EGuitarDistorted-20200321.jsfz',
+            ''
+          ]
+          break
+        case 'ピアノ':
+          timbres = [
+            '',
+            'instruments/UprightPianoKW-SFZ-20190703/UprightPianoKW-20190703.jsfz',
+            ''
+          ]
+          break
+      }
+
+      this.$accessor.player.setInstruments(timbres)
     },
     // カラーモード選択
     selectColorThema() {},
     // BPM変更時
-    bpmChanged() {},
+    bpmChanged() {
+      this.$accessor.music.setBpm(this.bpm)
+    },
     // リズムの音量変更時
-    rhythmVolumeChanged() {},
+    rhythmVolumeChanged() {
+      this.$accessor.music.setRhythmGain(this.rhythmVolume / 80)
+    },
     // コードの音量変更時
-    chordVolumeChanged() {},
+    chordVolumeChanged() {
+      this.$accessor.music.setChordGain(this.chordVolume / 80)
+    },
     // メロディの音量変更時
-    melodhyVolumeChanged() {}
+    melodhyVolumeChanged() {
+      this.$accessor.music.setMelodyGain(this.melodyVolume / 80)
+    }
   }
 })
 </script>
