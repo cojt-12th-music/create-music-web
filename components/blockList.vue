@@ -16,7 +16,7 @@
             large
             class="block-wrapper"
           >
-            <block :block="block" />
+            <block-item :block="block" />
           </v-chip>
 
           <v-card-text>邪道</v-card-text>
@@ -28,7 +28,7 @@
             large
             class="block-wrapper"
           >
-            <block :block="block" />
+            <block-item :block="block" />
           </v-chip>
 
           <v-card-text>元気いっぱい</v-card-text>
@@ -40,7 +40,7 @@
             large
             class="block-wrapper"
           >
-            <block :block="block" />
+            <block-item :block="block" />
           </v-chip>
         </v-card-text>
       </v-chip-group>
@@ -56,7 +56,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import block from '@/components/block.vue'
+import BlockItem from '@/components/BlockItem.vue'
 import { Block, ScorePart } from '@/types/music'
 
 type DataType = {
@@ -68,7 +68,7 @@ type DataType = {
 
 export default Vue.extend({
   components: {
-    block
+    BlockItem
   },
   data() {
     return {
@@ -77,8 +77,8 @@ export default Vue.extend({
     }
   },
   computed: {
-    rhythmBlocks() {
-      return this.$accessor.music.rhythmTemplateNames
+    rhythmBlocks(): Block[] {
+      return this.$accessor.music.rhythmTemplates
     },
     dragOptions() {
       return {

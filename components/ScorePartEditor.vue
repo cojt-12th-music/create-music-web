@@ -2,7 +2,7 @@
   <div class="score-part-container">
     <div class="column-title">
       <div class="part-title-container" @click="enabled = !enabled">
-        <v-icon class="icon" :class="{ disabled: !enabled }" :large="true">{{
+        <v-icon large class="icon" :class="{ disabled: !enabled }">{{
           partIcon
         }}</v-icon>
         <div class="part-title" :class="{ disabled: !enabled }">
@@ -10,6 +10,7 @@
         </div>
       </div>
     </div>
+
     <div
       class="block-area-container"
       :style="{ width: 5 * (maxLength + 1) + 'rem' }"
@@ -21,7 +22,7 @@
       <draggable
         v-model="blocks"
         class="score-draggable"
-        group="rhythm"
+        :group="part"
         v-bind="dragOptions"
       >
         <div
@@ -44,7 +45,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import draggable from 'vuedraggable'
-import BlockItem from '@/components/block.vue'
+import BlockItem from '@/components/BlockItem.vue'
 import { Block, ScorePart } from '@/types/music'
 
 export default Vue.extend({

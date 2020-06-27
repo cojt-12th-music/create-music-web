@@ -15,13 +15,13 @@
 
         <div class="open-blocklist">
           <v-dialog v-model="rhythmDialog">
-            <block-list />
+            <RhythmBlockList />
           </v-dialog>
-          <v-dialog v-model="chordDialog" max-width="290">
-            <block-list />
+          <v-dialog v-model="chordDialog">
+            <ChordBlockList />
           </v-dialog>
-          <v-dialog v-model="melodyDialog" max-width="290">
-            <block-list />
+          <v-dialog v-model="melodyDialog">
+            <MelodyBlockList />
           </v-dialog>
         </div>
       </div>
@@ -35,34 +35,26 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import draggable from 'vuedraggable'
+import ScorePartEditor from '@/components/ScorePartEditor.vue'
 import RhythmBlockList from '@/components/rhythmBlockList.vue'
 import ChordBlockList from '@/components/chordBlockList.vue'
 import MelodyBlockList from '@/components/melodyBlockList.vue'
 import MelodyModal from '@/components/melodyModal.vue'
-import BlockItem from '@/components/block.vue'
-import BlockList from '@/components/blockList.vue'
-import ScorePartEditor from '@/components/ScorePartEditor.vue'
-import { Block } from '@/types/music'
 
 export default Vue.extend({
   components: {
-    draggable,
+    ScorePartEditor,
     RhythmBlockList,
     ChordBlockList,
     MelodyBlockList,
-    MelodyModal,
-    BlockItem,
-    ScorePartEditor,
-    BlockList
+    MelodyModal
   },
   data() {
     return {
       rhythmDialog: false,
       chordDialog: false,
       melodyDialog: false,
-      melodyEditModal: false,
-      maxDuration: 10
+      melodyEditModal: false
     }
   },
   computed: {
