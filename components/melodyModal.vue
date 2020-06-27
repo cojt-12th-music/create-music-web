@@ -4,7 +4,7 @@
       <!-- 編集画面上部 -->
       <v-card-title class="top-area">
         メロディー編集画面
-        <v-btn icon dark @click="dialog">
+        <v-btn icon dark class="btn-back" @click="dialog">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -19,16 +19,23 @@
                 v-for="item in guideLines"
                 :key="item.text"
                 :value="item.value"
-                >{{ item.text }}
-              </option>
+                >{{ item.text }}</option
+              >
             </select>
           </v-col>
         </v-row>
       </v-card-title>
 
       <!-- 編集エリア -->
-      <v-card class="edit-area">
-        <div v-for="text in scale" :key="text" class="scale">
+      <v-card id="edit-area" class="edit-area">
+        <div
+          v-for="text in scale"
+          :key="text"
+          class="scale"
+          @mousedown="touchstart($event)"
+          @mousemove="touchmove($event)"
+          @mouseup="touchend()"
+        >
           <div class="scale-text">{{ text }}</div>
           <!-- <draggable v-model="melodyBlocks" class="score-draggable" v-bind="dragOptions">
             <div v-for="n in 5" :key="n" class="block">
@@ -51,14 +58,11 @@
 
 <script lang="ts">
 import Vue from 'vue'
-// import draggable from 'vuedraggable'
+import { BlockHash } from '../types/music'
 // import MelodyModalBlock from '@/components/melodyModalBlock.vue'
 
 export default Vue.extend({
-  components: {
-    // MelodyModalBlock,
-    // draggable
-  },
+  components: {},
   data() {
     return {
       selected: [],
@@ -90,11 +94,45 @@ export default Vue.extend({
         // animation: 300,
         disabled: false
       }
+    },
+    melodyPresets: {
+      get(): BlockHash {
+        return this.$accessor.music.blocks.melody
+      }
+      //   set(blockNames: string, sound: Sound) {
+      //     this.$accessor.music.updateSound({ part: 'melody', blockNames, sound })
+      //   }
     }
   },
   methods: {
     dialog() {
       this.$emit('dialog', false)
+    },
+    touchstart(e) {
+      let x = 0
+      let y = 0
+      x = e.clientX
+      y = e.clientY
+      this.isClick = true
+      console.log('x: ' + x + ' y: ' + y)
+    },
+    touchmove(e) {
+      // 押下中だったら
+      if (this.isClick) {
+        // 前回座標との差分を算出
+        // let moved_x = e.offsetX - this.prev_pos.x;
+        // let moved_y = e.offsetY - this.prev_pos.y;
+
+        // // 前回のクリック座標を更新
+        // this.prev_pos.x = e.offsetX;
+        // this.prev_pos.y = e.offsetY;
+        console.log(e.clientX)
+      }
+    },
+    touchend() {
+      if (this.isClick) {
+        this.isClick = false
+      }
     }
   }
 })
@@ -126,6 +164,7 @@ div#component-frame {
   //   height: 544.81px;
   height: 100%;
   width: 100%;
+  position: relative;
 }
 
 .play-area {
@@ -176,5 +215,8 @@ div#component-frame {
 .scale-text {
   width: 55px;
   border-right: 1px dashed $-gray-500;
+}
+.btn-back {
+  margin: 0 0 0 auto;
 }
 </style>
