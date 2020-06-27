@@ -97,6 +97,8 @@ export type ScorePart = 'rhythm' | 'chord' | 'melody'
  * blocks: melody, chord, rhytmそれぞれのブロック
  */
 export interface Music {
+  title: string
+  composer: string
   bpm: number
   melody: Melody
   chord: Chord
