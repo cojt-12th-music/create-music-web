@@ -30,7 +30,7 @@
           :key="index"
           class="block-item-wrapper"
         >
-          <block-item :block="block" />
+          <block-item :block="block" @click.native="editModal = true" />
         </div>
       </draggable>
       <div class="button-wrapper">
@@ -39,6 +39,23 @@
         </v-icon>
       </div>
     </div>
+    <!-- ブロックが押されたら編集画面表示 -->
+    <v-dialog
+      v-if="part === 'melody'"
+      v-model="editModal"
+      fullscreen
+      hide-overlay
+    >
+      <melody-modal @dialog="editModal = $event" />
+    </v-dialog>
+    <v-dialog
+      v-if="part === 'rhythm'"
+      v-model="editModal"
+      fullscreen
+      hide-overlay
+    >
+      <rhythm-modal @dialog="editModal = $event" />
+    </v-dialog>
   </div>
 </template>
 
@@ -47,11 +64,15 @@ import Vue from 'vue'
 import draggable from 'vuedraggable'
 import BlockItem from '@/components/BlockItem.vue'
 import { Block, ScorePart } from '@/types/music'
+import MelodyModal from '@/components/melodyModal.vue'
+import RhythmModal from '@/components/rhythmModal.vue'
 
 export default Vue.extend({
   components: {
     draggable,
-    BlockItem
+    BlockItem,
+    MelodyModal,
+    RhythmModal
   },
   props: {
     part: {
@@ -66,7 +87,8 @@ export default Vue.extend({
   data() {
     return {
       // TODO: store setting
-      enabled: true
+      enabled: true,
+      editModal: false
     }
   },
   computed: {

@@ -26,10 +26,6 @@
         </div>
       </div>
     </v-container>
-    <!-- ブロックが押されたら編集画面表示 -->
-    <v-dialog v-model="melodyEditModal" fullscreen hide-overlay>
-      <melody-modal @dialog="melodyEditModal = $event" />
-    </v-dialog>
   </div>
 </template>
 
@@ -39,15 +35,13 @@ import ScorePartEditor from '@/components/ScorePartEditor.vue'
 import RhythmBlockList from '@/components/rhythmBlockList.vue'
 import ChordBlockList from '@/components/chordBlockList.vue'
 import MelodyBlockList from '@/components/melodyBlockList.vue'
-import MelodyModal from '@/components/melodyModal.vue'
 
 export default Vue.extend({
   components: {
     ScorePartEditor,
     RhythmBlockList,
     ChordBlockList,
-    MelodyBlockList,
-    MelodyModal
+    MelodyBlockList
   },
   data() {
     return {
