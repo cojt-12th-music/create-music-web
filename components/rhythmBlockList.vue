@@ -2,7 +2,7 @@
   <div id="component-frame">
     <v-card class="mx-auto">
       <v-card-title>
-        <h2>コードの選択</h2>
+        <p>リズムの選択</p>
       </v-card-title>
 
       <v-chip-group v-model="selection" column>
@@ -43,7 +43,7 @@
       </v-chip-group>
 
       <v-card-actions>
-        <v-btn block class="white--text " color="#333333">
+        <v-btn block class="white--text" color="#F96500">
           Add to Score
         </v-btn>
       </v-card-actions>
@@ -60,8 +60,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      selection: 0,
-      text: 'aaa'
+      selection: 0
     }
   },
   computed: {
@@ -74,23 +73,40 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .v-card__title {
-  background-color: #0a0a0a;
-  color: #f0f0f0;
+  background-color: $-gray-900;
+  color: $-gray-50;
+  p {
+    margin: 0;
+  }
 }
 div#component-frame {
   height: 100%;
 }
 .v-card__text {
-  color: #f0f0f0;
+  color: $-gray-50;
+  padding: 0;
+  margin: 5px 5px 5px 10px;
 }
 .v-item-group {
-  background-color: #333333;
+  background-color: $-gray-700;
 }
 .v-chip.v-size--large {
   padding: 0;
-  height: 70px;
+  height: 64px;
 }
 .v-card__actions {
-  background-color: #0a0a0a;
+  background-color: $-gray-900;
+  padding: 10px;
+}
+.v-chip-group .v-chip--active {
+  color: $-gray-300;
+}
+.theme--light.v-chip--active:hover::before,
+.theme--light.v-chip--active::before {
+  opacity: 0.2;
+}
+.v-divider {
+  background-color: $-gray-500;
+  margin-bottom: 5px;
 }
 </style>

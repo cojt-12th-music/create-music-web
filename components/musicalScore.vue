@@ -1,78 +1,129 @@
 <template>
   <div id="component-frame">
     <v-container>
-      <div id="wrapper">
-        <ul id="rhythm" class="blue darken-1">
-          <li class="column-title">リズム</li>
-          <li>
-            <draggable
-              v-model="rhythmBlocks"
-              class="score-draggable"
-              group="rhythm"
-              v-bind="dragOptions"
+      <ul id="rhythm">
+        <li class="column-title">
+          <div>
+            <v-icon :large="true" color="#C2C2C2">fas fa-drum</v-icon>
+            <div><p>リズム</p></div>
+          </div>
+        </li>
+        <li>
+          <draggable
+            v-model="rhythmBlocks"
+            class="score-draggable"
+            group="rhythm"
+            v-bind="dragOptions"
+          >
+            <div v-for="(block, index) in rhythmBlocks" :key="index">
+              <block :text="block" />
+            </div>
+          </draggable>
+        </li>
+        <li class="open-blocklist">
+          <v-icon :large="true" color="#F96500" @click.stop="rythmDialog = true"
+            >mdi-plus-circle-outline</v-icon
+          >
+          <v-dialog v-model="rythmDialog" max-width="800">
+            <rhythm-block-list />
+          </v-dialog>
+        </li>
+      </ul>
+      <ul id="chord">
+        <li class="column-title">
+          <div>
+            <v-icon :large="true" color="#C2C2C2">fas fa-guitar</v-icon>
+            <div><p>コード</p></div>
+          </div>
+        </li>
+        <li>
+          <draggable
+            v-model="chordBlocks"
+            class="score-draggable"
+            group="chord"
+            v-bind="dragOptions"
+          >
+            <div v-for="(block, index) in chordBlocks" :key="index">
+              <block :text="block" />
+            </div>
+          </draggable>
+        </li>
+        <li class="open-blocklist">
+          <v-icon :large="true" color="#F96500" @click.stop="chrodDialog = true"
+            >mdi-plus-circle-outline</v-icon
+          >
+          <v-dialog v-model="chrodDialog" max-width="800">
+            <chord-block-list />
+          </v-dialog>
+        </li>
+      </ul>
+      <ul id="melody">
+        <li class="column-title">
+          <div>
+            <v-icon :large="true" color="#C2C2C2">music_note</v-icon>
+            <div><p>メロディ</p></div>
+          </div>
+        </li>
+        <li>
+          <draggable
+            v-model="melodyBlocks"
+            class="score-draggable"
+            group="melody"
+            v-bind="dragOptions"
+          >
+            <div
+              v-for="(block, index) in melodyBlocks"
+              :key="index"
+              class="block-wrapper"
             >
-              <div
-                v-for="(block, index) in rhythmBlocks"
-                :key="index"
-                class="block-wrapper"
-              >
-                <block :text="block" block-type="#4FC3F7" />
-              </div>
-            </draggable>
-          </li>
-        </ul>
-        <ul id="code" class="green lighten-1">
-          <li class="column-title">コード</li>
-          <li>
-            <draggable
-              v-model="chordBlocks"
-              class="score-draggable"
-              group="chord"
-              v-bind="dragOptions"
-            >
-              <div
-                v-for="(block, index) in chordBlocks"
-                :key="index"
-                class="block-wrapper"
-              >
-                <block :text="block" block-type="#81C784" />
-              </div>
-            </draggable>
-          </li>
-        </ul>
-        <ul id="melody" class="pink lighten-1">
-          <li class="column-title">メロディ</li>
-          <li>
-            <draggable
-              v-model="melodyBlocks"
-              class="score-draggable"
-              group="melody"
-              v-bind="dragOptions"
-            >
-              <div
-                v-for="(block, index) in melodyBlocks"
-                :key="index"
-                class="block-wrapper"
-              >
-                <block :text="block" block-type="#F06292" />
-              </div>
-            </draggable>
-          </li>
-        </ul>
-      </div>
+              <block :text="block" @click.native="melodyEditModal = true" />
+            </div>
+          </draggable>
+        </li>
+        <li class="open-blocklist">
+          <v-icon
+            :large="true"
+            color="#F96500"
+            @click.stop="melodyDialog = true"
+            >mdi-plus-circle-outline</v-icon
+          >
+          <v-dialog v-model="melodyDialog" max-width="800">
+            <melody-block-list />
+          </v-dialog>
+        </li>
+      </ul>
     </v-container>
+    <!-- ブロックが押されたら編集画面表示 -->
+    <v-dialog v-model="melodyEditModal" fullscreen hide-overlay>
+      <melody-modal @dialog="melodyEditModal = $event" />
+    </v-dialog>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import draggable from 'vuedraggable'
-
+import RhythmBlockList from '@/components/rhythmBlockList.vue'
+import ChordBlockList from '@/components/chordBlockList.vue'
+import MelodyBlockList from '@/components/melodyBlockList.vue'
+import MelodyModal from '@/components/melodyModal.vue'
 import block from '~/components/block.vue'
 export default Vue.extend({
   components: {
     draggable,
-    block
+    RhythmBlockList,
+    ChordBlockList,
+    MelodyBlockList,
+    block,
+    MelodyModal
+  },
+  data() {
+    return {
+      rythmDialog: false,
+      chrodDialog: false,
+      melodyDialog: false,
+      melodyEditModal: false
+    }
   },
   computed: {
     dragOptions() {
@@ -110,37 +161,47 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-@import '~assets/style/draggable.scss';
-
 div#component-frame {
   height: 100%;
 }
 
-#wrapper {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 1em;
+li.column-title {
+  display: block;
+  div {
+    margin: auto;
+    display: block;
+    width: 4rem;
+    color: $-gray-200;
+    i {
+      display: block;
+      width: 3rem;
+      margin: auto;
+    }
+  }
+}
+div.score-draggable {
+  margin: 0;
+}
+ul {
+  padding: 0;
+  list-style: none;
+  display: flex;
+  border: 1px solid $-gray-500;
+  padding: 1rem;
+  div {
+    display: flex;
+    margin-left: 1rem;
+  }
 }
 
-ul {
-  display: block;
-  list-style: none;
-  text-align: center;
-  padding: 0;
+li.open-blocklist {
+  margin-left: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translateY(-0.5rem);
 }
 
 @include pc {
-  #wrapper {
-    display: block;
-  }
-  ul {
-    text-align: left;
-    li {
-      display: inline-block;
-    }
-  }
-  .column-title {
-    width: 5rem;
-  }
 }
 </style>
