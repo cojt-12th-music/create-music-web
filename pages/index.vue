@@ -1,6 +1,5 @@
 <template>
   <div id="component-frame">
-    <div class="title">曲のタイトル</div>
     <div id="musical-score-wrapper">
       <musical-score />
     </div>
@@ -36,12 +35,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.title {
-  color: $-gray-50;
-  padding-top: 1rem;
-  margin-left: 1rem;
-  margin-bottom: 1rem;
-}
 #component-frame {
   background-color: $-gray-800;
   height: 100vh;
@@ -52,11 +45,22 @@ export default {
   height: 65vh;
   margin-bottom: 3vh;
   overflow: scroll;
+
+  // for IE, Edge
+  -ms-overflow-style: none;
+  // for Firefox
+  scrollbar-width: none;
+  // for Chrome, Safari
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
+
 #block-list-wrapper {
   height: 15vh;
   margin-bottom: 3vh;
 }
+
 #operation-area-wrapper {
   height: 10vh;
   width: 100vw;

@@ -13,6 +13,9 @@ import {
 } from '@/lib/presets'
 
 export const state = (): Music => ({
+  title: '無題のタイトル',
+  composer: '名無しの作曲者',
+  bpm: 100,
   melody: {
     instrument: 'guitar',
     blockNames: ['メロ1', 'メロ2', 'メロ3', 'メロ4'],
@@ -20,7 +23,7 @@ export const state = (): Music => ({
   },
   chord: {
     instrument: 'guitar',
-    blockNames: ['王道', '王道', '小室', '小室', 'カノン', 'かノン'],
+    blockNames: ['コード1', 'コード2', 'コード3', 'コード4'],
     gain: 1
   },
   rhythm: {
@@ -33,8 +36,7 @@ export const state = (): Music => ({
     melody: MELODY_BLOCKS,
     chord: CHORD_BLOCKS,
     rhythm: RHYTHM_BLOCKS
-  },
-  bpm: 100
+  }
 })
 
 export type MusicState = ReturnType<typeof state>
@@ -45,13 +47,14 @@ export const getters = getterTree(state, {
    * 編集時に使用する
    */
   // リズム
-  rhythmTemplateNames: (state: MusicState): string[] =>
-    Object.keys(state.blocks.rhythm),
+  rhythmTemplates: (state: MusicState): Block[] =>
+    Object.values(state.blocks.rhythm),
   // コード
-  chordPresetNames: (_: MusicState): string[] => Object.keys(CHORD_PRESETS),
+  chordTemplates: (state: MusicState): Block[] =>
+    Object.values(state.blocks.chord),
   // メロディー
-  melodyTemplateNames: (state: MusicState): string[] =>
-    Object.keys(state.blocks.melody),
+  melodyTemplates: (state: MusicState): Block[] =>
+    Object.values(state.blocks.melody),
 
   /**
    * 実際に再生する順番でblocksを返す系のgetters
