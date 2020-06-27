@@ -30,7 +30,7 @@ export default {
     OperationArea,
     Player
   },
-  fetch({ route, store }: Context) {
+  async fetch({ route, store }: Context) {
     firebaseAuth.onAuthStateChanged((user) => {
       if (user) {
         // User is signed in.
@@ -41,7 +41,7 @@ export default {
       }
     })
 
-    firebaseAuth.signInAnonymously().catch((error) => {
+    await firebaseAuth.signInAnonymously().catch((error) => {
       // Handle Errors here.
       console.log(error.code)
       console.log(error.message)
@@ -50,10 +50,15 @@ export default {
     const scoreId = route.query.id
 
     if (scoreId && typeof scoreId === 'string') {
-      firestoreAccessor.scores.show(scoreId).then((score: Music) => {
-        // fetchのときは直接dispatchせざるを得ない屈辱
-        store.commit('music/SET_SCORE', score)
-      })
+      await firestoreAccessor.scores
+        .show(scoreId)
+        .then((score: Music) => {
+          // fetchのときは直接dispatchせざるを得ない屈辱
+          store.commit('music/SET_SCORE', score)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     }
   },
   data(): DataType {

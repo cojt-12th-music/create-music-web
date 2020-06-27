@@ -28,13 +28,6 @@
             </v-btn>
           </div>
         </v-col>
-        <v-col cols="4" align-self="center">
-          <div class="iconRight">
-            <v-btn icon @click="upload">
-              <v-icon size="300%" color="#c4c4c4">upload</v-icon>
-            </v-btn>
-          </div>
-        </v-col>
       </v-row>
     </v-container>
 
