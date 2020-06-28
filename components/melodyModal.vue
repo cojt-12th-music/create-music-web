@@ -27,22 +27,42 @@
       </v-card-title>
 
       <!-- 編集エリア -->
-      <v-card id="edit-area" class="edit-area">
-        <div
-          v-for="text in scale"
-          :key="text"
-          class="scale"
-          @mousedown="touchstart($event)"
-          @mousemove="touchmove($event)"
-          @mouseup="touchend()"
-        >
-          <div class="scale-text">{{ text }}</div>
-          <!-- <draggable v-model="melodyBlocks" class="score-draggable" v-bind="dragOptions">
-            <div v-for="n in 5" :key="n" class="block">
-              <melody-modal-block />
-            </div>
-          </draggable>-->
-          <div v-for="n in 5" :key="n" class="block"></div>
+      <v-card
+        id="edit-area"
+        class="edit-area"
+        @mousedown="touchstart($event)"
+        @mousemove="touchmove($event)"
+        @mouseup="touchend()"
+      >
+        <div v-for="(key, index) in keys" :key="index" class="scale">
+          <div
+            v-for="n in 5"
+            id="grid"
+            :key="n"
+            class="grid"
+            :style="{
+              width: widthPerNote + 2 * borderWidth + 'px',
+              height: heightPerKey + 'px'
+            }"
+          ></div>
+          <div
+            v-for="sound in sounds"
+            id="block"
+            :key="sound.id"
+            class="block"
+            :style="{
+              height: heightPerKey + 'px',
+              top:
+                sound.key * heightPerKey +
+                (2 * sound.key + 1) * borderWidth +
+                'px',
+              left:
+                sound.delay * widthPerNote +
+                (2 * sound.delay - 1) * borderWidth +
+                'px',
+              width: sound.duration * widthPerNote + 'px'
+            }"
+          ></div>
         </div>
       </v-card>
 
@@ -58,34 +78,29 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { BlockHash } from '../types/music'
+import { BlockHash, Sound } from '../types/music'
 // import MelodyModalBlock from '@/components/melodyModalBlock.vue'
 
 export default Vue.extend({
   components: {},
+  props: {
+    blockName: {
+      required: true,
+      type: String
+    }
+  },
   data() {
     return {
-      selected: [],
       guideLines: [
         { text: '明るい', value: ['ド#', 'レ#', 'ファ#', 'ソ#', 'ラ#'] },
         { text: '悲しい' },
         { text: 'お洒落' }
       ],
-      scale: [
-        'ド',
-        'ド#',
-        'レ',
-        'レ#',
-        'ミ',
-        'ファ',
-        'ファ#',
-        'ソ',
-        'ソ#',
-        'ラ',
-        'ラ#',
-        'シ'
-      ],
-      isClick: false
+      isClick: false,
+      widthPerNote: 50,
+      heightPerKey: 20,
+      keys: [...Array(100).keys()].map(() => true),
+      borderWidth: 0.5
     }
   },
   computed: {
@@ -94,6 +109,9 @@ export default Vue.extend({
         // animation: 300,
         disabled: false
       }
+    },
+    sounds(): Sound[] {
+      return this.melodyPresets[this.blockName].sounds
     },
     melodyPresets: {
       get(): BlockHash {
@@ -109,23 +127,38 @@ export default Vue.extend({
       this.$emit('dialog', false)
     },
     touchstart(e) {
-      let x = 0
-      let y = 0
-      x = e.clientX
-      y = e.clientY
       this.isClick = true
-      console.log('x: ' + x + ' y: ' + y)
+
+      const targetRect = e.currentTarget.getBoundingClientRect()
+      console.log(e.target.id)
+      const targetId = e.target.id
+      const x = e.clientX - targetRect.left
+      const y = e.clientY - targetRect.top
+      if (targetId === 'grid') {
+        const addSound: Sound = {
+          //   id: this.sounds.length + 1,
+          key: Math.floor(
+            (y - this.borderWidth) / (this.heightPerKey + 2 * this.borderWidth)
+          ),
+          delay:
+            Math.floor(
+              ((x + this.borderWidth) /
+                (this.widthPerNote + 2 * this.borderWidth)) *
+                2
+            ) / 2,
+          duration: 1
+        }
+        this.$accessor.music.addSound({
+          part: 'melody',
+          blockName: this.blockName,
+          sound: addSound
+        })
+      } else if (targetId === 'block') {
+      }
     },
     touchmove(e) {
       // 押下中だったら
       if (this.isClick) {
-        // 前回座標との差分を算出
-        // let moved_x = e.offsetX - this.prev_pos.x;
-        // let moved_y = e.offsetY - this.prev_pos.y;
-
-        // // 前回のクリック座標を更新
-        // this.prev_pos.x = e.offsetX;
-        // this.prev_pos.y = e.offsetY;
         console.log(e.clientX)
       }
     },
@@ -143,25 +176,18 @@ div#component-frame {
   height: 100%;
 }
 
-.v-select {
-  color: white;
-}
-
 .top-area {
   font-size: 80%;
   background-color: $-gray-900;
 }
 
 .guideline-area {
-  //   height: 15%;
-
   font-size: 80%;
   background-color: $-gray-800;
 }
 
 .edit-area {
   background-color: $-gray-700;
-  //   height: 544.81px;
   height: 100%;
   width: 100%;
   position: relative;
@@ -182,11 +208,6 @@ div#component-frame {
   color: $-gray-50;
 }
 
-.v-divider {
-  background-color: $-gray-500;
-  margin-top: 3px;
-}
-
 .guideline-input {
   padding: 0 0 0 10px;
   border-radius: 4px;
@@ -197,25 +218,19 @@ div#component-frame {
   padding: 0;
 }
 
-.block {
-  margin-top: 1px;
-  height: 33.5px;
-  width: 64px;
+.grid {
   border-right: 0.5px dashed $-gray-500;
 }
 
-.score-draggable {
-  display: flex;
-  margin-bottom: 1px;
+.block {
+  position: absolute;
+  background-color: $-primary-500;
 }
 .scale {
   display: flex;
   border-top: 0.5px solid $-gray-500;
 }
-.scale-text {
-  width: 55px;
-  border-right: 1px dashed $-gray-500;
-}
+
 .btn-back {
   margin: 0 0 0 auto;
 }
