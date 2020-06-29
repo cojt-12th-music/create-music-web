@@ -4,6 +4,7 @@ export interface PlayerState {
   context: AudioContext | null
   isPlaying: boolean
   isReady: boolean
+  playTime: number
   loadingProgress: number
   instruments: Instrument[]
   previewPreset: {

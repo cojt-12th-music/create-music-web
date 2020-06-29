@@ -60,6 +60,7 @@ export interface Melody {
   instrument: string
   blockNames: string[]
   gain: number
+  totalDuration: number
 }
 
 /**
@@ -71,6 +72,7 @@ export interface Chord {
   instrument: string
   blockNames: string[]
   gain: number
+  totalDuration: number
 }
 
 /**
@@ -82,6 +84,7 @@ export interface Rhythm {
   instrument: string
   blockNames: string[]
   gain: number
+  totalDuration: number
 }
 
 // 楽譜のパート

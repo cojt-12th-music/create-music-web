@@ -6,6 +6,7 @@ export const state = (): PlayerState => ({
   context: null,
   isPlaying: false,
   isReady: false,
+  playTime: 0,
   loadingProgress: 0,
   instruments: [],
   previewPreset: {
@@ -26,7 +27,7 @@ export const mutations = mutationTree(state, {
   SET_IS_PLAYING(state: PlayerState, isPlaying: boolean) {
     state.isPlaying = isPlaying
   },
-  SET_IS_READY(state: PlayerState, isReady) {
+  SET_IS_READY(state: PlayerState, isReady: boolean) {
     state.isReady = isReady
   },
   SET_LOADING_PROGRESS(state: PlayerState, progress: number) {
