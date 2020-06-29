@@ -45,7 +45,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      selection: 0
+      selection: null
     }
   },
   computed: {
