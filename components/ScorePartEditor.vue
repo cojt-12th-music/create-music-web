@@ -262,6 +262,7 @@ export default Vue.extend({
 
   .block-item-wrapper {
     margin-right: 1rem;
+    z-index: 1;
   }
 }
 

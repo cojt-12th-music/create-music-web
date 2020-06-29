@@ -46,6 +46,37 @@ export default Vue.extend({
         this.$accessor.music.setComposer(input)
       }
     }
+  },
+  methods: {
+    closeDialog(genre: string): any {
+      switch (genre) {
+        case 'rhythm':
+          this.rhythmDialog = false
+          break
+        case 'chord':
+          this.chordDialog = false
+          break
+        case 'melody':
+          this.melodyDialog = false
+          break
+      }
+    },
+    seekBarStyle(): Object {
+      const style = {
+        transform: `translateX(${this.$accessor.player.playTime}rem)`
+      }
+      if (this.$accessor.player.isPlaying) {
+        const duration = this.$accessor.music.musicDuration
+        const len = Math.floor(duration / 2) + 1
+        Object.assign(style, {
+          transform: `translateX(${len * 5}rem)`,
+          transitionProperty: 'transform',
+          transitionDuration: `${(duration * 60) / this.$accessor.music.bpm}s`,
+          transitionTimingFunction: 'linear'
+        })
+      }
+      return style
+    }
   }
 })
 </script>
@@ -81,12 +112,19 @@ div#component-frame {
   .seek-bar {
     position: absolute;
     top: 0;
-    left: calc(6rem + 1px);
+    left: calc(6rem - 2px);
     width: 2px;
     height: 100%;
     background-color: red;
     opacity: 0.5;
   }
+}
+
+.open-blocklist {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translateY(-0.5rem);
 }
 
 @include pc {
