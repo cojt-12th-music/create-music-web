@@ -109,6 +109,7 @@ export const mutations = mutationTree(state, {
     { part, blockName }: { part: ScorePart; blockName: string }
   ) {
     state[part].blockNames.push(blockName)
+    state[part].totalDuration += state.blocks[part][blockName].duration
   },
   /**
    * ブロックをブロックリストに追加する
