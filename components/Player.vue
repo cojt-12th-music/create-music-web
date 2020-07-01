@@ -143,17 +143,14 @@ export default Vue.extend({
     context(): AudioContext | null {
       return this.$accessor.player.context
     },
-    instruments(): string[] {
-      return this.$accessor.player.instruments
-    },
     melodyInstrument(): string {
-      return this.$accessor.player.instruments[1]
+      return this.$accessor.music.melodyInstrument
     },
     chordInstrument(): string {
-      return this.$accessor.player.instruments[2]
+      return this.$accessor.music.chordInstrument
     },
     rhythmInstrument(): string {
-      return this.$accessor.player.instruments[2]
+      return this.$accessor.music.rhythmInstrument
     }
   },
   watch: {
@@ -183,6 +180,15 @@ export default Vue.extend({
       .then((res) => res.json())
       .then((res) => {
         this.$accessor.player.setInstruments(res)
+        this.$accessor.music.setMelodyInstrument(
+          this.$accessor.player.instruments[1].path
+        )
+        this.$accessor.music.setChordInstrument(
+          this.$accessor.player.instruments[2].path
+        )
+        this.$accessor.music.setRhythmInstrument(
+          this.$accessor.player.instruments[2].path
+        )
       })
     fetch('/reverbs/reverbs.json')
       .then((res) => res.json())
