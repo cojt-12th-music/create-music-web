@@ -1,11 +1,11 @@
 <template>
   <div class="score-part-container">
     <div class="column-title">
-      <div class="part-title-container" @click="enabled = !enabled">
-        <v-icon large class="icon" :class="{ disabled: !enabled }">{{
+      <div class="part-title-container" @click="isMuted = !isMuted">
+        <v-icon large class="icon" :class="{ disabled: isMuted }">{{
           partIcon
         }}</v-icon>
-        <div class="part-title" :class="{ disabled: !enabled }">
+        <div class="part-title" :class="{ disabled: isMuted }">
           {{ partTitle }}
         </div>
       </div>
@@ -84,7 +84,6 @@ import RhythmModal from '@/components/rhythmModal.vue'
 import { Block, ScorePart } from '@/types/music'
 
 type DataType = {
-  enabled: boolean
   showsBlockList: boolean
   showsEditModal: boolean
   currentBlock: Block | null
@@ -106,7 +105,6 @@ export default Vue.extend({
   },
   data(): DataType {
     return {
-      enabled: true,
       showsBlockList: false,
       showsEditModal: false,
       currentBlock: null
@@ -154,6 +152,14 @@ export default Vue.extend({
         chord: 'fas fa-guitar',
         melody: 'music_note'
       }[this.part]
+    },
+    isMuted: {
+      get(): boolean {
+        return this.$accessor.player.isMuted[this.part]
+      },
+      set(isMuted: boolean) {
+        this.$accessor.player.setMuted({ part: this.part, isMuted })
+      }
     },
     blocks: {
       get(): Block[] {

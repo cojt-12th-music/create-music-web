@@ -66,8 +66,8 @@ export default Vue.extend({
         transform: `translateX(${this.$accessor.player.playTime}rem)`
       }
       if (this.$accessor.player.isPlaying) {
-        const duration = this.$accessor.music.musicDuration
-        const len = Math.floor(duration / 2) + 1
+        const duration = this.$accessor.music.musicDuration + 1
+        const len = Math.floor(duration / 2)
         Object.assign(style, {
           transform: `translateX(${len * 5}rem)`,
           transitionProperty: 'transform',
