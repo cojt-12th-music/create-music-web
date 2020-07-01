@@ -15,7 +15,80 @@ export const RHYTHM_BLOCKS: BlockHash = {
   },
   '16ビート': {
     name: '16ビート',
-    sounds: [],
+    sounds: [
+      {
+        id: 0,
+        key: 48,
+        delay: 0,
+        duration: 0.5
+      },
+      {
+        id: 0,
+        key: 48,
+        delay: 2,
+        duration: 0.5
+      },
+      {
+        id: 0,
+        key: 51,
+        delay: 1,
+        duration: 0.5
+      },
+      {
+        id: 0,
+        key: 51,
+        delay: 3,
+        duration: 0.5
+      },
+      {
+        id: 0,
+        key: 57,
+        delay: 0,
+        duration: 0.5
+      },
+      {
+        id: 0,
+        key: 57,
+        delay: 0.5,
+        duration: 0.5
+      },
+      {
+        id: 0,
+        key: 57,
+        delay: 1,
+        duration: 0.5
+      },
+      {
+        id: 0,
+        key: 57,
+        delay: 1.5,
+        duration: 0.5
+      },
+      {
+        id: 0,
+        key: 57,
+        delay: 2,
+        duration: 0.5
+      },
+      {
+        id: 0,
+        key: 57,
+        delay: 2.5,
+        duration: 0.5
+      },
+      {
+        id: 0,
+        key: 57,
+        delay: 3,
+        duration: 0.5
+      },
+      {
+        id: 0,
+        key: 57,
+        delay: 3.5,
+        duration: 0.5
+      }
+    ],
     duration: 2,
     category: 'わくわくさん系'
   }

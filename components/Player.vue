@@ -187,7 +187,7 @@ export default Vue.extend({
           this.$accessor.player.instruments[2].path
         )
         this.$accessor.music.setRhythmInstrument(
-          this.$accessor.player.instruments[2].path
+          this.$accessor.player.instruments[0].path
         )
       })
     fetch('/reverbs/reverbs.json')
