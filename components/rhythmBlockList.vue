@@ -80,8 +80,7 @@ export default Vue.extend({
         console.log('選択状態: ' + this.selection)
         this.$accessor.music.cloneBlock({
           part: 'rhythm',
-          blockName: this.selectedBlockName,
-          index: this.$accessor.music.rhythm.blockNames.length + 1
+          blockName: this.selectedBlockName
         })
       }
     },

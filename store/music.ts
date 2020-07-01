@@ -79,13 +79,9 @@ export const mutations = mutationTree(state, {
    */
   CLONE_BLOCK(
     state: MusicState,
-    {
-      part,
-      blockName,
-      index
-    }: { part: ScorePart; blockName: string; index: number }
+    { part, blockName }: { part: ScorePart; blockName: string }
   ) {
-    state[part].blockNames.splice(index, 0, blockName)
+    state[part].blockNames.push(blockName)
   },
   /**
    * ブロックをブロックリストに追加する
@@ -212,13 +208,9 @@ export const actions = actionTree(
      */
     cloneBlock(
       { commit },
-      {
-        part,
-        blockName,
-        index
-      }: { part: ScorePart; blockName: string; index: number }
+      { part, blockName }: { part: ScorePart; blockName: string }
     ) {
-      commit('CLONE_BLOCK', { part, blockName, index })
+      commit('CLONE_BLOCK', { part, blockName })
     },
     /**
      * ブロックをブロックリストに追加する
