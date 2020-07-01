@@ -45,7 +45,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      selection: 0
+      selection: null
     }
   },
   computed: {
@@ -57,6 +57,17 @@ export default Vue.extend({
         acc[cur.category].push(cur)
         return acc
       }, {} as BlockGroup)
+    }
+  },
+  watch: {
+    async selection(newIndex: number) {
+      if (newIndex === undefined) return
+      this.$accessor.player.stopPresetPreview()
+      await this.$nextTick()
+      this.$accessor.player.playPresetPreview({
+        part: 'melody',
+        name: 'メロ1'
+      })
     }
   }
 })
