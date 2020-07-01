@@ -69,9 +69,16 @@
 
       <!-- 再生エリア -->
       <v-card-title class="play-area">
-        <v-btn icon dark>
-          <v-icon color="#F96500" large>play_arrow</v-icon>
-        </v-btn>
+        <div v-if="isPlaying">
+          <v-btn icon @click="isPlaying = false">
+            <v-icon size="400%" color="#F96500">mdi-stop</v-icon>
+          </v-btn>
+        </div>
+        <div v-else>
+          <v-btn icon @click="isPlaying = true">
+            <v-icon size="400%" color="#F96500">mdi-play</v-icon>
+          </v-btn>
+        </div>
       </v-card-title>
     </v-card>
   </div>
@@ -98,6 +105,7 @@ export default Vue.extend({
       ],
       isClick: false,
       isDurationChanged: false,
+      isPlaying: false,
       widthPerNote: 50,
       heightPerKey: 20,
       keys: [...Array(100).keys()].map(() => true),
@@ -120,6 +128,18 @@ export default Vue.extend({
     melodyPresets: {
       get(): BlockHash {
         return this.$accessor.music.blocks.melody
+      }
+    }
+  },
+  watch: {
+    async isPlaying() {
+      if (this.isPlaying) {
+        this.$accessor.player.stopPresetPreview()
+        await this.$nextTick()
+        this.$accessor.player.playPresetPreview({
+          part: 'melody',
+          name: 'メロ1'
+        })
       }
     }
   },
