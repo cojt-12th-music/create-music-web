@@ -2,7 +2,7 @@
   <div id="component-frame">
     <v-card class="mx-auto">
       <v-card-title>
-        <p>コードの選択</p>
+        <p>コードの追加</p>
       </v-card-title>
 
       <v-chip-group v-model="selection" column>
@@ -17,6 +17,7 @@
             :key="category + index"
             label
             large
+            @click="setSelectedBlockName(block)"
           >
             <block-item :block="block" />
           </v-chip>
@@ -24,7 +25,7 @@
       </v-chip-group>
 
       <v-card-actions>
-        <v-btn block class="white--text " color="#F96500">
+        <v-btn block class="white--text " color="#F96500" @click="addBlock">
           Add to Score
         </v-btn>
       </v-card-actions>
@@ -45,7 +46,8 @@ export default Vue.extend({
   },
   data() {
     return {
-      selection: null
+      selection: undefined,
+      selectedBlockName: ''
     }
   },
   computed: {
@@ -68,6 +70,23 @@ export default Vue.extend({
         part: 'melody',
         name: 'メロ1'
       })
+    }
+  },
+  methods: {
+    addBlock() {
+      if (this.selection === undefined) {
+        console.log('未選択')
+      } else {
+        console.log('選択状態: ' + this.selection)
+        this.$accessor.music.cloneBlock({
+          part: 'chord',
+          blockName: this.selectedBlockName,
+          index: this.$accessor.music.rhythm.blockNames.length + 1
+        })
+      }
+    },
+    setSelectedBlockName(block: Block) {
+      this.selectedBlockName = block.name
     }
   }
 })

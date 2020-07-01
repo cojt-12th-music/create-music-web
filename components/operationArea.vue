@@ -43,7 +43,7 @@
           <v-list-item>
             <v-row>
               <v-col>
-                <div class="textColoring">BPM</div>
+                <div class="textColoring">BPM (60 ~ 180)</div>
                 <v-slider
                   v-model="bpm"
                   class="align-center"
@@ -69,7 +69,7 @@
           <v-list-item>
             <v-row>
               <v-col>
-                <div class="textColoring">リズムの音量</div>
+                <div class="textColoring">リズムの音量 (0 ~ 100)</div>
                 <v-slider
                   v-model="rhythmVolume"
                   class="align-center"
@@ -95,7 +95,7 @@
           <v-list-item>
             <v-row>
               <v-col>
-                <div class="textColoring">コードの音量</div>
+                <div class="textColoring">コードの音量 (0 ~ 100)</div>
                 <v-slider
                   v-model="chordVolume"
                   class="align-center"
