@@ -32,7 +32,7 @@
         class="edit-area"
         @mousedown="touchstart($event)"
         @mousemove="touchmove($event)"
-        @mouseup="touchend()"
+        @mouseup="touchend($event)"
       >
         <div v-for="(key, index) in keys" :key="index" class="scale">
           <div
@@ -62,6 +62,7 @@
                 'px',
               width: sound.duration * widthPerNote + 'px'
             }"
+            @click="setId(sound.id)"
           ></div>
         </div>
       </v-card>
@@ -79,7 +80,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import { BlockHash, Sound } from '../types/music'
-// import MelodyModalBlock from '@/components/melodyModalBlock.vue'
 
 export default Vue.extend({
   components: {},
@@ -97,10 +97,14 @@ export default Vue.extend({
         { text: 'お洒落' }
       ],
       isClick: false,
+      isDurationChanged: false,
       widthPerNote: 50,
       heightPerKey: 20,
       keys: [...Array(100).keys()].map(() => true),
-      borderWidth: 0.5
+      borderWidth: 0.5,
+      selectedBlockId: 1,
+      selectedBlockType: '',
+      leftPos: 0
     }
   },
   computed: {
@@ -117,54 +121,98 @@ export default Vue.extend({
       get(): BlockHash {
         return this.$accessor.music.blocks.melody
       }
-      //   set(blockNames: string, sound: Sound) {
-      //     this.$accessor.music.updateSound({ part: 'melody', blockNames, sound })
-      //   }
     }
   },
   methods: {
     dialog() {
       this.$emit('dialog', false)
     },
+    setId(id: number) {
+      this.selectedBlockId = id
+      console.log('setid' + this.selectedBlockId)
+    },
     touchstart(e) {
       this.isClick = true
 
-      const targetRect = e.currentTarget.getBoundingClientRect()
-      console.log(e.target.id)
-      const targetId = e.target.id
-      const x = e.clientX - targetRect.left
-      const y = e.clientY - targetRect.top
-      if (targetId === 'grid') {
-        const addSound: Sound = {
-          //   id: this.sounds.length + 1,
-          key: Math.floor(
-            (y - this.borderWidth) / (this.heightPerKey + 2 * this.borderWidth)
-          ),
-          delay:
-            Math.floor(
-              ((x + this.borderWidth) /
-                (this.widthPerNote + 2 * this.borderWidth)) *
-                2
-            ) / 2,
-          duration: 1
-        }
-        this.$accessor.music.addSound({
-          part: 'melody',
-          blockName: this.blockName,
-          sound: addSound
-        })
-      } else if (targetId === 'block') {
-      }
+      this.selectedBlockType = e.target.id
+      this.leftPos = e.clientX - e.offsetX
     },
     touchmove(e) {
       // 押下中だったら
       if (this.isClick) {
-        console.log(e.clientX)
+        const x = e.clientX
+
+        // duration更新
+        if (this.selectedBlockType === 'block') {
+          this.isDurationChanged = true
+          const updSound: Sound = {
+            id: this.selectedBlockId,
+            key: this.sounds[0].key,
+            delay: this.sounds[0].delay,
+            duration: (x - this.leftPos) / this.widthPerNote
+          }
+          this.$accessor.music.updateSound({
+            part: 'melody',
+            blockName: this.blockName,
+            sound: updSound
+          })
+        }
       }
     },
-    touchend() {
+    touchend(e) {
       if (this.isClick) {
+        // blockがなければ追加する
+        if (this.selectedBlockType === 'grid') {
+          const x = e.clientX
+          const y = e.clientY - e.currentTarget.getBoundingClientRect().top
+
+          const addSound: Sound = {
+            key: Math.floor(
+              (y - this.borderWidth) /
+                (this.heightPerKey + 2 * this.borderWidth)
+            ),
+            delay:
+              Math.floor(
+                ((x + this.borderWidth) /
+                  (this.widthPerNote + 2 * this.borderWidth)) *
+                  2
+              ) / 2,
+            duration: 1
+          }
+          this.$accessor.music.addSound({
+            part: 'melody',
+            blockName: this.blockName,
+            sound: addSound
+          })
+        }
+        // blockがあれば削除する
+        else if (
+          this.selectedBlockType === 'block' &&
+          !this.isDurationChanged
+        ) {
+          this.$accessor.music.deleteSound({
+            part: 'melody',
+            blockName: this.blockName,
+            soundId: 1
+          })
+          // idの更新
+          for (let i = 0; i < this.sounds.length; i++) {
+            const updSound: Sound = {
+              id: this.sounds[i].id - 1,
+              key: this.sounds[i].key,
+              delay: this.sounds[i].delay,
+              duration: this.sounds[i].duration
+            }
+            this.$accessor.music.updateSound({
+              part: 'melody',
+              blockName: this.blockName,
+              sound: updSound
+            })
+          }
+        }
+
         this.isClick = false
+        this.isDurationChanged = false
       }
     }
   }

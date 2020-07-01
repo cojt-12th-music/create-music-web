@@ -114,6 +114,21 @@ export const mutations = mutationTree(state, {
     state.blocks[part][blockName].sounds.push(sound)
   },
   /**
+   * ブロックのsoundを削除する
+   * @param blockName 削除するブロックの名前
+   * @param soundId 削除するsoundのId
+   */
+  DELETE_SOUND(
+    state: MusicState,
+    {
+      part,
+      blockName,
+      soundId
+    }: { part: ScorePart; blockName: string; soundId: number }
+  ) {
+    state.blocks[part][blockName].sounds.splice(soundId - 1, 1)
+  },
+  /**
    * ブロックのsoundを変更する
    * @param blockName 変更する音が存在しているブロックの名前
    * @param sound 変更後のsound
@@ -236,6 +251,21 @@ export const actions = actionTree(
       }: { part: ScorePart; blockName: string; sound: Sound }
     ) {
       commit('ADD_SOUND', { part, blockName, sound })
+    },
+    /**
+     * ブロックのsoundを削除する
+     * @param blockName 削除するブロックの名前
+     * @param soundId 削除するsoundのId
+     */
+    deleteSound(
+      { commit },
+      {
+        part,
+        blockName,
+        soundId
+      }: { part: ScorePart; blockName: string; soundId: number }
+    ) {
+      commit('DELETE_SOUND', { part, blockName, soundId })
     },
     /**
      * ブロックのsoundを変更する
