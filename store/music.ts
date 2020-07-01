@@ -235,6 +235,7 @@ export const actions = actionTree(
     ) {
       const block = JSON.parse(JSON.stringify(state.blocks[part][blockName]))
       block.name = `${block.name}'`
+      block.category = 'マイブロック'
       commit('ADD_BLOCK_TO_LIST', { part, block })
     },
     /**
