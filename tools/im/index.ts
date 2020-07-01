@@ -45,10 +45,15 @@ export async function main() {
     })
   )
 
-  const jsfzs = dir(
-    path.resolve(__dirname, './instruments'),
-    '.jsfz'
-  ).map((p) => path.relative(__dirname, p).replace(/\\/g, '/'))
+  const jsfzs = dir(path.resolve(__dirname, './instruments'), '.jsfz').map(
+    (p) => ({
+      name: fs.readFileSync(
+        `${path.dirname(p)}/${path.basename(p, '.jsfz')}__name.txt`,
+        'utf-8'
+      ),
+      path: path.relative(__dirname, p).replace(/\\/g, '/')
+    })
+  )
 
   await fs.writeFile(
     path.resolve(__dirname, './instruments/instruments.json'),
