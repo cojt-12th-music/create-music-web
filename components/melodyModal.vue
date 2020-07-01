@@ -30,9 +30,9 @@
       <v-card
         id="edit-area"
         class="edit-area"
-        @mousedown="touchstart($event)"
-        @mousemove="touchmove($event)"
-        @mouseup="touchend($event)"
+        @mousedown="touchStart($event)"
+        @mousemove="touchMoveInEdit($event)"
+        @mouseup="touchEndInEdit()"
       >
         <div v-for="(key, index) in keys" :key="index" class="scale">
           <div
@@ -62,7 +62,9 @@
                 'px',
               width: sound.duration * widthPerNote + 'px'
             }"
-            @click="setId(sound.id)"
+            @mousedown="touchStart($event)"
+            @mousemove="touchMoveInBlock($event, sound.id)"
+            @mouseup="touchEndInBlock($event, sound.id)"
           ></div>
         </div>
       </v-card>
@@ -116,12 +118,6 @@ export default Vue.extend({
     }
   },
   computed: {
-    dragOptions() {
-      return {
-        // animation: 300,
-        disabled: false
-      }
-    },
     sounds(): Sound[] {
       return this.melodyPresets[this.blockName].sounds
     },
@@ -147,93 +143,99 @@ export default Vue.extend({
     dialog() {
       this.$emit('dialog', false)
     },
-    setId(id: number) {
-      this.selectedBlockId = id
-      console.log('setid' + this.selectedBlockId)
+    addSound(x: number, y: number) {
+      const addSound: Sound = {
+        key: Math.floor(
+          (y - this.borderWidth) / (this.heightPerKey + 2 * this.borderWidth)
+        ),
+        delay:
+          Math.floor(
+            ((x + this.borderWidth) /
+              (this.widthPerNote + 2 * this.borderWidth)) *
+              2
+          ) / 2,
+        duration: 1
+      }
+      this.$accessor.music.addSound({
+        part: 'melody',
+        blockName: this.blockName,
+        sound: addSound
+      })
     },
-    touchstart(e) {
+    updateDuration(x: number) {
+      this.isDurationChanged = true
+      const updSound: Sound = {
+        id: this.selectedBlockId,
+        key: this.sounds[this.selectedBlockId - 1].key,
+        delay: this.sounds[this.selectedBlockId - 1].delay,
+        duration: (x - this.leftPos) / this.widthPerNote
+      }
+      this.$accessor.music.updateSound({
+        part: 'melody',
+        blockName: this.blockName,
+        sound: updSound
+      })
+    },
+    deleteSound(blockId: number) {
+      this.$accessor.music.deleteSound({
+        part: 'melody',
+        blockName: this.blockName,
+        soundId: blockId
+      })
+      // idの更新
+      for (let i = blockId - 1; i < this.sounds.length; i++) {
+        const updSound: Sound = {
+          id: this.sounds[i].id - 1,
+          key: this.sounds[i].key,
+          delay: this.sounds[i].delay,
+          duration: this.sounds[i].duration
+        }
+        this.$accessor.music.updateSound({
+          part: 'melody',
+          blockName: this.blockName,
+          sound: updSound
+        })
+      }
+    },
+    touchStart(e) {
       this.isClick = true
 
       this.selectedBlockType = e.target.id
       this.leftPos = e.clientX - e.offsetX
+
+      if (this.selectedBlockType === 'grid') {
+        this.addSound(
+          e.clientX,
+          e.clientY - e.currentTarget.getBoundingClientRect().top
+        )
+      }
     },
-    touchmove(e) {
+    touchMoveInEdit(e) {
       // 押下中だったら
-      if (this.isClick) {
-        const x = e.clientX
-
+      if (this.isClick && this.selectedBlockType === 'block') {
         // duration更新
-        if (this.selectedBlockType === 'block') {
-          this.isDurationChanged = true
-          const updSound: Sound = {
-            id: this.selectedBlockId,
-            key: this.sounds[0].key,
-            delay: this.sounds[0].delay,
-            duration: (x - this.leftPos) / this.widthPerNote
-          }
-          this.$accessor.music.updateSound({
-            part: 'melody',
-            blockName: this.blockName,
-            sound: updSound
-          })
-        }
+        this.updateDuration(e.clientX)
       }
     },
-    touchend(e) {
-      if (this.isClick) {
-        // blockがなければ追加する
-        if (this.selectedBlockType === 'grid') {
-          const x = e.clientX
-          const y = e.clientY - e.currentTarget.getBoundingClientRect().top
-
-          const addSound: Sound = {
-            key: Math.floor(
-              (y - this.borderWidth) /
-                (this.heightPerKey + 2 * this.borderWidth)
-            ),
-            delay:
-              Math.floor(
-                ((x + this.borderWidth) /
-                  (this.widthPerNote + 2 * this.borderWidth)) *
-                  2
-              ) / 2,
-            duration: 1
-          }
-          this.$accessor.music.addSound({
-            part: 'melody',
-            blockName: this.blockName,
-            sound: addSound
-          })
-        }
-        // blockがあれば削除する
-        else if (
-          this.selectedBlockType === 'block' &&
-          !this.isDurationChanged
-        ) {
-          this.$accessor.music.deleteSound({
-            part: 'melody',
-            blockName: this.blockName,
-            soundId: 1
-          })
-          // idの更新
-          for (let i = 0; i < this.sounds.length; i++) {
-            const updSound: Sound = {
-              id: this.sounds[i].id - 1,
-              key: this.sounds[i].key,
-              delay: this.sounds[i].delay,
-              duration: this.sounds[i].duration
-            }
-            this.$accessor.music.updateSound({
-              part: 'melody',
-              blockName: this.blockName,
-              sound: updSound
-            })
-          }
-        }
-
-        this.isClick = false
-        this.isDurationChanged = false
+    touchMoveInBlock(e, blockId: number) {
+      if (this.isClick && this.selectedBlockType === 'block') {
+        // duration更新
+        this.selectedBlockId = blockId
+        this.updateDuration(e.clientX)
       }
+    },
+    touchEndInEdit() {
+      this.isClick = false
+      this.isDurationChanged = false
+    },
+    touchEndInBlock(blockId: number) {
+      if (this.isClick) {
+        // blockがあれば削除する
+        if (this.selectedBlockType === 'block' && !this.isDurationChanged) {
+          this.deleteSound(blockId)
+        }
+      }
+      this.touchEndInEdit()
     }
   }
 })
