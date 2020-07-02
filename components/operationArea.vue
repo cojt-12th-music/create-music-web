@@ -304,6 +304,11 @@ export default Vue.extend({
     init() {
       this.initialized = false
       this.$accessor.player.setContext(new AudioContext())
+
+      // リズムの音を試すための仮コード
+      // this.$accessor.music.setRhythmInstrument("instruments/ColomboADK-FreePats-SFZ-20200530/ColomboADK-FreePats-20200530.jsfz")
+      // this.$accessor.music.setMelodyInstrument("instruments/UprightPianoKW-SFZ-20190703/UprightPianoKW-20190703.jsfz")
+      // this.$accessor.music.setChordInstrument("instruments/SpanishClassicalGuitar-SFZ-20190618/SpanishClassicalGuitar-20190618.jsfz")
     },
     // リズムの楽器選択
     selectRhythmInst() {
