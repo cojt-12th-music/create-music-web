@@ -30,6 +30,15 @@
         </v-btn>
       </v-card-actions>
     </v-card>
+
+    <v-dialog v-model="attention">
+      <v-card>
+        <v-card-actions>
+          <v-card-title>注意</v-card-title>
+          <v-card-text>ブロックを選択しろや</v-card-text>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -47,7 +56,8 @@ export default Vue.extend({
   data() {
     return {
       selection: undefined,
-      selectedBlockName: ''
+      selectedBlockName: '',
+      attention: false
     }
   },
   computed: {
@@ -76,6 +86,7 @@ export default Vue.extend({
     addBlock() {
       if (this.selection === undefined) {
         console.log('未選択')
+        this.attention = true
       } else {
         console.log('選択状態: ' + this.selection)
         this.$accessor.music.cloneBlock({
