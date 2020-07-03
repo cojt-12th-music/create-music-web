@@ -8,14 +8,12 @@
           </v-btn>
         </v-col>
         <v-col align-self="center">
-          <div id="play-button" class="iconCenter">
-            <div v-if="isPlaying">
-              <v-btn :disabled="!isReady" icon @click="stop">
+          <div class="iconCenter">
+            <div id="play-button" class="play-button-container">
+              <v-btn v-if="isPlaying" :disabled="!isReady" icon @click="stop">
                 <v-icon size="400%" color="#F96500">mdi-stop</v-icon>
               </v-btn>
-            </div>
-            <div v-else>
-              <v-btn :disabled="!isReady" icon @click="play">
+              <v-btn v-else :disabled="!isReady" icon @click="play">
                 <v-icon size="400%" color="#F96500">mdi-play</v-icon>
               </v-btn>
             </div>
@@ -384,6 +382,10 @@ div#component-frame {
 }
 div.iconCenter {
   text-align: center;
+
+  .play-button-container {
+    width: max-content;
+  }
 }
 div.iconRight {
   text-align: right;

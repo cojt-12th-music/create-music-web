@@ -1,10 +1,14 @@
 <template>
   <div :id="`${part}-score`" class="score-part-container">
     <div class="column-title">
-      <div class="part-title-container" @click="isMute = !isMute">
-        <v-icon large class="icon" :class="{ disabled: isMute }">{{
-          partIcon
-        }}</v-icon>
+      <div
+        :id="`${part}-header`"
+        class="part-title-container"
+        @click="isMute = !isMute"
+      >
+        <v-icon large class="icon" :class="{ disabled: isMute }">
+          {{ partIcon }}
+        </v-icon>
         <div class="part-title" :class="{ disabled: isMute }">
           {{ partTitle }}
         </div>
