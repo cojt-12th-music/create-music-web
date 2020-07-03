@@ -3,7 +3,7 @@
     <v-container>
       <v-row justify="center">
         <v-col>
-          <v-btn icon @click="config">
+          <v-btn id="menu-button" icon @click="config">
             <v-icon size="300%" color="#F96500">mdi-menu</v-icon>
           </v-btn>
         </v-col>
@@ -22,7 +22,7 @@
           </div>
         </v-col>
         <v-col align-self="center">
-          <div class="iconRight">
+          <div id="share-button" class="iconRight">
             <a
               id="shareTag"
               href="https://twitter.com/intent/tweet?url=http://localhost:3000/ &text=音楽を作ってみました♪"

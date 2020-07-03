@@ -1,5 +1,5 @@
 <template>
-  <div class="score-part-container">
+  <div :id="`${part}-score`" class="score-part-container">
     <div class="column-title">
       <div class="part-title-container" @click="isMute = !isMute">
         <v-icon large class="icon" :class="{ disabled: isMute }">{{
@@ -37,9 +37,10 @@
       </draggable>
       <div class="button-wrapper">
         <v-icon
+          :id="`${part}-plus-button`"
           x-large
           class="dialog-button"
-          @click.stop="showsBlockList = true"
+          @click.stop="showDialog()"
         >
           mdi-plus-circle-outline
         </v-icon>

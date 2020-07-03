@@ -1,5 +1,5 @@
 <template>
-  <div id="component-frame">
+  <div id="chord-block-list">
     <v-card class="mx-auto">
       <v-card-title>
         <p>コードの追加</p>
@@ -124,6 +124,9 @@ export default Vue.extend({
   }
 }
 div#component-frame {
+  height: 100%;
+}
+#chord-block-list {
   height: 100%;
 }
 .v-card__text {
