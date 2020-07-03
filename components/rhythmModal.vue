@@ -9,34 +9,9 @@
         </v-btn>
       </v-card-title>
 
-      <!-- 曲調選択 -->
-      <v-card-title class="guideline-area">
-        <v-row align="center">
-          <v-col class="d-flex" cols="3" sm="1">ガイドライン</v-col>
-          <v-col class="d-flex" cols="5" sm="2">
-            <select v-model="selected" class="guideline-input">
-              <option
-                v-for="item in guideLines"
-                :key="item.text"
-                :value="item.value"
-                >{{ item.text }}
-              </option>
-            </select>
-          </v-col>
-        </v-row>
-      </v-card-title>
-
       <!-- 編集エリア -->
       <v-card class="edit-area">
-        <div v-for="text in scale" :key="text" class="scale">
-          <div class="scale-text">{{ text }}</div>
-          <!-- <draggable v-model="melodyBlocks" class="score-draggable" v-bind="dragOptions">
-            <div v-for="n in 5" :key="n" class="block">
-              <melody-modal-block />
-            </div>
-          </draggable>-->
-          <div v-for="n in 5" :key="n" class="block"></div>
-        </div>
+        <rhythmEditor v-for="i in instrument_keys" :key="i" :drum-key="i" />
       </v-card>
 
       <!-- 再生エリア -->
@@ -51,47 +26,31 @@
 
 <script lang="ts">
 import Vue from 'vue'
-// import draggable from 'vuedraggable'
-// import MelodyModalBlock from '@/components/melodyModalBlock.vue'
+import rhythmEditor from '@/components/rhythmEditor.vue'
 
 export default Vue.extend({
   components: {
-    // MelodyModalBlock,
-    // draggable
+    rhythmEditor
   },
   data() {
     return {
-      selected: [],
-      guideLines: [
-        { text: '明るい', value: ['ド#', 'レ#', 'ファ#', 'ソ#', 'ラ#'] },
-        { text: '悲しい' },
-        { text: 'お洒落' }
-      ],
-      scale: [
-        'ド',
-        'ド#',
-        'レ',
-        'レ#',
-        'ミ',
-        'ファ',
-        'ファ#',
-        'ソ',
-        'ソ#',
-        'ラ',
-        'ラ#',
-        'シ'
-      ],
-      isClick: false
+      // 一時的なサンプルデータ
+      ドラム1: {
+        name: 'ドラム1',
+        sounds: [
+          { id: 1, key: 48, delay: 0.0, duration: 0.5 },
+          { id: 2, key: 60, delay: 0.5, duration: 0.5 },
+          { id: 3, key: 64, delay: 1.0, duration: 0.5 },
+          { id: 4, key: 60, delay: 1.5, duration: 0.5 },
+          { id: 5, key: 64, delay: 2.0, duration: 0.5 },
+          { id: 6, key: 60, delay: 2.5, duration: 0.5 }
+        ],
+        duration: 4
+      },
+      instrument_keys: [48, 60, 64] // ドラムの種類（キー）(上のサンプルデータからこの配列を作ってもいいと思う)
     }
   },
-  computed: {
-    dragOptions() {
-      return {
-        // animation: 300,
-        disabled: false
-      }
-    }
-  },
+  computed: {},
   methods: {
     dialog() {
       this.$emit('dialog', false)
@@ -114,20 +73,6 @@ div#component-frame {
   background-color: $-gray-900;
 }
 
-.guideline-area {
-  //   height: 15%;
-
-  font-size: 80%;
-  background-color: $-gray-800;
-}
-
-.edit-area {
-  background-color: $-gray-700;
-  //   height: 544.81px;
-  height: 100%;
-  width: 100%;
-}
-
 .play-area {
   background-color: $-gray-900;
   position: fixed;
@@ -143,38 +88,18 @@ div#component-frame {
   color: $-gray-50;
 }
 
-.v-divider {
-  background-color: $-gray-500;
-  margin-top: 3px;
-}
+.edit-area {
+  background-color: $-gray-800;
+  height: 100vh;
+  overflow: scroll;
 
-.guideline-input {
-  padding: 0 0 0 10px;
-  border-radius: 4px;
-  border: 1px solid $-primary-500;
-  width: 100%;
-}
-.d-flex {
-  padding: 0;
-}
-
-.block {
-  margin-top: 1px;
-  height: 33.5px;
-  width: 64px;
-  border-right: 0.5px dashed $-gray-500;
-}
-
-.score-draggable {
-  display: flex;
-  margin-bottom: 1px;
-}
-.scale {
-  display: flex;
-  border-top: 0.5px solid $-gray-500;
-}
-.scale-text {
-  width: 55px;
-  border-right: 1px dashed $-gray-500;
+  // for IE, Edge
+  -ms-overflow-style: none;
+  // for Firefox
+  scrollbar-width: none;
+  // for Chrome, Safari
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 </style>
