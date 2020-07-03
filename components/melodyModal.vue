@@ -64,7 +64,7 @@
             }"
             @mousedown="touchStart($event)"
             @mousemove="touchMoveInBlock($event, sound.id)"
-            @mouseup="touchEndInBlock($event, sound.id)"
+            @mouseup="touchEndInBlock(sound.id)"
           ></div>
         </div>
       </v-card>
