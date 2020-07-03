@@ -15,13 +15,13 @@
 
         <div class="open-blocklist">
           <v-dialog v-model="rhythmDialog">
-            <RhythmBlockList />
+            <RhythmBlockList @clickAddBlock="closeDialog" />
           </v-dialog>
           <v-dialog v-model="chordDialog">
-            <ChordBlockList />
+            <ChordBlockList @clickAddBlock="closeDialog" />
           </v-dialog>
           <v-dialog v-model="melodyDialog">
-            <MelodyBlockList />
+            <MelodyBlockList @clickAddBlock="closeDialog" />
           </v-dialog>
         </div>
       </div>
@@ -57,6 +57,21 @@ export default Vue.extend({
     },
     scoreComposer(): string {
       return this.$accessor.music.composer
+    }
+  },
+  methods: {
+    closeDialog(genre: string): any {
+      switch (genre) {
+        case 'rhythm':
+          this.rhythmDialog = false
+          break
+        case 'chord':
+          this.chordDialog = false
+          break
+        case 'melody':
+          this.melodyDialog = false
+          break
+      }
     }
   }
 })

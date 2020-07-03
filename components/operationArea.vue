@@ -3,9 +3,6 @@
     <v-container>
       <v-row justify="center">
         <v-col>
-          <v-btn @click="init">初期化</v-btn>
-        </v-col>
-        <v-col>
           <v-btn icon @click="config">
             <v-icon size="300%" color="#F96500">mdi-menu</v-icon>
           </v-btn>
@@ -46,7 +43,7 @@
           <v-list-item>
             <v-row>
               <v-col>
-                <div class="textColoring">BPM</div>
+                <div class="textColoring">BPM (60 ~ 180)</div>
                 <v-slider
                   v-model="bpm"
                   class="align-center"
@@ -70,27 +67,9 @@
             </v-row>
           </v-list-item>
           <v-list-item>
-            <v-select
-              v-model="selectedTimbre"
-              :items="timbre"
-              label="音色"
-              dark
-              @change="selectTimbre"
-            ></v-select>
-          </v-list-item>
-          <v-list-item>
-            <v-select
-              v-model="selectedColorThema"
-              :items="colorThema"
-              label="色のテーマ"
-              dark
-              @change="selectColorThema"
-            ></v-select>
-          </v-list-item>
-          <v-list-item>
             <v-row>
               <v-col>
-                <div class="textColoring">リズムの音量</div>
+                <div class="textColoring">リズムの音量 (0 ~ 100)</div>
                 <v-slider
                   v-model="rhythmVolume"
                   class="align-center"
@@ -116,7 +95,7 @@
           <v-list-item>
             <v-row>
               <v-col>
-                <div class="textColoring">コードの音量</div>
+                <div class="textColoring">コードの音量 (0 ~ 100)</div>
                 <v-slider
                   v-model="chordVolume"
                   class="align-center"
@@ -165,12 +144,54 @@
               </v-col>
             </v-row>
           </v-list-item>
+          <v-list-item>
+            <v-select
+              v-model="selectedRhythmInst"
+              :items="rhythmInstruments[0]"
+              label="リズムの楽器"
+              dark
+              @change="selectRhythmInst"
+            ></v-select>
+          </v-list-item>
+          <v-list-item>
+            <v-select
+              v-model="selectedChordInst"
+              :items="chordInstruments[0]"
+              label="コードの楽器"
+              dark
+              @change="selectChordInst"
+            ></v-select>
+          </v-list-item>
+          <v-list-item>
+            <v-select
+              v-model="selectedMelodyInst"
+              :items="melodyInstruments[0]"
+              label="メロディの楽器"
+              dark
+              @change="selectMelodyInst"
+            ></v-select>
+          </v-list-item>
+          <v-list-item>
+            <v-select
+              v-model="selectedColorThema"
+              :items="colorThema"
+              label="色のテーマ"
+              dark
+              @change="selectColorThema"
+            ></v-select>
+          </v-list-item>
         </v-list>
-        <!-- <v-card-actions>
-          <v-btn @click="configDialog = false">
-            閉じる
-          </v-btn>
-        </v-card-actions> -->
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="initialized" persistent>
+      <v-card color="#0A0A0A">
+        <v-card-title class="justify-center">
+          <div class="textColoring">音楽を作ってみましょう♪</div>
+        </v-card-title>
+        <div class="iconCenter pa-2">
+          <v-btn @click="init">始める！</v-btn>
+        </div>
       </v-card>
     </v-dialog>
   </div>
@@ -180,11 +201,19 @@
 import Vue from 'vue'
 
 type DataType = {
+  // 初めのinitモーダル
+  initialized: boolean
   // ナビゲーションドロワーの展開用
   configDialog: boolean
-  // 音色選択用
-  timbre: string[]
-  selectedTimbre: string
+  // リズムの楽器選択用
+  rhythmInstruments: string[][]
+  selectedRhythmInst: string
+  // コードの楽器選択用
+  chordInstruments: string[][]
+  selectedChordInst: string
+  // メロディの楽器選択用
+  melodyInstruments: string[][]
+  selectedMelodyInst: string
   // 色のテーマ用
   colorThema: string[]
   selectedColorThema: string
@@ -199,9 +228,27 @@ type DataType = {
 export default Vue.extend({
   data(): DataType {
     return {
+      initialized: true,
       configDialog: false,
-      timbre: ['クラシックギター', 'エレキギター', 'ピアノ'],
-      selectedTimbre: 'クラシックギター',
+      rhythmInstruments: [
+        ['ドラム1', 'ドラム2', 'ドラム3'],
+        ['dram1path', 'drum2path', 'drum3path']
+      ],
+      selectedRhythmInst: 'ドラム1',
+      chordInstruments: [
+        ['ベース1', 'ベース2', 'ベース3'],
+        ['base1path', 'base2path', 'base3path']
+      ],
+      selectedChordInst: 'ベース1',
+      melodyInstruments: [
+        ['クラシックギター', 'エレキギター', 'ピアノ'],
+        [
+          'instruments/SpanishClassicalGuitar-SFZ-20190618/SpanishClassicalGuitar-20190618.jsfz',
+          'instruments/FSFT-EGuitarDistorted-SFZ-20200321/FSFT-EGuitarDistorted-20200321.jsfz',
+          'instruments/UprightPianoKW-SFZ-20190703/UprightPianoKW-20190703.jsfz'
+        ]
+      ],
+      selectedMelodyInst: 'クラシックギター',
       colorThema: ['ダークモード', 'ライトモード'],
       selectedColorThema: 'ダークモード',
       bpm: 100,
@@ -249,43 +296,51 @@ export default Vue.extend({
     config() {
       this.configDialog = true
     },
+    // シェアボタンの動作
     share() {
       alert('仮')
     },
+    // 初めの初期化（コンテキスト生成）
     init() {
+      this.initialized = false
       this.$accessor.player.setContext(new AudioContext())
     },
-    // 音色選択
-    selectTimbre() {
-      // 現在はメロディのみ変更可能
-      // storeの引数はstring[],[1]はメロディ，[2]はコードとリズム(player.vue参照)
-      let timbres = ['']
+    // リズムの楽器選択
+    selectRhythmInst() {
+      let inst = ''
 
-      switch (this.selectedTimbre) {
-        case 'クラシックギター':
-          timbres = [
-            '',
-            'instruments/SpanishClassicalGuitar-SFZ-20190618/SpanishClassicalGuitar-20190618.jsfz',
-            ''
-          ]
-          break
-        case 'エレキギター':
-          timbres = [
-            '',
-            'instruments/FSFT-EGuitarDistorted-SFZ-20200321/FSFT-EGuitarDistorted-20200321.jsfz',
-            ''
-          ]
-          break
-        case 'ピアノ':
-          timbres = [
-            '',
-            'instruments/UprightPianoKW-SFZ-20190703/UprightPianoKW-20190703.jsfz',
-            ''
-          ]
-          break
+      for (let i = 0; i < this.rhythmInstruments[0].length; i++) {
+        if (this.rhythmInstruments[0][i] === this.selectedRhythmInst) {
+          inst = this.rhythmInstruments[1][i]
+        }
       }
 
-      this.$accessor.player.setInstruments(timbres)
+      alert(inst)
+      this.$accessor.music.setRhythmInstrument(inst)
+    },
+    // コードの楽器選択
+    selectChordInst() {
+      let inst = ''
+
+      for (let i = 0; i < this.chordInstruments[0].length; i++) {
+        if (this.chordInstruments[0][i] === this.selectedChordInst) {
+          inst = this.chordInstruments[1][i]
+        }
+      }
+
+      this.$accessor.music.setChordInstrument(inst)
+    },
+    // メロディの楽器選択
+    selectMelodyInst() {
+      let inst = ''
+
+      for (let i = 0; i < this.melodyInstruments[0].length; i++) {
+        if (this.melodyInstruments[0][i] === this.selectedMelodyInst) {
+          inst = this.melodyInstruments[1][i]
+        }
+      }
+
+      this.$accessor.music.setMelodyInstrument(inst)
     },
     // カラーモード選択
     selectColorThema() {},

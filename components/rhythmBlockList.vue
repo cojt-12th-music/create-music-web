@@ -2,40 +2,22 @@
   <div id="component-frame">
     <v-card class="mx-auto">
       <v-card-title>
-        <p>リズムの選択</p>
+        <p>リズムの追加</p>
       </v-card-title>
 
       <v-chip-group v-model="selection" column>
-        <v-card-text>
-          <v-card-text>王道</v-card-text>
+        <v-card-text
+          v-for="(blocks, category, categoryIndex) in rhythmBlocks"
+          :key="categoryIndex"
+        >
+          <v-card-text>{{ category }}</v-card-text>
           <v-divider></v-divider>
           <v-chip
-            v-for="(block, index) in rhythmBlocks"
-            :key="index"
+            v-for="(block, index) in blocks"
+            :key="category + index"
             label
             large
-          >
-            <block-item :block="block" />
-          </v-chip>
-
-          <v-card-text>邪道</v-card-text>
-          <v-divider></v-divider>
-          <v-chip
-            v-for="(block, index) in rhythmBlocks"
-            :key="index"
-            label
-            large
-          >
-            <block-item :block="block" />
-          </v-chip>
-
-          <v-card-text>元気いっぱい</v-card-text>
-          <v-divider></v-divider>
-          <v-chip
-            v-for="(block, index) in rhythmBlocks"
-            :key="index"
-            label
-            large
+            @click="setSelectedBlockName(block)"
           >
             <block-item :block="block" />
           </v-chip>
@@ -43,11 +25,20 @@
       </v-chip-group>
 
       <v-card-actions>
-        <v-btn block class="white--text" color="#F96500">
+        <v-btn block class="white--text" color="#F96500" @click="addBlock">
           Add to Score
         </v-btn>
       </v-card-actions>
     </v-card>
+
+    <v-dialog v-model="attention">
+      <v-card>
+        <v-card-actions>
+          <v-card-title>注意</v-card-title>
+          <v-card-text>ブロックを選択しろや</v-card-text>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -56,18 +47,57 @@ import Vue from 'vue'
 import BlockItem from '@/components/BlockItem.vue'
 import { Block } from '@/types/music'
 
+type BlockGroup = { [category: string]: Block[] }
+
 export default Vue.extend({
   components: {
     BlockItem
   },
   data() {
     return {
-      selection: 0
+      selection: undefined,
+      selectedBlockName: '',
+      attention: false
     }
   },
   computed: {
-    rhythmBlocks(): Block[] {
-      return this.$accessor.music.rhythmTemplates
+    rhythmBlocks(): BlockGroup {
+      return this.$accessor.music.rhythmTemplates.reduce((acc, cur) => {
+        if (!acc[cur.category]) {
+          acc[cur.category] = []
+        }
+        acc[cur.category].push(cur)
+        return acc
+      }, {} as BlockGroup)
+    }
+  },
+  watch: {
+    async selection(newIndex: number) {
+      if (newIndex === undefined) return
+      this.$accessor.player.stopPresetPreview()
+      await this.$nextTick()
+      this.$accessor.player.playPresetPreview({
+        part: 'melody',
+        name: 'メロ1'
+      })
+    }
+  },
+  methods: {
+    addBlock() {
+      if (this.selection === undefined) {
+        console.log('未選択')
+        this.attention = true
+      } else {
+        console.log('選択状態: ' + this.selection)
+        this.$accessor.music.cloneBlock({
+          part: 'rhythm',
+          blockName: this.selectedBlockName
+        })
+        this.$emit('clickAddBlock', 'rhythm')
+      }
+    },
+    setSelectedBlockName(block: Block) {
+      this.selectedBlockName = block.name
     }
   }
 })
