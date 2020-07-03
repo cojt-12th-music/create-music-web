@@ -2,8 +2,12 @@
   <div id="component-frame">
     <v-container>
       <div class="score-header">
-        <h2 class="score-header-title">{{ scoreTitle }}</h2>
-        <div class="score-header-creator">{{ scoreComposer }}</div>
+        <h2 class="score-header-title">
+          <input v-model="scoreTitle" placeholder="Add Music Name" />
+        </h2>
+        <div class="score-header-creator">
+          <input v-model="scoreComposer" placeholder="Add Your Name" />
+        </div>
       </div>
 
       <div class="score-container">
@@ -52,11 +56,21 @@ export default Vue.extend({
     }
   },
   computed: {
-    scoreTitle(): string {
-      return this.$accessor.music.title
+    scoreTitle: {
+      get() {
+        return this.$accessor.music.title
+      },
+      set(input: string) {
+        this.$accessor.music.setTitle(input)
+      }
     },
-    scoreComposer(): string {
-      return this.$accessor.music.composer
+    scoreComposer: {
+      get() {
+        return this.$accessor.music.composer
+      },
+      set(input) {
+        this.$accessor.music.setComposer(input)
+      }
     }
   },
   methods: {
