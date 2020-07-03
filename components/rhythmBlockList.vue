@@ -31,7 +31,7 @@
       </v-card-actions>
     </v-card>
 
-    <v-dialog v-model="attention">
+    <v-dialog v-model="attention" max-width="500">
       <v-card>
         <v-card-actions>
           <v-card-title>注意</v-card-title>

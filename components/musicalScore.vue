@@ -14,13 +14,13 @@
         <div class="seek-bar" />
 
         <div class="open-blocklist">
-          <v-dialog v-model="rhythmDialog">
+          <v-dialog v-model="rhythmDialog" max-width="800">
             <RhythmBlockList @clickAddBlock="closeDialog" />
           </v-dialog>
-          <v-dialog v-model="chordDialog">
+          <v-dialog v-model="chordDialog" max-width="800">
             <ChordBlockList @clickAddBlock="closeDialog" />
           </v-dialog>
-          <v-dialog v-model="melodyDialog">
+          <v-dialog v-model="melodyDialog" max-width="800">
             <MelodyBlockList @clickAddBlock="closeDialog" />
           </v-dialog>
         </div>
