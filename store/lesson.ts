@@ -19,7 +19,7 @@ export const state = (): LessonState => ({
         description: 'ドラムなどリズム隊を担当します',
         position: 'bottom-left'
       },
-      disableTouch: true
+      disableContent: true
     },
     {
       element: '#rhythm-plus-button',
@@ -29,11 +29,11 @@ export const state = (): LessonState => ({
         position: 'bottom-left',
         showButtons: false
       },
-      nextEvent: {
+      moveNext: {
         element: '#rhythm-plus-button',
         eventType: 'click'
       },
-      delay: 500
+      nextDelay: 500
     },
     {
       element: '#rhythm-block-list',
@@ -43,7 +43,7 @@ export const state = (): LessonState => ({
         position: 'top-right',
         showButtons: false
       },
-      nextEvent: {
+      moveNext: {
         element: '#rhythm-block-list-add',
         eventType: 'click'
       }
@@ -65,7 +65,7 @@ export const state = (): LessonState => ({
         position: 'top-center',
         showButtons: false
       },
-      nextEvent: {
+      moveNext: {
         element: '#play-button',
         eventType: 'click'
       }

@@ -1,9 +1,9 @@
 import Origin from 'driver.js'
 
 export interface Step extends Origin.Step {
-  disableTouch?: boolean
-  delay?: number
-  nextEvent?: {
+  disableContent?: boolean
+  nextDelay?: number
+  moveNext?: {
     element: string
     eventType: string
   }

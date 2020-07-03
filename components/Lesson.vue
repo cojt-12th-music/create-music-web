@@ -26,9 +26,9 @@ export default Vue.extend({
         }
       },
       onHighlightStarted: (step: Element) => {
-        const nextEvent = step.options.nextEvent
-        if (nextEvent) {
-          const elem = document.getElementById(nextEvent.element.slice(1))
+        const moveNext = step.options.moveNext
+        if (moveNext) {
+          const elem = document.getElementById(moveNext.element.slice(1))
           if (!elem) {
             return
           }
@@ -40,7 +40,7 @@ export default Vue.extend({
         }
       },
       onHighlighted: (step: Element) => {
-        if (step.options.disableTouch) {
+        if (step.options.disableContent) {
           step.node.classList.remove('driver-highlighted-element')
         }
       }
