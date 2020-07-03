@@ -1,5 +1,5 @@
 <template>
-  <div class="score-part-container">
+  <div class="score-part-container" @click="addscore">
     <div class="column-title">
       <div class="part-title-container">
         <v-icon large class="icon">fa-drum</v-icon>
@@ -11,7 +11,7 @@
       v-for="i in myKeyMusicalScore"
       :key="i.id"
       class="tap-block"
-      :style="{ left: i.delay * 10 + 6 + 'rem' }"
+      :style="{ left: i.delay * 40 + 100 + 'px' }"
     ></div>
   </div>
 </template>
@@ -72,6 +72,19 @@ export default Vue.extend({
         this.$accessor.music.setBlockNames({ part: 'rhythm', blockNames })
       }
     }
+  },
+  methods: {
+    addscore(event: any) {
+      console.log(event.clientX)
+      if (event.clientX > 100) {
+        this.ドラム1.sounds.push({
+          id: this.ドラム1.sounds.length + 1,
+          key: this.drumKey,
+          delay: (event.clientX - 100) / 40,
+          duration: 0.5
+        })
+      }
+    }
   }
 })
 </script>
@@ -95,7 +108,7 @@ export default Vue.extend({
   padding: 1rem;
   box-sizing: border-box;
   border-right: 1px solid $-gray-500;
-  width: 6rem;
+  width: 100px;
 
   .part-title-container {
     text-align: center;
@@ -122,8 +135,8 @@ export default Vue.extend({
   position: absolute;
   box-sizing: border-box;
   background-color: $-gray-200;
-  height: 5rem;
-  width: 5rem;
+  height: 20px;
+  width: 20px;
   border: 1px solid $-gray-200;
   border-radius: 4px;
 }
