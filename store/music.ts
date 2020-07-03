@@ -17,17 +17,17 @@ export const state = (): Music => ({
   composer: '名無しの作曲者',
   bpm: 100,
   melody: {
-    instrument: 'guitar',
+    instrument: '',
     blockNames: ['メロ1', 'メロ2', 'メロ3', 'メロ4'],
     gain: 1
   },
   chord: {
-    instrument: 'guitar',
+    instrument: '',
     blockNames: ['コード1', 'コード2', 'コード3', 'コード4'],
     gain: 1
   },
   rhythm: {
-    instrument: 'guitar',
+    instrument: '',
     blockNames: ['16ビート', '8ビート', '8ビート', '2ビート', '2ビート'],
     gain: 1
   },
@@ -68,7 +68,11 @@ export const getters = getterTree(state, {
     state.chord.blockNames.map((name) => state.blocks.chord[name]),
   // メロディーのblocksを返す
   rhythmBlocks: (state: MusicState): Block[] =>
-    state.rhythm.blockNames.map((name) => state.blocks.rhythm[name])
+    state.rhythm.blockNames.map((name) => state.blocks.rhythm[name]),
+
+  melodyInstrument: (state: MusicState): string => state.melody.instrument,
+  chordInstrument: (state: MusicState): string => state.chord.instrument,
+  rhythmInstrument: (state: MusicState): string => state.rhythm.instrument
 })
 
 export const mutations = mutationTree(state, {
@@ -178,6 +182,27 @@ export const mutations = mutationTree(state, {
    */
   SET_BPM(state: MusicState, bpm: number) {
     state.bpm = bpm
+  },
+  /**
+   * リズムの楽器を変更する
+   * @param rhythmInst セットする楽器名
+   */
+  SET_RHYTHM_INSTRUMENT(state: MusicState, rhythmInst: string) {
+    state.rhythm.instrument = rhythmInst
+  },
+  /**
+   * コードの楽器を変更する
+   * @param chordInst セットする楽器名
+   */
+  SET_CHORD_INSTRUMENT(state: MusicState, chordInst: string) {
+    state.chord.instrument = chordInst
+  },
+  /**
+   * メロディの楽器を変更する
+   * @param melodyInst セットする楽器名
+   */
+  SET_MELODY_INSTRUMENT(state: MusicState, melodyInst: string) {
+    state.melody.instrument = melodyInst
   }
 })
 
@@ -298,6 +323,27 @@ export const actions = actionTree(
      */
     setBpm({ commit }, bpm: number) {
       commit('SET_BPM', bpm)
+    },
+    /**
+     * リズムの楽器を変更する
+     * @param rhythmInst セットする楽器名
+     */
+    setRhythmInstrument({ commit }, rhythmInst: string) {
+      commit('SET_RHYTHM_INSTRUMENT', rhythmInst)
+    },
+    /**
+     * コードの楽器を変更する
+     * @param chordInst セットする楽器名
+     */
+    setChordInstrument({ commit }, chordInst: string) {
+      commit('SET_CHORD_INSTRUMENT', chordInst)
+    },
+    /**
+     * メロディの楽器を変更する
+     * @param melodyInst セットする楽器名
+     */
+    setMelodyInstrument({ commit }, MelodyInst: string) {
+      commit('SET_MELODY_INSTRUMENT', MelodyInst)
     }
   }
 )

@@ -1,5 +1,5 @@
 import { mutationTree, actionTree } from 'typed-vuex'
-import { PlayerState } from '~/types/player'
+import { PlayerState, Instrument } from '~/types/player'
 import { ScorePart } from '~/types/music'
 
 export const state = (): PlayerState => ({
@@ -28,7 +28,7 @@ export const mutations = mutationTree(state, {
   SET_LOADING_PROGRESS(state: PlayerState, progress: number) {
     state.loadingProgress = progress
   },
-  SET_INSTRUMENTS(state: PlayerState, insts: string[]) {
+  SET_INSTRUMENTS(state: PlayerState, insts: Instrument[]) {
     state.instruments = insts
   },
   SET_PREVIEW_PRESET(
@@ -60,7 +60,7 @@ export const actions = actionTree(
     setLoadingProgress({ commit }, progress: number) {
       commit('SET_LOADING_PROGRESS', progress)
     },
-    setInstruments({ commit }, insts: string[]) {
+    setInstruments({ commit }, insts: Instrument[]) {
       commit('SET_INSTRUMENTS', insts)
     },
     playPresetPreview({ commit }, p: { part: ScorePart; name: string }) {
