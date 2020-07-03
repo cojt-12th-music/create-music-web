@@ -46,11 +46,21 @@ export default Vue.extend({
           { id: 6, key: 60, delay: 2.5, duration: 0.5 }
         ],
         duration: 4
-      },
-      instrument_keys: [48, 60, 64] // ドラムの種類（キー）(上のサンプルデータからこの配列を作ってもいいと思う)
+      }
     }
   },
-  computed: {},
+  computed: {
+    // ドラムの種類（キー）を配列にして返す
+    instrument_keys(): Array<number> {
+      const keyList: Array<number> = []
+      this.ドラム1.sounds.forEach((elm) => {
+        if (!keyList.includes(elm.key)) {
+          keyList.push(elm.key)
+        }
+      })
+      return keyList
+    }
+  },
   methods: {
     dialog() {
       this.$emit('dialog', false)
