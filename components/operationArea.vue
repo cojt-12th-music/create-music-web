@@ -237,7 +237,7 @@ type DataType = {
 export default Vue.extend({
   data(): DataType {
     return {
-      initialized: true,
+      initialized: false,
       configDialog: false,
       rhythmInstruments: ['ドラム'],
       selectedRhythmInst: 'ドラム',

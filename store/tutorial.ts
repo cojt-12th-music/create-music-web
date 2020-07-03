@@ -53,26 +53,6 @@ export const state = () => ({
         position: 'bottom-left'
       }
     }
-    //   {
-    //     element: '#chord-score',
-    //     popover: {
-    //       title: 'コードパート',
-    //       description: 'ギターとか...',
-    //       position: 'top-left'
-    //     },
-    //     index: 4,
-    //     disableTouch: true
-    //   },
-    //   {
-    //     element: '#melody-score',
-    //     popover: {
-    //       title: 'メロディパート',
-    //       description: 'ピアノとか...',
-    //       position: 'top-left'
-    //     },
-    //     disableTouch: true,
-    //     index: 5
-    //   }
   ]
 })
 
