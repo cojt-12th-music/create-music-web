@@ -32,11 +32,15 @@ const config: Configuration = {
   /*
    ** Global CSS
    */
-  css: [],
+  css: ['~/assets/style/driver.dark.scss'],
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['plugins/vuetify', '~/plugins/firebase'],
+  plugins: [
+    'plugins/vuetify',
+    '~/plugins/firebase',
+    { src: 'plugins/vue-driver', mode: 'client' }
+  ],
   /*
    ** Nuxt.js dev-modules
    */
