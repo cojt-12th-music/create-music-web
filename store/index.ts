@@ -1,9 +1,9 @@
 import { getAccessorType } from 'typed-vuex'
 
 // サブモジュールのインポート
-import * as music from '~/store/music'
-import * as player from '~/store/player'
-import * as tutorial from '~/store/tutorial'
+import * as music from '@/store/music'
+import * as player from '@/store/player'
+import * as lesson from '@/store/lesson'
 
 export const state = () => ({})
 export const getters = {}
@@ -18,6 +18,6 @@ export const accessorType = getAccessorType({
   modules: {
     music,
     player,
-    tutorial
+    lesson
   }
 })

@@ -49,7 +49,7 @@ export default Vue.extend({
     },
     setSteps() {
       this.$driver.defineSteps(
-        this.$accessor.tutorial.steps.map((step, index) => ({ ...step, index }))
+        this.$accessor.lesson.steps.map((step, index) => ({ ...step, index }))
       )
     }
   }

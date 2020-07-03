@@ -56,7 +56,7 @@ export const state = () => ({
   ]
 })
 
-export type TutorialState = ReturnType<typeof state>
+export type LessonState = ReturnType<typeof state>
 
 export const mutations = mutationTree(state, {})
 
