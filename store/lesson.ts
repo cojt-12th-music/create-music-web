@@ -1,6 +1,8 @@
 import { mutationTree, actionTree } from 'typed-vuex'
+import { LessonState } from '@/types/lesson'
 
-export const state = () => ({
+export const state = (): LessonState => ({
+  isAvailable: true,
   steps: [
     {
       element: '#share-button',
@@ -28,7 +30,8 @@ export const state = () => ({
         showButtons: false
       },
       nextEvent: {
-        elemId: '#rhythm-plus-button'
+        element: '#rhythm-plus-button',
+        eventType: 'click'
       },
       delay: 500
     },
@@ -41,7 +44,8 @@ export const state = () => ({
         showButtons: false
       },
       nextEvent: {
-        elemId: '#rhythm-block-list-add'
+        element: '#rhythm-block-list-add',
+        eventType: 'click'
       }
     },
     {
@@ -55,8 +59,6 @@ export const state = () => ({
     }
   ]
 })
-
-export type LessonState = ReturnType<typeof state>
 
 export const mutations = mutationTree(state, {})
 

@@ -1,0 +1,30 @@
+import Origin from 'driver.js'
+
+export interface Step extends Origin.Step {
+  disableTouch?: boolean
+  delay?: number
+  nextEvent?: {
+    element: string
+    eventType: string
+  }
+}
+
+export interface Element {
+  options: Step
+  node: HTMLElement
+}
+
+export interface Driver {
+  options: Origin.DriverOptions
+  currentStep: number
+  preventMove: () => void
+  handleNext: () => void
+  start(index?: number): void
+  reset: (immediate?: boolean) => void
+  defineSteps: (steps: Step[]) => void
+}
+
+export interface LessonState {
+  isAvailable: boolean
+  steps: Step[]
+}

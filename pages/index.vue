@@ -20,7 +20,7 @@ import OperationArea from '@/components/operationArea.vue'
 import Player from '@/components/Player.vue'
 import { firebaseAuth, firestoreAccessor } from '@/plugins/firebase'
 import { Music } from '@/types/music'
-import lesson from '@/mixins/lesson.ts'
+import lessonMixin from '@/mixins/lesson.ts'
 
 type DataType = {
   lessonAvailable: boolean
@@ -32,7 +32,7 @@ export default {
     OperationArea,
     Player
   },
-  mixins: [lesson],
+  mixins: [lessonMixin],
   async fetch({ route, store }: Context) {
     firebaseAuth.onAuthStateChanged((user) => {
       if (user) {
@@ -67,11 +67,6 @@ export default {
   data(): DataType {
     return {
       lessonAvailable: true
-    }
-  },
-  mounted() {
-    if (this.lessonAvailable) {
-      this.lessonStart()
     }
   }
 }

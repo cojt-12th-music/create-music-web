@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import { Element } from '@/types/lesson'
 
 export default Vue.extend({
   beforeMount() {
@@ -10,7 +11,7 @@ export default Vue.extend({
       closeBtnText: 'やめる',
       doneBtnText: '終わる',
       showButtons: true,
-      onNext: (step) => {
+      onNext: (step: Element) => {
         if (step && step.options.delay) {
           const currentIndex = this.$driver.currentStep
           this.$driver.preventMove()
@@ -21,10 +22,10 @@ export default Vue.extend({
           }, step.options.delay)
         }
       },
-      onHighlightStarted: (step) => {
+      onHighlightStarted: (step: Element) => {
         const nextEvent = step.options.nextEvent
         if (nextEvent) {
-          const elem = document.getElementById(nextEvent.elemId.slice(1))
+          const elem = document.getElementById(nextEvent.element.slice(1))
           if (!elem) {
             return
           }
@@ -35,12 +36,17 @@ export default Vue.extend({
           elem.addEventListener('click', f, false)
         }
       },
-      onHighlighted: (step) => {
+      onHighlighted: (step: Element) => {
         if (step.options.disableTouch) {
           step.node.classList.remove('driver-highlighted-element')
         }
       }
     })
+  },
+  mounted() {
+    if (this.$accessor.lesson.isAvailable) {
+      this.lessonStart()
+    }
   },
   methods: {
     lessonStart() {
