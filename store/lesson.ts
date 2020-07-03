@@ -5,11 +5,11 @@ export const state = (): LessonState => ({
   isAvailable: true,
   steps: [
     {
-      element: '#share-button',
+      element: '#score-title',
       popover: {
         title: 'とりまやっていこう',
         description: 'ボタンを押すんや',
-        position: 'top-left'
+        position: 'bottom-left'
       }
     },
     {
@@ -53,8 +53,29 @@ export const state = (): LessonState => ({
       popover: {
         title: '追加成功',
         description:
-          '追加されたのを確認してくれ<br/>これでこのレッスンは終わりです!',
+          '追加されたのを確認してくれ<br/>ブロックを動かすこともできるぞ',
         position: 'bottom-left'
+      }
+    },
+    {
+      element: '#play-button',
+      popover: {
+        title: '再生してみよう',
+        description: '美しい旋律に酔いしれような',
+        position: 'top-center',
+        showButtons: false
+      },
+      nextEvent: {
+        element: '#play-button',
+        eventType: 'click'
+      }
+    },
+    {
+      element: '#share-button',
+      popover: {
+        title: '良い曲ですね...',
+        description: 'よければシェアしてください',
+        position: 'top-center'
       }
     }
   ]

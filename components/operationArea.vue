@@ -8,7 +8,7 @@
           </v-btn>
         </v-col>
         <v-col align-self="center">
-          <div class="iconCenter">
+          <div id="play-button" class="iconCenter">
             <div v-if="isPlaying">
               <v-btn :disabled="!isReady" icon @click="stop">
                 <v-icon size="400%" color="#F96500">mdi-stop</v-icon>
@@ -237,7 +237,7 @@ type DataType = {
 export default Vue.extend({
   data(): DataType {
     return {
-      initialized: false,
+      initialized: true,
       configDialog: false,
       rhythmInstruments: ['ドラム'],
       selectedRhythmInst: 'ドラム',

@@ -1,9 +1,9 @@
 // レッスン中にコンポーネントを浮かび上がらせるための苦肉の策
 .v-dialog__content.v-dialog__content--active.driver-fix-stacking {
-  position: absolute;
+  position: absolute !important;
 }
 #operation-area-wrapper.driver-fix-stacking {
-  position: absolute;
+  position: absolute !important;
 }
 
 //Palette

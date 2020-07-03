@@ -9,6 +9,7 @@
     </div>
 
     <player />
+    <lesson v-if="isReady && lessonAvailable" />
   </div>
 </template>
 
@@ -21,15 +22,17 @@ import Player from '@/components/Player.vue'
 import { firebaseAuth, firestoreAccessor } from '@/plugins/firebase'
 import { Music } from '@/types/music'
 import lessonMixin from '@/mixins/lesson.ts'
+import Lesson from '@/components/Lesson.vue'
 
 type DataType = {
-  lessonAvailable: boolean
+  lessonAvailable: string | (string | null)[]
 }
 
 export default {
   components: {
     MusicalScore,
     OperationArea,
+    Lesson,
     Player
   },
   mixins: [lessonMixin],
@@ -64,9 +67,15 @@ export default {
         })
     }
   },
-  data(): DataType {
+  asyncData({ route }: Context): DataType {
+    const lessonAvailable = route.query.lesson
     return {
-      lessonAvailable: true
+      lessonAvailable
+    }
+  },
+  computed: {
+    isReady(): boolean {
+      return this.$accessor.player.isReady
     }
   }
 }

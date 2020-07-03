@@ -1,3 +1,6 @@
+<template><div /></template>
+
+<script lang="ts">
 import Vue from 'vue'
 import { Element } from '@/types/lesson'
 
@@ -60,3 +63,4 @@ export default Vue.extend({
     }
   }
 })
+</script>
