@@ -68,7 +68,7 @@ export default Vue.extend({
       get() {
         return this.$accessor.music.composer
       },
-      set(input) {
+      set(input: string) {
         this.$accessor.music.setComposer(input)
       }
     }

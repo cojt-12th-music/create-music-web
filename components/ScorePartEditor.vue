@@ -82,6 +82,10 @@ export default Vue.extend({
     showsDialog: {
       required: true,
       type: Boolean
+    },
+    blockAreaLength: {
+      type: Number,
+      required: true
     }
   },
   data() {
@@ -93,6 +97,7 @@ export default Vue.extend({
   },
   computed: {
     dragOptions() {
+      console.log(this.$accessor.music.rhythmBlocks)
       return {
         animation: 300,
         disabled: false
@@ -101,7 +106,24 @@ export default Vue.extend({
     maxLength(): number {
       // 各partにおけるdurationの合計の最大値 / 2 + 1 (追加ボタン分)
       // TODO: fetch from store
-      return Math.floor(13 / 2) + 1
+      const RhythmLength: number = this.$accessor.music.rhythmBlocks.reduce(
+        (p: number, x: Block) => p + x.duration,
+        0
+      )
+      const ChordLength: number = this.$accessor.music.chordBlocks.reduce(
+        (p: number, x: Block) => p + x.duration,
+        0
+      )
+      const MelodyLength: number = this.$accessor.music.melodyBlocks.reduce(
+        (p: number, x: Block) => p + x.duration,
+        0
+      )
+      const maxLength: number = Math.max(
+        RhythmLength,
+        ChordLength,
+        MelodyLength
+      )
+      return Math.floor(maxLength / 2) + 1
     },
     partTitle(): string {
       return {
