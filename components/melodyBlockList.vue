@@ -93,8 +93,8 @@ export default Vue.extend({
           part: 'melody',
           blockName: this.selectedBlockName
         })
+        this.$emit('clickAddBlock', 'melody')
       }
-      this.$emit('clickAddBlock', 'melody')
     },
     setSelectedBlockName(block: Block) {
       this.selectedBlockName = block.name
