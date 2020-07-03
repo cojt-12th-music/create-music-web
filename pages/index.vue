@@ -44,6 +44,15 @@ export default {
 #musical-score-wrapper {
   height: 65vh;
   margin-bottom: 3vh;
+  overflow: scroll;
+  // for IE, Edge
+  -ms-overflow-style: none;
+  // for Firefox
+  scrollbar-width: none;
+  // for Chrome, Safari
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 #block-list-wrapper {
