@@ -12,6 +12,7 @@
       :key="i.id"
       class="tap-block"
       :style="{ left: i.delay * 40 + 100 + 'px' }"
+      @click.stop="deletescore(i.id)"
     ></div>
   </div>
 </template>
@@ -78,12 +79,19 @@ export default Vue.extend({
       console.log(event.clientX)
       if (event.clientX > 100) {
         this.ドラム1.sounds.push({
-          id: this.ドラム1.sounds.length + 1,
+          id: this.ドラム1.sounds[this.ドラム1.sounds.length - 1].id + 1,
           key: this.drumKey,
           delay: (event.clientX - 100) / 40,
           duration: 0.5
         })
       }
+    },
+    deletescore(id: number) {
+      this.ドラム1.sounds.forEach((item, index) => {
+        if (item.id === id) {
+          this.ドラム1.sounds.splice(index, 1)
+        }
+      })
     }
   }
 })
