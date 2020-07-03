@@ -1,7 +1,7 @@
 import Vue from 'vue'
 
 export default Vue.extend({
-  mounted() {
+  beforeMount() {
     Object.assign(this.$driver.options, {
       allowClose: false,
       opacity: 0,
@@ -41,11 +41,9 @@ export default Vue.extend({
         }
       }
     })
-
-    this.start()
   },
   methods: {
-    start() {
+    lessonStart() {
       this.setSteps()
       this.$driver.start()
     },

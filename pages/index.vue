@@ -68,6 +68,11 @@ export default {
     return {
       lessonAvailable: true
     }
+  },
+  mounted() {
+    if (this.lessonAvailable) {
+      this.lessonStart()
+    }
   }
 }
 </script>
