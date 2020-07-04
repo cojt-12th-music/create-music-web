@@ -23,6 +23,9 @@
         @mousedown.prevent.stop="mouseDown"
         @mousemove.prevent.stop="mouseMove"
         @mouseup.prevent.stop="mouseUp"
+        @touchstart="touchStart"
+        @touchmove="touchMove"
+        @touchend="touchEnd"
       >
         <div
           v-for="(a, i) in keys"
@@ -60,6 +63,7 @@ type DataType = {
   selectedSoundID: number | null
   xBorderWidth: number
   isMouseDown: boolean
+  mouseDeleteFlag: boolean
   startPos: { x: number; y: number }
   startOffsetInBlock: { x: number; y: number }
   editMode: 'border' | 'move' | null
@@ -82,6 +86,7 @@ export default Vue.extend({
       selectedSoundID: null,
       xBorderWidth: 5,
       isMouseDown: false,
+      mouseDeleteFlag: false,
       startPos: { x: 0, y: 0 },
       startOffsetInBlock: { x: 0, y: 0 },
       editMode: null,
@@ -191,88 +196,142 @@ export default Vue.extend({
       return pos
     },
     mouseDown(e: MouseEvent) {
+      if ('ontouchstart' in window) return
       const pos = this.calcPosInEditInner(e.clientX, e.clientY)
       this.startOffsetInBlock = { x: e.offsetX, y: e.offsetX }
-      this.handleStart(pos.x, pos.y)
-      this.isMouseDown = true
-    },
-    mouseMove(e: MouseEvent) {
-      if (this.isMouseDown) {
-        const pos = this.calcPosInEditInner(e.clientX, e.clientY)
-        this.handleMove(pos.x, pos.y)
-      }
-    },
-    mouseUp(e: MouseEvent) {
-      const pos = this.calcPosInEditInner(e.clientX, e.clientY)
-      this.handleEnd(pos.x, pos.y)
-      this.isMouseDown = false
-    },
-    handleStart(x: number, y: number) {
-      this.startPos = { x, y }
-      const target = this.findBlockFromCoordinate(x, y)
+      this.startPos = { x: pos.x, y: pos.y }
+      const target = this.findBlockFromCoordinate(pos.x, pos.y)
       if (target) {
+        this.mouseDeleteFlag = true
         this.selectedSoundID = target.sound.id || null
         this.editMode = target.type
       } else {
-        const newPos = this.posToSound(x, y)
-        const newID = this.sounds[this.sounds.length - 1].id!! + 1
-        this.$accessor.music.addSound({
-          part: 'melody',
-          blockName: this.soundBlock.name,
-          sound: {
-            id: newID,
-            key: newPos.key,
-            delay: newPos.delay,
-            duration: this.quantize
-          }
-        })
-        this.selectedSoundID = newID
+        this.mouseDeleteFlag = false
+        this.selectedSoundID = this.addSoundFromPos(pos.x, pos.y)
         this.editMode = 'border'
       }
+      this.isMouseDown = true
     },
-    handleMove(x: number, y: number) {
-      if (!this.selectedSound) return
-      if (this.editMode === 'move') {
-        const newPos = this.posToSound(x - this.startOffsetInBlock.x, y)
-        this.$accessor.music.updateSound({
-          part: 'melody',
-          blockName: this.soundBlock.name,
-          sound: {
-            id: this.selectedSound.id,
-            duration: this.selectedSound.duration,
-            ...newPos
-          }
-        })
-      } else if (this.editMode === 'border') {
-        const newPos = this.posToSound(x, y)
-        this.$accessor.music.updateSound({
-          part: 'melody',
-          blockName: this.soundBlock.name,
-          sound: {
-            id: this.selectedSound.id,
-            duration: Math.max(
-              this.quantize,
-              newPos.delay - this.selectedSound.delay
-            ),
-            delay: this.selectedSound.delay,
-            key: this.selectedSound.key
-          }
-        })
+    mouseMove(e: MouseEvent) {
+      if ('ontouchmove' in window) return
+      if (this.isMouseDown) {
+        const pos = this.calcPosInEditInner(e.clientX, e.clientY)
+
+        if (this.editMode === 'move') {
+          this.moveSoundFromPos(pos.x, pos.y)
+        } else if (this.editMode === 'border') {
+          this.changeSoundDurationFromPos(pos.x, pos.y)
+        }
       }
     },
-    handleEnd(x: number, y: number) {
+    mouseUp(e: MouseEvent) {
+      if ('ontouchend' in window) return
+      const pos = this.calcPosInEditInner(e.clientX, e.clientY)
+
       if (
-        this.startPos.x === x &&
-        this.startPos.y === y &&
-        this.selectedSoundID
+        this.startPos.x === pos.x &&
+        this.startPos.y === pos.y &&
+        this.selectedSoundID &&
+        this.mouseDeleteFlag
       ) {
-        this.$accessor.music.deleteSound({
-          part: 'melody',
-          blockName: this.blockName,
-          soundId: this.selectedSoundID
-        })
+        this.deleteSound(this.selectedSoundID)
       }
       this.selectedSoundID = null
+      this.isMouseDown = false
+    },
+    touchStart(e: TouchEvent) {
+      const pos = this.calcPosInEditInner(
+        e.touches[0].clientX,
+        e.touches[0].clientY
+      )
+      this.startPos = pos
+      const target = this.findBlockFromCoordinate(pos.x, pos.y)
+      if (target) {
+        const rect = (e.target as HTMLElement).getBoundingClientRect()
+        this.startOffsetInBlock = {
+          x: e.touches[0].pageX - rect.left,
+          y: e.touches[0].pageY - rect.top
+        }
+        this.selectedSoundID = target.sound.id || null
+        this.editMode = target.type
+      } else {
+        this.selectedSoundID = null
+      }
+    },
+    touchMove(e: TouchEvent) {
+      if (!this.selectedSoundID) return
+      e.preventDefault()
+      const pos = this.calcPosInEditInner(
+        e.touches[0].clientX,
+        e.touches[0].clientY
+      )
+      if (this.editMode === 'move') this.moveSoundFromPos(pos.x, pos.y)
+      else if (this.editMode === 'border')
+        this.changeSoundDurationFromPos(pos.x, pos.y)
+    },
+    touchEnd(e: TouchEvent) {
+      const pos = this.calcPosInEditInner(
+        e.changedTouches[0].clientX,
+        e.changedTouches[0].clientY
+      )
+      if (this.startPos.x === pos.x && this.startPos.y === pos.y) {
+        if (!this.selectedSoundID) {
+          this.addSoundFromPos(pos.x, pos.y)
+        } else this.deleteSound(this.selectedSoundID)
+      }
+      this.selectedSoundID = null
+    },
+    addSoundFromPos(x: number, y: number): number {
+      const newPos = this.posToSound(x, y)
+      const newID = this.sounds[this.sounds.length - 1].id!! + 1
+      this.$accessor.music.addSound({
+        part: 'melody',
+        blockName: this.soundBlock.name,
+        sound: {
+          id: newID,
+          key: newPos.key,
+          delay: newPos.delay,
+          duration: this.quantize
+        }
+      })
+      return newID
+    },
+    moveSoundFromPos(x: number, y: number) {
+      if (!this.selectedSound) return
+      const newPos = this.posToSound(x - this.startOffsetInBlock.x, y)
+      this.$accessor.music.updateSound({
+        part: 'melody',
+        blockName: this.soundBlock.name,
+        sound: {
+          id: this.selectedSound.id,
+          duration: this.selectedSound.duration,
+          ...newPos
+        }
+      })
+    },
+    changeSoundDurationFromPos(x: number, y: number) {
+      if (!this.selectedSound) return
+      const newPos = this.posToSound(x, y)
+      this.$accessor.music.updateSound({
+        part: 'melody',
+        blockName: this.soundBlock.name,
+        sound: {
+          id: this.selectedSound.id,
+          duration: Math.max(
+            this.quantize,
+            newPos.delay - this.selectedSound.delay
+          ),
+          delay: this.selectedSound.delay,
+          key: this.selectedSound.key
+        }
+      })
+    },
+    deleteSound(soundId: number) {
+      this.$accessor.music.deleteSound({
+        part: 'melody',
+        blockName: this.blockName,
+        soundId
+      })
     }
   }
 })
