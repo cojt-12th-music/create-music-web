@@ -8,8 +8,9 @@
       </v-btn>
       <template v-slot:extension>
         <v-select
+          v-model="selectedGuideLineName"
           class="mt-4"
-          :items="guidelines"
+          :items="Object.keys(guidelines)"
           label="ガイドライン"
           solo
         ></v-select>
@@ -28,6 +29,7 @@
           :key="`row-${i}`"
           class="row"
           :style="rowStyle()"
+          :class="{ guide: keys[i] }"
         />
         <div
           v-for="gridIndex in blockDuration"
@@ -61,8 +63,8 @@ type DataType = {
   startPos: { x: number; y: number }
   startOffsetInBlock: { x: number; y: number }
   editMode: 'border' | 'move' | null
-  keys: boolean[]
-  guidelines: string[]
+  guidelines: { [key: string]: number[] }
+  selectedGuideLineName: string
 }
 
 export default Vue.extend({
@@ -83,8 +85,11 @@ export default Vue.extend({
       startPos: { x: 0, y: 0 },
       startOffsetInBlock: { x: 0, y: 0 },
       editMode: null,
-      keys: [...Array(100).keys()].map((_) => true),
-      guidelines: ['明るい', '暗い']
+      guidelines: {
+        明るい: [0, 2, 4, 5, 7, 9, 11],
+        暗い: [0, 2, 3, 5, 7, 9, 11]
+      },
+      selectedGuideLineName: '明るい'
     }
   },
   computed: {
@@ -99,6 +104,12 @@ export default Vue.extend({
     },
     selectedSound(): Sound | undefined {
       return this.sounds.find((s) => s.id === this.selectedSoundID)
+    },
+    keys(): boolean[] {
+      const guideline = this.guidelines[this.selectedGuideLineName]
+      return [...Array(100).keys()].map((k) =>
+        guideline.some((g) => k % 12 === g)
+      )
     }
   },
   methods: {
@@ -272,6 +283,9 @@ export default Vue.extend({
 .row {
   width: 100%;
   border-bottom: 1px solid $-gray-500;
+  &.guide {
+    background: $-gray-700;
+  }
 }
 .grid {
   top: 0;
