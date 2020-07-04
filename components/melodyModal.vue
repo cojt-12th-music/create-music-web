@@ -215,7 +215,7 @@ export default Vue.extend({
         this.editMode = target.type
       } else {
         const newPos = this.posToSound(x, y)
-        const newID = this.sounds.length + 1
+        const newID = this.sounds[this.sounds.length - 1].id!! + 1
         this.$accessor.music.addSound({
           part: 'melody',
           blockName: this.soundBlock.name,
@@ -227,7 +227,7 @@ export default Vue.extend({
           }
         })
         this.selectedSoundID = newID
-        this.editMode = 'move'
+        this.editMode = 'border'
       }
     },
     handleMove(x: number, y: number) {
@@ -250,14 +250,28 @@ export default Vue.extend({
           blockName: this.soundBlock.name,
           sound: {
             id: this.selectedSound.id,
-            duration: newPos.delay - this.selectedSound.delay,
+            duration: Math.max(
+              this.quantize,
+              newPos.delay - this.selectedSound.delay
+            ),
             delay: this.selectedSound.delay,
             key: this.selectedSound.key
           }
         })
       }
     },
-    handleEnd(_: number, __: number) {
+    handleEnd(x: number, y: number) {
+      if (
+        this.startPos.x === x &&
+        this.startPos.y === y &&
+        this.selectedSoundID
+      ) {
+        this.$accessor.music.deleteSound({
+          part: 'melody',
+          blockName: this.blockName,
+          soundId: this.selectedSoundID
+        })
+      }
       this.selectedSoundID = null
     }
   }
