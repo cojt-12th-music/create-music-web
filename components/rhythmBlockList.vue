@@ -37,13 +37,13 @@
       </v-card-actions>
     </v-card>
 
-    <v-dialog v-model="attention">
+    <v-dialog v-model="attention" max-width="1000">
       <v-card>
         <v-card-title class="attention-modal-title"
           ><span class="material-icons">warning</span></v-card-title
         >
         <v-card-text class="attention-modal-text">
-          ブロックを選択しろや
+          ブロックを選択してください．クソが．
         </v-card-text>
 
         <v-card-actions class="attention-modal-btn">
