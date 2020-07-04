@@ -110,7 +110,9 @@ export const mutations = mutationTree(state, {
       sound
     }: { part: ScorePart; blockName: string; sound: Sound }
   ) {
-    sound.id = state.blocks[part][blockName].sounds.length + 1
+    const sounds = state.blocks[part][blockName].sounds
+    const newID = sounds[sounds.length - 1].id!! + 1
+    if (!sound.id) sound.id = newID
     state.blocks[part][blockName].sounds.push(sound)
   },
   /**
@@ -126,7 +128,10 @@ export const mutations = mutationTree(state, {
       soundId
     }: { part: ScorePart; blockName: string; soundId: number }
   ) {
-    state.blocks[part][blockName].sounds.splice(soundId - 1, 1)
+    const i = state.blocks[part][blockName].sounds.findIndex(
+      (e) => e.id === soundId
+    )
+    state.blocks[part][blockName].sounds.splice(i, 1)
   },
   /**
    * ブロックのsoundを変更する
@@ -142,7 +147,10 @@ export const mutations = mutationTree(state, {
     }: { part: ScorePart; blockName: string; sound: Sound }
   ) {
     if (sound.id) {
-      state.blocks[part][blockName].sounds.splice(sound.id - 1, 1, sound)
+      const i = state.blocks[part][blockName].sounds.findIndex(
+        (e) => e.id === sound.id
+      )
+      state.blocks[part][blockName].sounds.splice(i, 1, sound)
     }
   },
   /**
