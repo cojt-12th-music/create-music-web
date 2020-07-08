@@ -2,8 +2,12 @@
   <div id="component-frame">
     <v-container>
       <div class="score-header">
-        <h2 class="score-header-title">{{ scoreTitle }}</h2>
-        <div class="score-header-creator">{{ scoreComposer }}</div>
+        <h2 class="score-header-title">
+          <input v-model="scoreTitle" placeholder="Add Music Name" />
+        </h2>
+        <div class="score-header-creator">
+          <input v-model="scoreComposer" placeholder="Add Your Name" />
+        </div>
       </div>
 
       <div class="score-container">
@@ -14,13 +18,13 @@
         <div class="seek-bar" />
 
         <div class="open-blocklist">
-          <v-dialog v-model="rhythmDialog">
+          <v-dialog v-model="rhythmDialog" max-width="800">
             <RhythmBlockList @clickAddBlock="closeDialog" />
           </v-dialog>
-          <v-dialog v-model="chordDialog">
+          <v-dialog v-model="chordDialog" max-width="800">
             <ChordBlockList @clickAddBlock="closeDialog" />
           </v-dialog>
-          <v-dialog v-model="melodyDialog">
+          <v-dialog v-model="melodyDialog" max-width="800">
             <MelodyBlockList @clickAddBlock="closeDialog" />
           </v-dialog>
         </div>
@@ -52,11 +56,21 @@ export default Vue.extend({
     }
   },
   computed: {
-    scoreTitle(): string {
-      return this.$accessor.music.title
+    scoreTitle: {
+      get() {
+        return this.$accessor.music.title
+      },
+      set(input: string) {
+        this.$accessor.music.setTitle(input)
+      }
     },
-    scoreComposer(): string {
-      return this.$accessor.music.composer
+    scoreComposer: {
+      get() {
+        return this.$accessor.music.composer
+      },
+      set(input: string) {
+        this.$accessor.music.setComposer(input)
+      }
     }
   },
   methods: {

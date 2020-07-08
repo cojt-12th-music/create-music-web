@@ -195,6 +195,12 @@ export const mutations = mutationTree(state, {
    */
   SET_MELODY_INSTRUMENT(state: MusicState, melodyInst: string) {
     state.melody.instrument = melodyInst
+  },
+  SET_TITLE(state: MusicState, input: string) {
+    state.title = input
+  },
+  SET_COMPOSER(state: MusicState, input: string) {
+    state.composer = input
   }
 })
 
@@ -332,6 +338,12 @@ export const actions = actionTree(
      */
     setMelodyInstrument({ commit }, MelodyInst: string) {
       commit('SET_MELODY_INSTRUMENT', MelodyInst)
+    },
+    setTitle({ commit }, Input: string) {
+      commit('SET_TITLE', Input)
+    },
+    setComposer({ commit }, Input: string) {
+      commit('SET_COMPOSER', Input)
     }
   }
 )

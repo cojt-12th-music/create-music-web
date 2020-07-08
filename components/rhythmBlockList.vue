@@ -1,5 +1,5 @@
 <template>
-  <div id="component-frame">
+  <div id="rhythm-block-list">
     <v-card class="mx-auto">
       <v-card-title>
         <p>リズムの追加</p>
@@ -25,17 +25,32 @@
       </v-chip-group>
 
       <v-card-actions>
-        <v-btn block class="white--text" color="#F96500" @click="addBlock">
+        <v-btn
+          id="rhythm-block-list-add"
+          block
+          class="white--text"
+          color="#F96500"
+          @click="addBlock"
+        >
           Add to Score
         </v-btn>
       </v-card-actions>
     </v-card>
 
-    <v-dialog v-model="attention">
+    <v-dialog v-model="attention" max-width="1000">
       <v-card>
-        <v-card-actions>
-          <v-card-title>注意</v-card-title>
-          <v-card-text>ブロックを選択しろや</v-card-text>
+        <v-card-title class="attention-modal-title"
+          ><span class="material-icons">warning</span></v-card-title
+        >
+        <v-card-text class="attention-modal-text">
+          ブロックを選択してください．クソが．
+        </v-card-text>
+
+        <v-card-actions class="attention-modal-btn">
+          <v-spacer></v-spacer>
+          <v-btn color="orange darken-1" text @click="attention = false">
+            Agree
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -62,13 +77,16 @@ export default Vue.extend({
   },
   computed: {
     rhythmBlocks(): BlockGroup {
-      return this.$accessor.music.rhythmTemplates.reduce((acc, cur) => {
-        if (!acc[cur.category]) {
-          acc[cur.category] = []
-        }
-        acc[cur.category].push(cur)
-        return acc
-      }, {} as BlockGroup)
+      return this.$accessor.music.rhythmTemplates.reduce(
+        (acc: BlockGroup, cur: Block) => {
+          if (!acc[cur.category]) {
+            acc[cur.category] = []
+          }
+          acc[cur.category].push(cur)
+          return acc
+        },
+        {} as BlockGroup
+      )
     }
   },
   watch: {
@@ -114,6 +132,9 @@ export default Vue.extend({
 div#component-frame {
   height: 100%;
 }
+#rhythm-block-list {
+  height: 100%;
+}
 .v-card__text {
   color: $-gray-50;
   padding: 0;
@@ -140,5 +161,22 @@ div#component-frame {
 .v-divider {
   background-color: $-gray-500;
   margin-bottom: 5px;
+}
+.attention-modal-title {
+  background-color: $-gray-700;
+  .material-icons {
+    color: $-primary-500;
+    font-size: 30px;
+  }
+}
+.attention-modal-text.v-card__text {
+  background-color: $-gray-700;
+  color: $-gray-50;
+  text-align: center;
+  margin: 0;
+  padding: 30px;
+}
+.attention-modal-btn {
+  background-color: $-gray-700;
 }
 </style>
