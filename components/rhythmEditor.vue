@@ -82,11 +82,11 @@ export default Vue.extend({
         })
       }
     },
-    deletescore(id: number) {
+    deletescore(soundId: number) {
       this.$accessor.music.deleteSound({
-        part: 'melody',
+        part: 'rhythm',
         blockName: this.blockName,
-        id
+        soundId
       })
     }
   }
