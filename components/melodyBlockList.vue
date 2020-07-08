@@ -94,10 +94,8 @@ export default Vue.extend({
   methods: {
     addBlock() {
       if (this.selection === undefined) {
-        console.log('未選択')
         this.attention = true
       } else {
-        console.log('選択状態: ' + this.selection)
         this.$accessor.music.cloneBlock({
           part: 'melody',
           blockName: this.selectedBlockName
