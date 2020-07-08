@@ -27,30 +27,20 @@ export default Vue.extend({
     drumKey: {
       type: Number,
       required: true
+    },
+    blockName: {
+      required: true,
+      type: String
     }
   },
   data() {
-    return {
-      // 一時的なサンプルデータ
-      ドラム1: {
-        name: 'ドラム1',
-        sounds: [
-          { id: 1, key: 48, delay: 0.0, duration: 0.5 },
-          { id: 2, key: 60, delay: 0.5, duration: 0.5 },
-          { id: 3, key: 64, delay: 1.0, duration: 0.5 },
-          { id: 4, key: 60, delay: 1.5, duration: 0.5 },
-          { id: 5, key: 64, delay: 2.0, duration: 0.5 },
-          { id: 6, key: 60, delay: 2.5, duration: 0.5 }
-        ],
-        duration: 4
-      }
-    }
+    return {}
   },
   computed: {
     // 自分のパートの楽譜だけ返す
     myKeyMusicalScore(): Array<Object> {
       const newMusicalScore: Array<Object> = []
-      this.ドラム1.sounds.forEach((elm) => {
+      this.soundBlock.sounds.forEach((elm) => {
         if (elm.key === this.drumKey) {
           newMusicalScore.push(elm)
         }
@@ -72,25 +62,31 @@ export default Vue.extend({
         const blockNames = blocks.map((block) => block.name)
         this.$accessor.music.setBlockNames({ part: 'rhythm', blockNames })
       }
+    },
+    soundBlock(): Block {
+      return this.$accessor.music.blocks.rhythm[this.blockName]
     }
   },
   methods: {
     addscore(event: any) {
       console.log(event.clientX)
       if (event.clientX > 100) {
-        this.ドラム1.sounds.push({
-          id: this.ドラム1.sounds[this.ドラム1.sounds.length - 1].id + 1,
-          key: this.drumKey,
-          delay: (event.clientX - 100) / 40,
-          duration: 0.5
+        this.$accessor.music.addSound({
+          part: 'rhythm',
+          blockName: this.soundBlock.name,
+          sound: {
+            key: this.drumKey,
+            delay: (event.clientX - 100) / 40,
+            duration: 0.5
+          }
         })
       }
     },
     deletescore(id: number) {
-      this.ドラム1.sounds.forEach((item, index) => {
-        if (item.id === id) {
-          this.ドラム1.sounds.splice(index, 1)
-        }
+      this.$accessor.music.deleteSound({
+        part: 'melody',
+        blockName: this.blockName,
+        id
       })
     }
   }

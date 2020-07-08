@@ -11,7 +11,12 @@
 
       <!-- 編集エリア -->
       <v-card class="edit-area">
-        <rhythmEditor v-for="i in instrument_keys" :key="i" :drum-key="i" />
+        <rhythmEditor
+          v-for="i in instrument_keys"
+          :key="i"
+          :drum-key="i"
+          :block-name="this.blockName"
+        />
       </v-card>
 
       <!-- 再生エリア -->
@@ -26,39 +31,36 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { Block } from '../types/music'
 import rhythmEditor from '@/components/rhythmEditor.vue'
 
 export default Vue.extend({
   components: {
     rhythmEditor
   },
-  data() {
-    return {
-      // 一時的なサンプルデータ
-      ドラム1: {
-        name: 'ドラム1',
-        sounds: [
-          { id: 1, key: 48, delay: 0.0, duration: 0.5 },
-          { id: 2, key: 60, delay: 0.5, duration: 0.5 },
-          { id: 3, key: 64, delay: 1.0, duration: 0.5 },
-          { id: 4, key: 60, delay: 1.5, duration: 0.5 },
-          { id: 5, key: 64, delay: 2.0, duration: 0.5 },
-          { id: 6, key: 60, delay: 2.5, duration: 0.5 }
-        ],
-        duration: 4
-      }
+  props: {
+    blockName: {
+      required: true,
+      type: String
     }
+  },
+  data() {
+    return {}
   },
   computed: {
     // ドラムの種類（キー）を配列にして返す
     instrument_keys(): Array<number> {
+      console.log('blockName:' + this.blockName)
       const keyList: Array<number> = []
-      this.ドラム1.sounds.forEach((elm) => {
+      this.soundBlock.sounds.forEach((elm) => {
         if (!keyList.includes(elm.key)) {
           keyList.push(elm.key)
         }
       })
       return keyList
+    },
+    soundBlock(): Block {
+      return this.$accessor.music.blocks.rhythm[this.blockName]
     }
   },
   methods: {
