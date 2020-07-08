@@ -1,180 +1,391 @@
 <template>
-  <div id="component-frame">
-    <v-card>
-      <!-- 編集画面上部 -->
-      <v-card-title class="top-area">
-        メロディー編集画面
-        <v-btn icon dark @click="dialog">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </v-card-title>
-
-      <!-- 曲調選択 -->
-      <v-card-title class="guideline-area">
-        <v-row align="center">
-          <v-col class="d-flex" cols="3" sm="1">ガイドライン</v-col>
-          <v-col class="d-flex" cols="5" sm="2">
-            <select v-model="selected" class="guideline-input">
-              <option
-                v-for="item in guideLines"
-                :key="item.text"
-                :value="item.value"
-                >{{ item.text }}
-              </option>
-            </select>
-          </v-col>
-        </v-row>
-      </v-card-title>
-
-      <!-- 編集エリア -->
-      <v-card class="edit-area">
-        <div v-for="text in scale" :key="text" class="scale">
-          <div class="scale-text">{{ text }}</div>
-          <!-- <draggable v-model="melodyBlocks" class="score-draggable" v-bind="dragOptions">
-            <div v-for="n in 5" :key="n" class="block">
-              <melody-modal-block />
-            </div>
-          </draggable>-->
-          <div v-for="n in 5" :key="n" class="block"></div>
-        </div>
-      </v-card>
-
-      <!-- 再生エリア -->
-      <v-card-title class="play-area">
-        <v-btn icon dark>
-          <v-icon color="#F96500" large>play_arrow</v-icon>
-        </v-btn>
-      </v-card-title>
-    </v-card>
+  <div id="melody-modal">
+    <v-app-bar extension-height="64px" dark>
+      <v-toolbar-title>メロディ編集</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn icon @click="$emit('dialog', false)">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
+      <template v-slot:extension>
+        <v-select
+          v-model="selectedGuideLineName"
+          class="mt-4"
+          :items="Object.keys(guidelines)"
+          label="ガイドライン"
+          solo
+        ></v-select>
+      </template>
+    </v-app-bar>
+    <div class="edit-area">
+      <div
+        ref="editInner"
+        class="inner"
+        @mousedown.prevent.stop="mouseDown"
+        @mousemove.prevent.stop="mouseMove"
+        @mouseup.prevent.stop="mouseUp"
+        @touchstart="touchStart"
+        @touchmove="touchMove"
+        @touchend="touchEnd"
+      >
+        <div
+          v-for="(a, i) in keys"
+          :key="`row-${i}`"
+          class="row"
+          :style="rowStyle()"
+          :class="{ guide: keys[i] }"
+        />
+        <div
+          v-for="gridIndex in blockDuration"
+          :key="`grid-${gridIndex}`"
+          class="grid"
+          :style="gridStyle(gridIndex - 1)"
+        />
+        <div
+          v-for="sound in sounds"
+          :key="sound.id"
+          class="block"
+          :style="blockStyle(sound)"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-// import draggable from 'vuedraggable'
-// import MelodyModalBlock from '@/components/melodyModalBlock.vue'
+import { Sound, Block } from '../types/music'
+
+type Rect = { top: number; left: number; height: number; width: number }
+type DataType = {
+  heightPerBlock: number
+  widthPerNote: number
+  quantize: number
+  selectedSoundID: number | null
+  xBorderWidth: number
+  isMouseDown: boolean
+  mouseDeleteFlag: boolean
+  startPos: { x: number; y: number }
+  startOffsetInBlock: { x: number; y: number }
+  editMode: 'border' | 'move' | null
+  guidelines: { [key: string]: number[] }
+  selectedGuideLineName: string
+}
 
 export default Vue.extend({
-  components: {
-    // MelodyModalBlock,
-    // draggable
+  props: {
+    blockName: {
+      required: true,
+      type: String
+    }
   },
-  data() {
+  data(): DataType {
     return {
-      selected: [],
-      guideLines: [
-        { text: '明るい', value: ['ド#', 'レ#', 'ファ#', 'ソ#', 'ラ#'] },
-        { text: '悲しい' },
-        { text: 'お洒落' }
-      ],
-      scale: [
-        'ド',
-        'ド#',
-        'レ',
-        'レ#',
-        'ミ',
-        'ファ',
-        'ファ#',
-        'ソ',
-        'ソ#',
-        'ラ',
-        'ラ#',
-        'シ'
-      ],
-      isClick: false
+      heightPerBlock: 25,
+      widthPerNote: 60,
+      quantize: 0.5,
+      selectedSoundID: null,
+      xBorderWidth: 10,
+      isMouseDown: false,
+      mouseDeleteFlag: false,
+      startPos: { x: 0, y: 0 },
+      startOffsetInBlock: { x: 0, y: 0 },
+      editMode: null,
+      guidelines: {
+        明るい: [0, 2, 4, 5, 7, 9, 11],
+        暗い: [0, 2, 3, 5, 7, 9, 11]
+      },
+      selectedGuideLineName: '明るい'
     }
   },
   computed: {
-    dragOptions() {
-      return {
-        // animation: 300,
-        disabled: false
-      }
+    sounds(): Sound[] {
+      return this.soundBlock.sounds
+    },
+    soundBlock(): Block {
+      return this.$accessor.music.blocks.melody[this.blockName]
+    },
+    blockDuration(): number {
+      return Math.ceil(this.soundBlock.duration)
+    },
+    selectedSound(): Sound | undefined {
+      return this.sounds.find((s) => s.id === this.selectedSoundID)
+    },
+    keys(): boolean[] {
+      const guideline = this.guidelines[this.selectedGuideLineName]
+      return [...Array(100).keys()].map((k) =>
+        guideline.some((g) => k % 12 === g)
+      )
     }
   },
   methods: {
-    dialog() {
-      this.$emit('dialog', false)
+    calcBlock(s: Sound): Rect {
+      return {
+        top: this.heightPerBlock * s.key,
+        left: this.widthPerNote * s.delay,
+        width: this.widthPerNote * s.duration,
+        height: this.heightPerBlock
+      }
+    },
+    posToSound(x: number, y: number): { key: number; delay: number } {
+      return {
+        key: Math.floor(y / this.heightPerBlock),
+        delay: Math.round(x / this.widthPerNote / this.quantize) * this.quantize
+      }
+    },
+    rowStyle() {
+      return {
+        left: '0',
+        height: `${this.heightPerBlock}px`,
+        width: `${this.widthPerNote * this.blockDuration}px`
+      }
+    },
+    blockStyle(sound: Sound) {
+      const rect = this.calcBlock(sound)
+      return {
+        top: `${rect.top}px`,
+        left: `${rect.left}px`,
+        height: `${rect.height}px`,
+        width: `${rect.width}px`
+      }
+    },
+    gridStyle(delay: number) {
+      return {
+        left: `${this.widthPerNote * delay}px`,
+        width: `${this.widthPerNote}px`
+      }
+    },
+    findBlockFromCoordinate(
+      x: number,
+      y: number
+    ): { sound: Sound; type: 'border' | 'move' } | undefined {
+      const target = this.sounds.find((s) => {
+        const rect = this.calcBlock(s)
+        return (
+          rect.left <= x &&
+          x <= rect.left + rect.width &&
+          rect.top <= y &&
+          y <= rect.top + rect.height
+        )
+      })
+      if (!target) return undefined
+
+      const rect = this.calcBlock(target)
+      if (
+        rect.left + rect.width - this.xBorderWidth <= x &&
+        x <= rect.left + rect.width &&
+        rect.top <= y &&
+        y <= rect.top + rect.height
+      )
+        return { sound: target, type: 'border' }
+      else if (
+        rect.left <= x &&
+        x <= rect.left + rect.width &&
+        rect.top <= y &&
+        y <= rect.top + rect.height
+      )
+        return { sound: target, type: 'move' }
+    },
+    calcPosInEditInner(
+      clientX: number,
+      clientY: number
+    ): { x: number; y: number } {
+      if (!this.$refs.editInner) throw new Error('ref参照がありません')
+      const inner = this.$refs.editInner as HTMLElement
+      const pos = {
+        x: clientX - inner.getBoundingClientRect().left,
+        y: clientY - inner.getBoundingClientRect().top
+      }
+      return pos
+    },
+    mouseDown(e: MouseEvent) {
+      if ('ontouchstart' in window) return
+      const pos = this.calcPosInEditInner(e.clientX, e.clientY)
+      this.startOffsetInBlock = { x: e.offsetX, y: e.offsetX }
+      this.startPos = { x: pos.x, y: pos.y }
+      const target = this.findBlockFromCoordinate(pos.x, pos.y)
+      if (target) {
+        this.mouseDeleteFlag = true
+        this.selectedSoundID = target.sound.id || null
+        this.editMode = target.type
+      } else {
+        this.mouseDeleteFlag = false
+        this.selectedSoundID = this.addSoundFromPos(pos.x, pos.y)
+        this.editMode = 'border'
+      }
+      this.isMouseDown = true
+    },
+    mouseMove(e: MouseEvent) {
+      if ('ontouchmove' in window) return
+      if (this.isMouseDown) {
+        const pos = this.calcPosInEditInner(e.clientX, e.clientY)
+
+        if (this.editMode === 'move') {
+          this.moveSoundFromPos(pos.x, pos.y)
+        } else if (this.editMode === 'border') {
+          this.changeSoundDurationFromPos(pos.x, pos.y)
+        }
+      }
+    },
+    mouseUp(e: MouseEvent) {
+      if ('ontouchend' in window) return
+      const pos = this.calcPosInEditInner(e.clientX, e.clientY)
+
+      if (
+        this.startPos.x === pos.x &&
+        this.startPos.y === pos.y &&
+        this.selectedSoundID &&
+        this.mouseDeleteFlag
+      ) {
+        this.deleteSound(this.selectedSoundID)
+      }
+      this.selectedSoundID = null
+      this.isMouseDown = false
+    },
+    touchStart(e: TouchEvent) {
+      const pos = this.calcPosInEditInner(
+        e.touches[0].clientX,
+        e.touches[0].clientY
+      )
+      this.startPos = pos
+      const target = this.findBlockFromCoordinate(pos.x, pos.y)
+      if (target) {
+        const rect = (e.target as HTMLElement).getBoundingClientRect()
+        this.startOffsetInBlock = {
+          x: e.touches[0].pageX - rect.left,
+          y: e.touches[0].pageY - rect.top
+        }
+        this.selectedSoundID = target.sound.id || null
+        this.editMode = target.type
+      } else {
+        this.selectedSoundID = null
+      }
+    },
+    touchMove(e: TouchEvent) {
+      if (!this.selectedSoundID) return
+      e.preventDefault()
+      const pos = this.calcPosInEditInner(
+        e.touches[0].clientX,
+        e.touches[0].clientY
+      )
+      if (this.editMode === 'move') this.moveSoundFromPos(pos.x, pos.y)
+      else if (this.editMode === 'border')
+        this.changeSoundDurationFromPos(pos.x, pos.y)
+    },
+    touchEnd(e: TouchEvent) {
+      const pos = this.calcPosInEditInner(
+        e.changedTouches[0].clientX,
+        e.changedTouches[0].clientY
+      )
+      if (this.startPos.x === pos.x && this.startPos.y === pos.y) {
+        if (!this.selectedSoundID) {
+          this.addSoundFromPos(pos.x, pos.y)
+        } else this.deleteSound(this.selectedSoundID)
+      }
+      this.selectedSoundID = null
+    },
+    addSoundFromPos(x: number, y: number): number {
+      const newPos = this.posToSound(x, y)
+      const newID =
+        this.sounds.length > 0
+          ? this.sounds[this.sounds.length - 1].id!! + 1
+          : 1
+      this.$accessor.music.addSound({
+        part: 'melody',
+        blockName: this.soundBlock.name,
+        sound: {
+          id: newID,
+          key: newPos.key,
+          delay: newPos.delay,
+          duration: this.quantize
+        }
+      })
+      return newID
+    },
+    moveSoundFromPos(x: number, y: number) {
+      if (!this.selectedSound) return
+      const newPos = this.posToSound(x - this.startOffsetInBlock.x, y)
+      this.$accessor.music.updateSound({
+        part: 'melody',
+        blockName: this.soundBlock.name,
+        sound: {
+          id: this.selectedSound.id,
+          duration: this.selectedSound.duration,
+          ...newPos
+        }
+      })
+    },
+    changeSoundDurationFromPos(x: number, y: number) {
+      if (!this.selectedSound) return
+      const newPos = this.posToSound(x, y)
+      this.$accessor.music.updateSound({
+        part: 'melody',
+        blockName: this.soundBlock.name,
+        sound: {
+          id: this.selectedSound.id,
+          duration: Math.max(
+            this.quantize,
+            newPos.delay - this.selectedSound.delay
+          ),
+          delay: this.selectedSound.delay,
+          key: this.selectedSound.key
+        }
+      })
+    },
+    deleteSound(soundId: number) {
+      this.$accessor.music.deleteSound({
+        part: 'melody',
+        blockName: this.blockName,
+        soundId
+      })
     }
   }
 })
 </script>
 
-<style lang="scss" scoped>
-div#component-frame {
+<style scoped lang="scss">
+#melody-modal {
+  width: 100%;
   height: 100%;
+  background: $-gray-900;
+  display: flex;
+  flex-direction: column;
 }
-
-.v-select {
-  color: white;
-}
-
-.top-area {
-  font-size: 80%;
-  background-color: $-gray-900;
-}
-
-.guideline-area {
-  //   height: 15%;
-
-  font-size: 80%;
-  background-color: $-gray-800;
-}
-
 .edit-area {
-  background-color: $-gray-700;
-  //   height: 544.81px;
-  height: 100%;
+  overflow: auto;
+  flex-grow: 1;
+  .inner {
+    position: relative;
+    min-width: 100%;
+  }
+}
+.row {
   width: 100%;
+  border-bottom: 1px solid $-gray-500;
+  margin: 0;
+  &.guide {
+    background: $-gray-700;
+  }
 }
-
-.play-area {
-  background-color: $-gray-900;
-  position: fixed;
-  bottom: 0px;
-  height: 81px;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.v-card__title {
-  color: $-gray-50;
-}
-
-.v-divider {
-  background-color: $-gray-500;
-  margin-top: 3px;
-}
-
-.guideline-input {
-  padding: 0 0 0 10px;
-  border-radius: 4px;
-  border: 1px solid $-primary-500;
-  width: 100%;
-}
-.d-flex {
-  padding: 0;
-}
-
-.block {
-  margin-top: 1px;
-  height: 33.5px;
-  width: 64px;
-  border-right: 0.5px dashed $-gray-500;
-}
-
-.score-draggable {
-  display: flex;
-  margin-bottom: 1px;
-}
-.scale {
-  display: flex;
-  border-top: 0.5px solid $-gray-500;
-}
-.scale-text {
-  width: 55px;
+.grid {
+  top: 0;
+  position: absolute;
   border-right: 1px dashed $-gray-500;
+  height: 100%;
+}
+.block {
+  background: $-primary-500;
+  position: absolute;
+  border-radius: 4px;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+  &::after {
+    content: '';
+    background: $-gray-700;
+    position: absolute;
+    right: 5px;
+    top: 10%;
+    height: 80%;
+    width: 4px;
+    border-radius: 2px;
+  }
 }
 </style>

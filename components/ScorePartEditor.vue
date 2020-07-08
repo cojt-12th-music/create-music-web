@@ -46,7 +46,7 @@
       fullscreen
       hide-overlay
     >
-      <melody-modal @dialog="editModal = $event" />
+      <melody-modal :block-name="blockName" @dialog="editModal = $event" />
     </v-dialog>
     <v-dialog
       v-if="part === 'rhythm'"
