@@ -71,13 +71,16 @@ export default Vue.extend({
   },
   computed: {
     melodyBlocks(): BlockGroup {
-      return this.$accessor.music.melodyTemplates.reduce((acc, cur) => {
-        if (!acc[cur.category]) {
-          acc[cur.category] = []
-        }
-        acc[cur.category].push(cur)
-        return acc
-      }, {} as BlockGroup)
+      return this.$accessor.music.melodyTemplates.reduce(
+        (acc: BlockGroup, cur: Block) => {
+          if (!acc[cur.category]) {
+            acc[cur.category] = []
+          }
+          acc[cur.category].push(cur)
+          return acc
+        },
+        {} as BlockGroup
+      )
     }
   },
   watch: {

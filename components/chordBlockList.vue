@@ -71,13 +71,16 @@ export default Vue.extend({
   },
   computed: {
     chordBlocks(): BlockGroup {
-      return this.$accessor.music.chordTemplates.reduce((acc, cur) => {
-        if (!acc[cur.category]) {
-          acc[cur.category] = []
-        }
-        acc[cur.category].push(cur)
-        return acc
-      }, {} as BlockGroup)
+      return this.$accessor.music.chordTemplates.reduce(
+        (acc: BlockGroup, cur: Block) => {
+          if (!acc[cur.category]) {
+            acc[cur.category] = []
+          }
+          acc[cur.category].push(cur)
+          return acc
+        },
+        {} as BlockGroup
+      )
     }
   },
   watch: {
