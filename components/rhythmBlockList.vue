@@ -111,6 +111,7 @@ export default Vue.extend({
           part: 'rhythm',
           blockName: this.selectedBlockName
         })
+        this.selection = undefined
         this.$emit('clickAddBlock', 'rhythm')
       }
     },
