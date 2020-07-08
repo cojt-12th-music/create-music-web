@@ -1,4 +1,6 @@
-<template><div /></template>
+<template>
+  <div />
+</template>
 
 <script lang="ts">
 import Vue from 'vue'
@@ -15,14 +17,16 @@ export default Vue.extend({
       doneBtnText: '終わる',
       showButtons: true,
       onNext: (step: Element) => {
-        if (step && step.options.delay) {
-          const currentIndex = this.$driver.currentStep
+        console.log(step)
+        const currentIndex = this.$driver.currentStep
+        const nextStep = this.$accessor.lesson.steps[currentIndex + 1]
+        if (nextStep && nextStep.delay) {
           this.$driver.preventMove()
           this.$driver.reset()
           setTimeout(() => {
             this.setSteps()
             this.$driver.start(currentIndex + 1)
-          }, step.options.delay)
+          }, nextStep.delay)
         }
       },
       onHighlightStarted: (step: Element) => {

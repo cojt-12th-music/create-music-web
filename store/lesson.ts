@@ -32,8 +32,7 @@ export const state = (): LessonState => ({
       moveNext: {
         element: '#rhythm-plus-button',
         eventType: 'click'
-      },
-      nextDelay: 500
+      }
     },
     {
       element: '#rhythm-block-list',
@@ -46,7 +45,8 @@ export const state = (): LessonState => ({
       moveNext: {
         element: '#rhythm-block-list-add',
         eventType: 'click'
-      }
+      },
+      delay: 500
     },
     {
       element: '#rhythm-score',

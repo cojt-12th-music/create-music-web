@@ -2,7 +2,7 @@ import Origin from 'driver.js'
 
 export interface Step extends Origin.Step {
   disableContent?: boolean
-  nextDelay?: number
+  delay?: number
   moveNext?: {
     element: string
     eventType: string
@@ -16,6 +16,7 @@ export interface Element {
 
 export interface Driver {
   options: Origin.DriverOptions
+  steps: Step[]
   currentStep: number
   preventMove: () => void
   handleNext: () => void
