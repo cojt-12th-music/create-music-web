@@ -84,7 +84,7 @@ export default Vue.extend({
       widthPerNote: 60,
       quantize: 0.5,
       selectedSoundID: null,
-      xBorderWidth: 5,
+      xBorderWidth: 10,
       isMouseDown: false,
       mouseDeleteFlag: false,
       startPos: { x: 0, y: 0 },
@@ -105,7 +105,7 @@ export default Vue.extend({
       return this.$accessor.music.blocks.melody[this.blockName]
     },
     blockDuration(): number {
-      return this.soundBlock.duration
+      return Math.ceil(this.soundBlock.duration)
     },
     selectedSound(): Sound | undefined {
       return this.sounds.find((s) => s.id === this.selectedSoundID)
@@ -134,7 +134,9 @@ export default Vue.extend({
     },
     rowStyle() {
       return {
-        height: `${this.heightPerBlock}px`
+        left: '0',
+        height: `${this.heightPerBlock}px`,
+        width: `${this.widthPerNote * this.blockDuration}px`
       }
     },
     blockStyle(sound: Sound) {
@@ -283,7 +285,10 @@ export default Vue.extend({
     },
     addSoundFromPos(x: number, y: number): number {
       const newPos = this.posToSound(x, y)
-      const newID = this.sounds[this.sounds.length - 1].id!! + 1
+      const newID =
+        this.sounds.length > 0
+          ? this.sounds[this.sounds.length - 1].id!! + 1
+          : 1
       this.$accessor.music.addSound({
         part: 'melody',
         blockName: this.soundBlock.name,
@@ -347,15 +352,16 @@ export default Vue.extend({
 }
 .edit-area {
   overflow: auto;
-  width: 100%;
   flex-grow: 1;
   .inner {
     position: relative;
+    min-width: 100%;
   }
 }
 .row {
   width: 100%;
   border-bottom: 1px solid $-gray-500;
+  margin: 0;
   &.guide {
     background: $-gray-700;
   }
@@ -369,6 +375,8 @@ export default Vue.extend({
 .block {
   background: $-primary-500;
   position: absolute;
+  border-radius: 4px;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
   &::after {
     content: '';
     background: $-gray-700;
@@ -377,6 +385,7 @@ export default Vue.extend({
     top: 10%;
     height: 80%;
     width: 4px;
+    border-radius: 2px;
   }
 }
 </style>
