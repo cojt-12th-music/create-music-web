@@ -2,10 +2,10 @@
   <div id="component-frame">
     <v-container>
       <div class="score-header">
-        <h2 class="score-header-title">
-          <input v-model="scoreTitle" placeholder="Add Music Name" />
-        </h2>
-        <div class="score-header-creator">
+        <div id="score-title" class="score-header-composer">
+          {{ scoreComposer }}
+        </div>
+        <div id="score-composer" class="score-header-creator">
           <input v-model="scoreComposer" placeholder="Add Your Name" />
         </div>
       </div>
@@ -123,6 +123,8 @@ export default Vue.extend({
 div#component-frame {
   height: 100%;
   position: relative;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 .score-header {

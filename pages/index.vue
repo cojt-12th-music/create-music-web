@@ -1,5 +1,5 @@
 <template>
-  <div id="component-frame">
+  <div class="component-frame">
     <div id="musical-score-wrapper">
       <musical-score />
     </div>
@@ -82,11 +82,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#component-frame {
-  background-color: $-gray-800;
+.component-frame {
+  background-color: $-gray-800 !important;
   height: 100vh;
   color: $-gray-500;
   position: relative;
+  width: 100%;
 }
 
 #musical-score-wrapper {

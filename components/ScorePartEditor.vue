@@ -22,7 +22,7 @@
       <div v-for="i in scoreLength + 1" :key="i" class="block-area"></div>
     </div>
 
-    <div class="draggable-wrapper">
+    <div :id="`${part}-edit-area`" class="draggable-wrapper">
       <draggable
         v-model="blocks"
         class="score-draggable"
