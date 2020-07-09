@@ -136,7 +136,7 @@ div#component-frame {
     color: $-gray-50;
     margin-right: 1rem;
   }
-  .score-header-creator {
+  .score-header-composer {
     color: $-gray-100;
   }
 }
