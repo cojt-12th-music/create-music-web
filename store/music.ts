@@ -11,6 +11,7 @@ import {
   CHORD_PRESETS,
   RHYTHM_BLOCKS
 } from '@/lib/presets'
+import { firestoreAccessor } from '@/plugins/firebase'
 
 export const state = (): Music => ({
   title: '無題のタイトル',
@@ -201,6 +202,14 @@ export const mutations = mutationTree(state, {
   },
   SET_COMPOSER(state: MusicState, input: string) {
     state.composer = input
+  },
+  /**
+   * 楽譜データをFirestoreからfetchしてstateにセットする
+   * @param presetName セットするプリセット名
+   */
+  SET_SCORE(state: MusicState, data: Music) {
+    Object.assign(state, data)
+    console.log(state)
   }
 })
 
@@ -344,6 +353,24 @@ export const actions = actionTree(
     },
     setComposer({ commit }, Input: string) {
       commit('SET_COMPOSER', Input)
+    },
+    /**
+     * コードのプリセットをセットする
+     * @param presetName セットするプリセット名
+     */
+    addScore({ commit, state }) {
+      const data = { ...state }
+      // blocksはデカいのでとりあえず全て除外
+      // TODO: 初期のプリセットのみ除外するように
+      data.blocks = {
+        rhythm: {},
+        chord: {},
+        melody: {}
+      }
+
+      firestoreAccessor.scores
+        .create(data)
+        .then((score) => commit('SET_SCORE', score))
     }
   }
 )

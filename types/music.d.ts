@@ -99,6 +99,7 @@ export type ScorePart = 'rhythm' | 'chord' | 'melody'
  * blocks: melody, chord, rhytmそれぞれのブロック
  */
 export interface Music {
+  id?: string
   title: string
   composer: string
   bpm: number

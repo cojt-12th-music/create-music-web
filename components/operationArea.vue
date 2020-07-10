@@ -359,6 +359,9 @@ export default Vue.extend({
     // メロディの音量変更時
     melodhyVolumeChanged() {
       this.$accessor.music.setMelodyGain(this.melodyVolume / 80)
+    },
+    upload() {
+      this.$accessor.music.addScore()
     }
   }
 })
