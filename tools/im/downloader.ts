@@ -9,7 +9,20 @@ export async function downloadAndUnzip(url: string, name: string) {
   consola.info(`Downloading ${name}`)
   const archivePath = await download(url)
   consola.info(`Decompressing ${name}`)
-  await unzip(archivePath, './instruments/')
+  const files = await unzip(archivePath, './instruments/')
+  files
+    .filter((f) => f.path.endsWith('.sfz'))
+    .forEach((f) => {
+      fs.writeFile(
+        resolveFromHere(
+          `./instruments/${path.dirname(f.path)}/${path.basename(
+            f.path,
+            '.sfz'
+          )}__name.txt`
+        ),
+        name
+      )
+    })
   consola.info(`Done ${name}`)
 }
 

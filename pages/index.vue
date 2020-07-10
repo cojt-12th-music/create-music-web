@@ -80,7 +80,6 @@ export default {
   height: 65vh;
   margin-bottom: 3vh;
   overflow: scroll;
-
   // for IE, Edge
   -ms-overflow-style: none;
   // for Firefox

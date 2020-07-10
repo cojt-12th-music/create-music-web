@@ -30,7 +30,7 @@
           :key="index"
           class="block-item-wrapper"
         >
-          <block-item :block="block" @click.native="editModal = true" />
+          <block-item :block="block" @click.native="clickBlock(block.name)" />
         </div>
       </draggable>
       <div class="button-wrapper">
@@ -46,7 +46,7 @@
       fullscreen
       hide-overlay
     >
-      <melody-modal @dialog="editModal = $event" />
+      <melody-modal :block-name="blockName" @dialog="editModal = $event" />
     </v-dialog>
     <v-dialog
       v-if="part === 'rhythm'"
@@ -54,7 +54,7 @@
       fullscreen
       hide-overlay
     >
-      <rhythm-modal @dialog="editModal = $event" />
+      <rhythm-modal :block-name="blockName" @dialog="editModal = $event" />
     </v-dialog>
   </div>
 </template>
@@ -92,7 +92,8 @@ export default Vue.extend({
     return {
       // TODO: store setting
       enabled: true,
-      editModal: false
+      editModal: false,
+      blockName: ''
     }
   },
   computed: {
@@ -156,6 +157,10 @@ export default Vue.extend({
   methods: {
     showDialog() {
       this.$emit('update:showsDialog', true)
+    },
+    clickBlock(name: string) {
+      this.editModal = true
+      this.blockName = name
     }
   }
 })

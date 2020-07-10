@@ -1,5 +1,5 @@
 import { mutationTree, actionTree } from 'typed-vuex'
-import { PlayerState } from '~/types/player'
+import { PlayerState, Instrument } from '~/types/player'
 import { ScorePart } from '~/types/music'
 
 export const state = (): PlayerState => ({
@@ -11,6 +11,10 @@ export const state = (): PlayerState => ({
   previewPreset: {
     part: null,
     name: null
+  },
+  previewUnitSound: {
+    part: null,
+    key: 0
   },
   reverbs: []
 })
@@ -28,7 +32,7 @@ export const mutations = mutationTree(state, {
   SET_LOADING_PROGRESS(state: PlayerState, progress: number) {
     state.loadingProgress = progress
   },
-  SET_INSTRUMENTS(state: PlayerState, insts: string[]) {
+  SET_INSTRUMENTS(state: PlayerState, insts: Instrument[]) {
     state.instruments = insts
   },
   SET_PREVIEW_PRESET(
@@ -36,6 +40,12 @@ export const mutations = mutationTree(state, {
     previewPreset: { part: ScorePart | null; name: string | null }
   ) {
     state.previewPreset = { ...previewPreset }
+  },
+  SET_PREVIEW_UNITSOUND(
+    state: PlayerState,
+    previewUnitSound: { part: ScorePart | null; key: number | 0 }
+  ) {
+    state.previewUnitSound = { ...previewUnitSound }
   },
   SET_REVERBS(state: PlayerState, rvs: string[]) {
     state.reverbs = rvs
@@ -60,7 +70,7 @@ export const actions = actionTree(
     setLoadingProgress({ commit }, progress: number) {
       commit('SET_LOADING_PROGRESS', progress)
     },
-    setInstruments({ commit }, insts: string[]) {
+    setInstruments({ commit }, insts: Instrument[]) {
       commit('SET_INSTRUMENTS', insts)
     },
     playPresetPreview({ commit }, p: { part: ScorePart; name: string }) {
@@ -68,6 +78,12 @@ export const actions = actionTree(
     },
     stopPresetPreview({ commit }) {
       commit('SET_PREVIEW_PRESET', { part: null, name: null })
+    },
+    playUnitSoundPreview({ commit }, p: { part: ScorePart; key: number }) {
+      commit('SET_PREVIEW_UNITSOUND', p)
+    },
+    stopUnitSoundPreview({ commit }) {
+      commit('SET_PREVIEW_UNITSOUND', { part: null, key: 0 })
     },
     setReverbs({ commit }, rvs: string[]) {
       commit('SET_REVERBS', rvs)

@@ -1,14 +1,6 @@
 <template>
   <div>
-    <div v-show="isBlock" @click="clicked">
-      <div id="block-component-frame">
-        <div id="block-drag"></div>
-      </div>
-    </div>
-
-    <div v-show="isTile">
-      <div class="Tile" @click="clicked"></div>
-    </div>
+    <div id="block-component-frame"></div>
   </div>
 </template>
 
@@ -25,18 +17,7 @@ export default Vue.extend({
     }
   },
   computed: {},
-  methods: {
-    clicked() {
-      if (!this.isBlock && this.isTile) {
-        this.isBlock = true
-        this.isTile = false
-      } else if (this.isBlock && !this.isTile) {
-        this.isBlock = false
-        this.isTile = true
-      }
-      console.log(this.isBlock)
-    }
-  }
+  methods: {}
 })
 </script>
 
@@ -62,13 +43,5 @@ div#block-drag {
   box-sizing: border-box;
   width: 3px;
   height: 17.74px;
-}
-.Tile {
-  background-color: $-gray-700;
-  border-radius: 4px;
-  box-sizing: border-box;
-  width: 64px;
-  height: 33.5px;
-  margin-left: 1px;
 }
 </style>
