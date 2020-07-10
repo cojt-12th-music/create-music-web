@@ -83,6 +83,7 @@ export default Vue.extend({
       }
     },
     deletescore(soundId: number) {
+      console.log('deleteSoundId:' + soundId)
       this.$accessor.music.deleteSound({
         part: 'rhythm',
         blockName: this.blockName,

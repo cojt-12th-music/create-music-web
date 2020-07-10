@@ -15,7 +15,7 @@
           v-for="i in instrument_keys"
           :key="i"
           :drum-key="i"
-          :block-name="this.blockName"
+          :block-name="blockName"
         />
       </v-card>
 
@@ -57,6 +57,7 @@ export default Vue.extend({
           keyList.push(elm.key)
         }
       })
+      console.log('keyList:' + keyList)
       return keyList
     },
     soundBlock(): Block {

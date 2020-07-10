@@ -182,7 +182,7 @@ export const mutations = mutationTree(state, {
         targetBlockHash = state.blocks.chord
         break
       case 'rhythm':
-        if (state.blocks.melody[blockName].sounds.length === 0) lastSound = null
+        if (state.blocks.rhythm[blockName].sounds.length === 0) lastSound = null
         else
           lastSound = state.blocks.rhythm[blockName].sounds.reduce((p, c) =>
             p.delay + p.duration < c.delay + c.duration ? c : p
