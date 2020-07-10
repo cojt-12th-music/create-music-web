@@ -14,28 +14,27 @@
 </template>
 
 <script lang="ts">
+import Vue from 'vue'
 import { Context } from '@nuxt/types'
 
+import Lesson from '@/components/Lesson.vue'
 import MusicalScore from '@/components/musicalScore.vue'
 import OperationArea from '@/components/operationArea.vue'
 import Player from '@/components/Player.vue'
 import { firebaseAuth, firestoreAccessor } from '@/plugins/firebase'
 import { Music } from '@/types/music'
-import lessonMixin from '@/mixins/lesson.ts'
-import Lesson from '@/components/Lesson.vue'
 
 type DataType = {
   lessonAvailable: string | (string | null)[]
 }
 
-export default {
+export default Vue.extend({
   components: {
+    Lesson,
     MusicalScore,
     OperationArea,
-    Lesson,
     Player
   },
-  mixins: [lessonMixin],
   async fetch({ route, store }: Context) {
     firebaseAuth.onAuthStateChanged((user) => {
       if (user) {
@@ -78,7 +77,7 @@ export default {
       return this.$accessor.player.isReady
     }
   }
-}
+})
 </script>
 
 <style lang="scss" scoped>

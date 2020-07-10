@@ -2,9 +2,9 @@
   <div id="component-frame">
     <v-container>
       <div class="score-header">
-        <div id="score-title" class="score-header-composer">
-          {{ scoreComposer }}
-        </div>
+        <h2 id="score-title" class="score-header-title">
+          <input v-model="scoreTitle" placeholder="Add Music Name" />
+        </h2>
         <div id="score-composer" class="score-header-creator">
           <input v-model="scoreComposer" placeholder="Add Your Name" />
         </div>

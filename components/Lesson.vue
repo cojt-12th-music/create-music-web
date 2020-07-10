@@ -16,8 +16,7 @@ export default Vue.extend({
       closeBtnText: 'やめる',
       doneBtnText: '終わる',
       showButtons: true,
-      onNext: (step: Element) => {
-        console.log(step)
+      onNext: (_: Element) => {
         const currentIndex = this.$driver.currentStep
         const nextStep = this.$accessor.lesson.steps[currentIndex + 1]
         if (nextStep && nextStep.delay) {
