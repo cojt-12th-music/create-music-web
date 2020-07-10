@@ -57,7 +57,9 @@ export default Vue.extend({
           keyList.push(elm.key)
         }
       })
-      console.log('keyList:' + keyList)
+      keyList.sort(function(a, b) {
+        return a < b ? -1 : 1
+      })
       return keyList
     },
     soundBlock(): Block {
