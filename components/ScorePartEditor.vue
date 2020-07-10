@@ -30,10 +30,7 @@
           :key="index"
           class="block-item-wrapper"
         >
-          <block-item
-            :block="block"
-            @click.native="showEditModal(block.name)"
-          />
+          <block-item :block="block" @click.native="showEditModal(block)" />
         </div>
       </draggable>
       <div class="button-wrapper">
@@ -56,7 +53,11 @@
       fullscreen
       hide-overlay
     >
-      <melody-modal :block-name="blockName" @dialog="showsEditModal = $event" />
+      <melody-modal
+        v-if="currentBlock"
+        :block-name="currentBlock.name"
+        @dialog="showsEditModal = $event"
+      />
     </v-dialog>
     <v-dialog
       v-if="part === 'rhythm'"
@@ -64,7 +65,11 @@
       fullscreen
       hide-overlay
     >
-      <rhythm-modal :block-name="blockName" @dialog="showsEditModal = $event" />
+      <rhythm-modal
+        v-if="currentBlock"
+        :block-name="currentBlock.name"
+        @dialog="closeEditModal"
+      />
     </v-dialog>
   </div>
 </template>
@@ -77,6 +82,13 @@ import BlockList from '@/components/BlockList.vue'
 import MelodyModal from '@/components/melodyModal.vue'
 import RhythmModal from '@/components/rhythmModal.vue'
 import { Block, ScorePart } from '@/types/music'
+
+type DataType = {
+  enabled: boolean
+  showsBlockList: boolean
+  showsEditModal: boolean
+  currentBlock: Block | null
+}
 
 export default Vue.extend({
   components: {
@@ -92,12 +104,12 @@ export default Vue.extend({
       type: String as Vue.PropType<ScorePart>
     }
   },
-  data() {
+  data(): DataType {
     return {
       enabled: true,
       showsBlockList: false,
       showsEditModal: false,
-      blockName: ''
+      currentBlock: null
     }
   },
   computed: {
@@ -154,9 +166,29 @@ export default Vue.extend({
     }
   },
   methods: {
-    showEditModal(name: string) {
-      this.blockName = name
+    showEditModal(block: Block) {
+      // ブロックは編集前の状態を保持できるようdeep copyしておく
+      this.currentBlock = JSON.parse(JSON.stringify(block))
       this.showsEditModal = true
+    },
+    closeEditModal(isEdited: boolean) {
+      this.showsEditModal = false
+
+      // 編集していないときや, ブロックがユーザが作成したものなときは何もしない
+      if (!isEdited || !this.currentBlock || this.currentBlock.isOriginal) {
+        return
+      }
+
+      // ブロックをコピー
+      this.$accessor.music.copyBlock({
+        part: this.part,
+        blockName: this.currentBlock.name
+      })
+      // もとのブロックは編集前に戻す
+      this.$accessor.music.updateBlock({
+        part: this.part,
+        block: this.currentBlock
+      })
     }
   }
 })

@@ -16,6 +16,7 @@
           :key="i"
           :drum-key="i"
           :block-name="blockName"
+          @edit-block="editBlock"
         />
       </v-card>
 
@@ -45,7 +46,9 @@ export default Vue.extend({
     }
   },
   data() {
-    return {}
+    return {
+      isEdited: false
+    }
   },
   computed: {
     // ドラムの種類（キー）を配列にして返す
@@ -68,7 +71,10 @@ export default Vue.extend({
   },
   methods: {
     dialog() {
-      this.$emit('dialog', false)
+      this.$emit('dialog', this.isEdited)
+    },
+    editBlock() {
+      this.isEdited = true
     },
     async playPreview() {
       await this.$accessor.player.stopPresetPreview()

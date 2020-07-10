@@ -108,6 +108,17 @@ export const mutations = mutationTree(state, {
     state.blocks[part][block.name] = block
   },
   /**
+   * ブロックを変更する
+   * @param part 変更するブロックのパート
+   * @param block 変更するブロック
+   */
+  UPDATE_BLOCK(
+    state: MusicState,
+    { part, block }: { part: ScorePart; block: Block }
+  ) {
+    Object.assign(state.blocks[part], { [block.name]: block })
+  },
+  /**
    * ブロックに新しいsoundを追加する
    * @param blockName 追加するブロックの名前
    * @param sound 追加するsound
@@ -285,6 +296,16 @@ export const actions = actionTree(
       commit('ADD_BLOCK_TO_LIST', { part, block })
     },
     /**
+     * ブロックを変更する
+     * @param block 変更するブロック
+     */
+    updateBlock(
+      { commit },
+      { part, block }: { part: ScorePart; block: Block }
+    ) {
+      commit('UPDATE_BLOCK', { part, block })
+    },
+    /**
      * blockをディープコピーし, 新たなblockを追加する
      * hoge というblockをコピーする場合, hoge' というblockを新しく生成する
      * @param blockName コピーするブロックの名前
@@ -293,10 +314,23 @@ export const actions = actionTree(
       { state, commit },
       { part, blockName }: { part: ScorePart; blockName: string }
     ) {
-      const block = JSON.parse(JSON.stringify(state.blocks[part][blockName]))
-      block.name = `${block.name}'`
+      const block: Block = JSON.parse(
+        JSON.stringify(state.blocks[part][blockName])
+      )
+      // もしhoge'が存在しているならhoge''を見る, これを存在しないところまで繰り返す
+      while (state.blocks[part][block.name]) {
+        block.name = `${block.name}'`
+      }
       block.category = 'マイブロック'
+      block.isOriginal = true
+      // コピー後のブロックをリストに追加する
       commit('ADD_BLOCK_TO_LIST', { part, block })
+
+      // コピー前のブロック名をコピー後のものに置き換える
+      const blockNames = state[part].blockNames.map((name: string) =>
+        name === blockName ? block.name : name
+      )
+      commit('SET_BLOCK_NAMES', { part, blockNames })
     },
     /**
      * ブロックに新しいsoundを追加する
