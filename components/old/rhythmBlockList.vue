@@ -111,7 +111,7 @@ export default Vue.extend({
           part: 'rhythm',
           blockName: this.selectedBlockName
         })
-        this.$emit('clickAddBlock', 'rhythm')
+        this.$emit('closeDialog', 'rhythm')
       }
     },
     setSelectedBlockName(block: Block) {

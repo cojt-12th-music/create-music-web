@@ -2,12 +2,12 @@
   <div id="component-frame">
     <v-card class="mx-auto">
       <v-card-title>
-        <p>コードの追加</p>
+        <p>メロディの追加</p>
       </v-card-title>
 
       <v-chip-group v-model="selection" column>
         <v-card-text
-          v-for="(blocks, category, categoryIndex) in chordBlocks"
+          v-for="(blocks, category, categoryIndex) in melodyBlocks"
           :key="categoryIndex"
         >
           <v-card-text>{{ category }}</v-card-text>
@@ -37,7 +37,7 @@
           ><span class="material-icons">warning</span></v-card-title
         >
         <v-card-text class="attention-modal-text">
-          ブロック選べや．ちょっと考えれば分かるやろ．
+          ちゃんとブロック選択しいや
         </v-card-text>
 
         <v-card-actions class="attention-modal-btn">
@@ -70,8 +70,8 @@ export default Vue.extend({
     }
   },
   computed: {
-    chordBlocks(): BlockGroup {
-      return this.$accessor.music.chordTemplates.reduce((acc, cur) => {
+    melodyBlocks(): BlockGroup {
+      return this.$accessor.music.melodyTemplates.reduce((acc, cur) => {
         if (!acc[cur.category]) {
           acc[cur.category] = []
         }
@@ -99,10 +99,10 @@ export default Vue.extend({
       } else {
         console.log('選択状態: ' + this.selection)
         this.$accessor.music.cloneBlock({
-          part: 'chord',
+          part: 'melody',
           blockName: this.selectedBlockName
         })
-        this.$emit('clickAddBlock', 'chord')
+        this.$emit('closeDialog', 'melody')
       }
     },
     setSelectedBlockName(block: Block) {

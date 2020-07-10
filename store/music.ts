@@ -51,6 +51,10 @@ export const getters = getterTree(state, {
   // リズム
   rhythmTemplates: (state: MusicState): Block[] =>
     Object.values(state.blocks.rhythm),
+  // 以上を関数化したもの
+  blockTemplates: (state: MusicState): ((part: ScorePart) => Block[]) => (
+    part: ScorePart
+  ) => Object.values(state.blocks[part]),
 
   /**
    * 実際に再生する順番でblocksを返す系のgetters

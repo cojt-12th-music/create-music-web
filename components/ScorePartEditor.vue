@@ -37,37 +37,34 @@
         </div>
       </draggable>
       <div class="button-wrapper">
-        <v-icon x-large class="dialog-button" @click.stop="showBlockList()">
+        <v-icon
+          x-large
+          class="dialog-button"
+          @click.stop="showsBlockList = true"
+        >
           mdi-plus-circle-outline
         </v-icon>
       </div>
     </div>
 
-    <v-dialog v-model="rhythmDialog" max-width="800">
-      <RhythmBlockList @clickAddBlock="closeDialog" />
+    <v-dialog v-model="showsBlockList" max-width="800">
+      <block-list :part="part" @closeDialog="showsBlockList = false" />
     </v-dialog>
-    <v-dialog v-model="chordDialog" max-width="800">
-      <ChordBlockList @clickAddBlock="closeDialog" />
-    </v-dialog>
-    <v-dialog v-model="melodyDialog" max-width="800">
-      <MelodyBlockList @clickAddBlock="closeDialog" />
-    </v-dialog>
-    <!-- ブロックが押されたら編集画面表示 -->
     <v-dialog
       v-if="part === 'melody'"
-      v-model="editModal"
+      v-model="showsEditModal"
       fullscreen
       hide-overlay
     >
-      <melody-modal :block-name="blockName" @dialog="editModal = $event" />
+      <melody-modal :block-name="blockName" @dialog="showsEditModal = $event" />
     </v-dialog>
     <v-dialog
       v-if="part === 'rhythm'"
-      v-model="editModal"
+      v-model="showsEditModal"
       fullscreen
       hide-overlay
     >
-      <rhythm-modal :block-name="blockName" @dialog="editModal = $event" />
+      <rhythm-modal :block-name="blockName" @dialog="showsEditModal = $event" />
     </v-dialog>
   </div>
 </template>
@@ -76,9 +73,7 @@
 import Vue from 'vue'
 import draggable from 'vuedraggable'
 import BlockItem from '@/components/BlockItem.vue'
-import RhythmBlockList from '@/components/rhythmBlockList.vue'
-import ChordBlockList from '@/components/chordBlockList.vue'
-import MelodyBlockList from '@/components/melodyBlockList.vue'
+import BlockList from '@/components/BlockList.vue'
 import MelodyModal from '@/components/melodyModal.vue'
 import RhythmModal from '@/components/rhythmModal.vue'
 import { Block, ScorePart } from '@/types/music'
@@ -87,9 +82,7 @@ export default Vue.extend({
   components: {
     draggable,
     BlockItem,
-    RhythmBlockList,
-    ChordBlockList,
-    MelodyBlockList,
+    BlockList,
     MelodyModal,
     RhythmModal
   },
@@ -97,29 +90,18 @@ export default Vue.extend({
     part: {
       required: true,
       type: String as Vue.PropType<ScorePart>
-    },
-    showsDialog: {
-      required: true,
-      type: Boolean
-    },
-    blockAreaLength: {
-      type: Number,
-      required: true
     }
   },
   data() {
     return {
-      editModal: false,
-      blockName: '',
-      rhythmDialog: false,
-      chordDialog: false,
-      melodyDialog: false,
-      melodyEditModal: false
+      enabled: true,
+      showsBlockList: false,
+      showsEditModal: false,
+      blockName: ''
     }
   },
   computed: {
     dragOptions() {
-      console.log(this.$accessor.music.rhythmBlocks)
       return {
         animation: 300,
         disabled: false
@@ -176,36 +158,9 @@ export default Vue.extend({
     }
   },
   methods: {
-    showBlockList() {
-      switch (this.part) {
-        case 'rhythm':
-          this.rhythmDialog = true
-          break
-        case 'chord':
-          this.chordDialog = true
-          break
-        case 'melody':
-          this.melodyDialog = true
-          break
-      }
-    },
     showEditModal(name: string) {
-      this.editModal = true
       this.blockName = name
-    },
-    closeDialog() {
-      this.editModal = false
-      switch (this.part) {
-        case 'rhythm':
-          this.rhythmDialog = false
-          break
-        case 'chord':
-          this.chordDialog = false
-          break
-        case 'melody':
-          this.melodyDialog = false
-          break
-      }
+      this.showsEditModal = true
     }
   }
 })
