@@ -23,9 +23,18 @@
         </v-col>
         <v-col align-self="center">
           <div class="iconRight">
-            <v-btn icon @click="share">
-              <v-icon size="300%" color="#F96500">mdi-share-variant</v-icon>
-            </v-btn>
+            <a
+              id="shareTag"
+              href="https://twitter.com/intent/tweet?url=http://localhost:3000/ &text=音楽を作ってみました♪"
+              target="blank_"
+              style="text-decoration: none;"
+            >
+              <v-btn icon @click="share">
+                <v-icon size="300%" color="#F96500">
+                  mdi-share-variant
+                </v-icon>
+              </v-btn>
+            </a>
           </div>
         </v-col>
       </v-row>
@@ -147,7 +156,7 @@
           <v-list-item>
             <v-select
               v-model="selectedRhythmInst"
-              :items="rhythmInstruments[0]"
+              :items="rhythmInstruments"
               label="リズムの楽器"
               dark
               @change="selectRhythmInst"
@@ -156,7 +165,7 @@
           <v-list-item>
             <v-select
               v-model="selectedChordInst"
-              :items="chordInstruments[0]"
+              :items="chordInstruments"
               label="コードの楽器"
               dark
               @change="selectChordInst"
@@ -165,7 +174,7 @@
           <v-list-item>
             <v-select
               v-model="selectedMelodyInst"
-              :items="melodyInstruments[0]"
+              :items="melodyInstruments"
               label="メロディの楽器"
               dark
               @change="selectMelodyInst"
@@ -206,13 +215,13 @@ type DataType = {
   // ナビゲーションドロワーの展開用
   configDialog: boolean
   // リズムの楽器選択用
-  rhythmInstruments: string[][]
+  rhythmInstruments: string[]
   selectedRhythmInst: string
   // コードの楽器選択用
-  chordInstruments: string[][]
+  chordInstruments: string[]
   selectedChordInst: string
   // メロディの楽器選択用
-  melodyInstruments: string[][]
+  melodyInstruments: string[]
   selectedMelodyInst: string
   // 色のテーマ用
   colorThema: string[]
@@ -230,25 +239,12 @@ export default Vue.extend({
     return {
       initialized: true,
       configDialog: false,
-      rhythmInstruments: [
-        ['ドラム1', 'ドラム2', 'ドラム3'],
-        ['dram1path', 'drum2path', 'drum3path']
-      ],
-      selectedRhythmInst: 'ドラム1',
-      chordInstruments: [
-        ['ベース1', 'ベース2', 'ベース3'],
-        ['base1path', 'base2path', 'base3path']
-      ],
-      selectedChordInst: 'ベース1',
-      melodyInstruments: [
-        ['クラシックギター', 'エレキギター', 'ピアノ'],
-        [
-          'instruments/SpanishClassicalGuitar-SFZ-20190618/SpanishClassicalGuitar-20190618.jsfz',
-          'instruments/FSFT-EGuitarDistorted-SFZ-20200321/FSFT-EGuitarDistorted-20200321.jsfz',
-          'instruments/UprightPianoKW-SFZ-20190703/UprightPianoKW-20190703.jsfz'
-        ]
-      ],
-      selectedMelodyInst: 'クラシックギター',
+      rhythmInstruments: ['ドラム'],
+      selectedRhythmInst: 'ドラム',
+      chordInstruments: ['エレキ', 'ギター', 'ピアノ'],
+      selectedChordInst: 'ギター',
+      melodyInstruments: ['エレキ', 'ギター', 'ピアノ'],
+      selectedMelodyInst: 'ピアノ',
       colorThema: ['ダークモード', 'ライトモード'],
       selectedColorThema: 'ダークモード',
       bpm: 100,
@@ -297,50 +293,62 @@ export default Vue.extend({
       this.configDialog = true
     },
     // シェアボタンの動作
+    // twitterシェアのURLを取得
     share() {
-      alert('仮')
+      // const shareTag = <HTMLAnchorElement>document.getElementById("shareTag")
+      // const shareURL =
+      //   'https://twitter.com/intent/tweet?url=' +
+      //   location.href +
+      //   '&text=音楽を作ってみました♪'
+      // shareTag.href=shareURL
     },
     // 初めの初期化（コンテキスト生成）
+    // 各パートの楽器を初期化
     init() {
       this.initialized = false
       this.$accessor.player.setContext(new AudioContext())
+
+      // 各パートの楽器を初期化
+      this.$accessor.music.setRhythmInstrument(
+        'instruments/ColomboADK-FreePats-SFZ-20200530/ColomboADK-FreePats-20200530.jsfz'
+      )
+      this.$accessor.music.setMelodyInstrument(
+        'instruments/UprightPianoKW-SFZ-20190703/UprightPianoKW-20190703.jsfz'
+      )
+      this.$accessor.music.setChordInstrument(
+        'instruments/SpanishClassicalGuitar-SFZ-20190618/SpanishClassicalGuitar-20190618.jsfz'
+      )
+    },
+    // 楽器名から音ファイルのパスを返す
+    nameToPath(instrumentName: string) {
+      return new Promise<string>((resolve) => {
+        fetch('/instruments/instruments.json')
+          .then((res) => res.json())
+          .then((res) => {
+            const instPath = res.find(
+              (item: any) => item.name === instrumentName
+            ).path
+            resolve(instPath)
+          })
+      })
     },
     // リズムの楽器選択
-    selectRhythmInst() {
-      let inst = ''
+    async selectRhythmInst() {
+      const path: string = await this.nameToPath(this.selectedRhythmInst)
 
-      for (let i = 0; i < this.rhythmInstruments[0].length; i++) {
-        if (this.rhythmInstruments[0][i] === this.selectedRhythmInst) {
-          inst = this.rhythmInstruments[1][i]
-        }
-      }
-
-      alert(inst)
-      this.$accessor.music.setRhythmInstrument(inst)
+      this.$accessor.music.setRhythmInstrument(path)
     },
     // コードの楽器選択
-    selectChordInst() {
-      let inst = ''
+    async selectChordInst() {
+      const path: string = await this.nameToPath(this.selectedChordInst)
 
-      for (let i = 0; i < this.chordInstruments[0].length; i++) {
-        if (this.chordInstruments[0][i] === this.selectedChordInst) {
-          inst = this.chordInstruments[1][i]
-        }
-      }
-
-      this.$accessor.music.setChordInstrument(inst)
+      this.$accessor.music.setChordInstrument(path)
     },
     // メロディの楽器選択
-    selectMelodyInst() {
-      let inst = ''
+    async selectMelodyInst() {
+      const path: string = await this.nameToPath(this.selectedMelodyInst)
 
-      for (let i = 0; i < this.melodyInstruments[0].length; i++) {
-        if (this.melodyInstruments[0][i] === this.selectedMelodyInst) {
-          inst = this.melodyInstruments[1][i]
-        }
-      }
-
-      this.$accessor.music.setMelodyInstrument(inst)
+      this.$accessor.music.setMelodyInstrument(path)
     },
     // カラーモード選択
     selectColorThema() {},

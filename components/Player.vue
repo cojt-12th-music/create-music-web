@@ -12,6 +12,7 @@
           :is-ready.sync="isMelodyReady"
           :gain-value="gainValue"
           :reverb-path="null"
+          :unit-sound-preview="melodyUnitSoundKey"
         />
         <instrument
           :sfz-path="chordInstrument"
@@ -22,6 +23,7 @@
           :is-playing="isChordPlaying"
           :is-ready.sync="isChordReady"
           :gain-value="gainValue"
+          :unit-sound-preview="chordUnitSoundKey"
         />
         <instrument
           :sfz-path="rhythmInstrument"
@@ -32,10 +34,13 @@
           :is-playing="isRhythmPlaying"
           :is-ready.sync="isRhythmReady"
           :gain-value="gainValue"
+          :unit-sound-preview="rhythmUnitSoundKey"
         />
       </v-col>
     </v-row>
     <v-btn @click="test">test</v-btn>
+    <v-btn @click="testUnit">testUnit</v-btn>
+    <v-select v-model="unitKey" :items="keys"> </v-select>
     <v-slider
       v-model="gainValue"
       ticks
@@ -59,6 +64,11 @@ type DataType = {
   isRhythmReady: boolean
   isLimiter: boolean
   isReverb: boolean
+  melodyUnitSoundKey: number
+  chordUnitSoundKey: number
+  rhythmUnitSoundKey: number
+  unitKey: number // デバッグ用
+  keys: number[] // デバッグ用
 }
 export default Vue.extend({
   components: {
@@ -82,10 +92,18 @@ export default Vue.extend({
       isChordReady: false,
       isRhythmReady: false,
       isLimiter: false,
-      isReverb: false
+      isReverb: false,
+      melodyUnitSoundKey: 0,
+      chordUnitSoundKey: 0,
+      rhythmUnitSoundKey: 0,
+      unitKey: 0,
+      keys: [48, 60, 64, 67, 72]
     }
   },
   computed: {
+    unitSoundKey(): number {
+      return this.$accessor.player.previewUnitSound.key
+    },
     melodyNotes(): Sound[] {
       // プレビュー用
       if (this.$accessor.player.previewPreset.part === 'melody') {
@@ -143,17 +161,14 @@ export default Vue.extend({
     context(): AudioContext | null {
       return this.$accessor.player.context
     },
-    instruments(): string[] {
-      return this.$accessor.player.instruments
-    },
     melodyInstrument(): string {
-      return this.$accessor.player.instruments[1]
+      return this.$accessor.music.melodyInstrument
     },
     chordInstrument(): string {
-      return this.$accessor.player.instruments[2]
+      return this.$accessor.music.chordInstrument
     },
     rhythmInstrument(): string {
-      return this.$accessor.player.instruments[2]
+      return this.$accessor.music.rhythmInstrument
     }
   },
   watch: {
@@ -176,6 +191,15 @@ export default Vue.extend({
     },
     isRhythmReady() {
       this.updateReadyState()
+    },
+    unitSoundKey() {
+      if (this.$accessor.player.previewUnitSound.part === 'melody') {
+        this.melodyUnitSoundKey = this.unitSoundKey
+      } else if (this.$accessor.player.previewUnitSound.part === 'chord') {
+        this.chordUnitSoundKey = this.unitSoundKey
+      } else if (this.$accessor.player.previewUnitSound.part === 'rhythm') {
+        this.rhythmUnitSoundKey = this.unitSoundKey
+      }
     }
   },
   mounted() {
@@ -183,6 +207,15 @@ export default Vue.extend({
       .then((res) => res.json())
       .then((res) => {
         this.$accessor.player.setInstruments(res)
+        this.$accessor.music.setMelodyInstrument(
+          this.$accessor.player.instruments[1].path
+        )
+        this.$accessor.music.setChordInstrument(
+          this.$accessor.player.instruments[2].path
+        )
+        this.$accessor.music.setRhythmInstrument(
+          this.$accessor.player.instruments[0].path
+        )
       })
     fetch('/reverbs/reverbs.json')
       .then((res) => res.json())
@@ -218,6 +251,12 @@ export default Vue.extend({
       this.$accessor.player.playPresetPreview({
         part: 'melody',
         name: 'メロ1'
+      })
+    },
+    testUnit() {
+      this.$accessor.player.playUnitSoundPreview({
+        part: 'melody',
+        key: this.unitKey
       })
     }
   }

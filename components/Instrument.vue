@@ -91,6 +91,10 @@ export default Vue.extend({
       required: false,
       default: null,
       type: Object as Vue.PropType<string | null>
+    },
+    unitSoundPreview: {
+      required: true,
+      type: Number
     }
   },
   data(): DataType {
@@ -135,6 +139,11 @@ export default Vue.extend({
     },
     isReverb() {
       if (this.isReverb) this.setReverb()
+    },
+    unitSoundPreview() {
+      if (this.unitSoundPreview) {
+        this.playNote(this.unitSoundPreview, 0)
+      }
     }
   },
   mounted() {
@@ -228,11 +237,34 @@ export default Vue.extend({
     },
     constructGraph(key: number, delay = 0, duration = 0.5): AudioNode[] {
       // 指定された鍵盤番号の音を鳴らすのに必要な音データを探す
-      const target = this.sampleDefinition.find(
+      // リズムは乱数によって少し違う音を格納する
+      const targetArray = this.sampleDefinition.filter(
         (s) =>
           s.key === key ||
           (s.lokey && s.lokey <= key && s.hikey && key <= s.hikey)
       )
+
+      // 鳴らす音データを格納する変数
+      let target
+      // リズムの乱数用
+      const rand = Math.random()
+
+      for (let i = 0; i < targetArray.length; i++) {
+        // lorandが定義されていない音データ（メロディ，コード，一部のリズム）については始めに見つかった音データを格納
+        if (targetArray[i].lorand === undefined) {
+          target = targetArray[i]
+          break
+        }
+        // lorandが定義されている音データ（リズムのほぼ全部）について，randに適する音データを格納
+        else if (
+          targetArray[i].lorand! <= rand &&
+          rand <= targetArray[i].hirand!
+        ) {
+          target = targetArray[i]
+          break
+        }
+      }
+
       if (!target) return [] // 対応するものが無ければ何もしない
 
       const nodes: AudioNode[] = []

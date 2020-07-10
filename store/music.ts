@@ -18,17 +18,17 @@ export const state = (): Music => ({
   composer: '名無しの作曲者',
   bpm: 100,
   melody: {
-    instrument: 'guitar',
+    instrument: '',
     blockNames: ['メロ1', 'メロ2', 'メロ3', 'メロ4'],
     gain: 1
   },
   chord: {
-    instrument: 'guitar',
+    instrument: '',
     blockNames: ['コード1', 'コード2', 'コード3', 'コード4'],
     gain: 1
   },
   rhythm: {
-    instrument: 'guitar',
+    instrument: '',
     blockNames: ['16ビート', '8ビート', '8ビート', '2ビート', '2ビート'],
     gain: 1
   },
@@ -69,7 +69,11 @@ export const getters = getterTree(state, {
     state.chord.blockNames.map((name) => state.blocks.chord[name]),
   // メロディーのblocksを返す
   rhythmBlocks: (state: MusicState): Block[] =>
-    state.rhythm.blockNames.map((name) => state.blocks.rhythm[name])
+    state.rhythm.blockNames.map((name) => state.blocks.rhythm[name]),
+
+  melodyInstrument: (state: MusicState): string => state.melody.instrument,
+  chordInstrument: (state: MusicState): string => state.chord.instrument,
+  rhythmInstrument: (state: MusicState): string => state.rhythm.instrument
 })
 
 export const mutations = mutationTree(state, {
