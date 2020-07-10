@@ -4,7 +4,7 @@
  */
 
 import { getterTree, mutationTree, actionTree } from 'typed-vuex'
-import { Music, Block, Sound, ScorePart, BlockHash } from '@/types/music'
+import { Music, Block, Sound, ScorePart } from '@/types/music'
 import {
   MELODY_BLOCKS,
   CHORD_BLOCKS,
@@ -47,32 +47,38 @@ export const getters = getterTree(state, {
    * テンプレートやプリセットの名前のみを返す系のgetters
    * 編集時に使用する
    */
-  // リズム
-  rhythmTemplates: (state: MusicState): Block[] =>
-    Object.values(state.blocks.rhythm),
-  // コード
-  chordTemplates: (state: MusicState): Block[] =>
-    Object.values(state.blocks.chord),
   // メロディー
   melodyTemplates: (state: MusicState): Block[] =>
     Object.values(state.blocks.melody),
+  // コード
+  chordTemplates: (state: MusicState): Block[] =>
+    Object.values(state.blocks.chord),
+  // リズム
+  rhythmTemplates: (state: MusicState): Block[] =>
+    Object.values(state.blocks.rhythm),
 
   /**
    * 実際に再生する順番でblocksを返す系のgetters
    * 音源の再生時に使用する
    */
-  // メロディーのblocksを返す
+  // メロディー
   melodyBlocks: (state: MusicState): Block[] =>
     state.melody.blockNames.map((name) => state.blocks.melody[name]),
-  // メロディーのblocksを返す
+  // コード
   chordBlocks: (state: MusicState): Block[] =>
     state.chord.blockNames.map((name) => state.blocks.chord[name]),
-  // メロディーのblocksを返す
+  // リズム
   rhythmBlocks: (state: MusicState): Block[] =>
     state.rhythm.blockNames.map((name) => state.blocks.rhythm[name]),
 
+  /**
+   * 各パートの楽器名を返す系のgetters
+   */
+  // メロディー
   melodyInstrument: (state: MusicState): string => state.melody.instrument,
+  // コード
   chordInstrument: (state: MusicState): string => state.chord.instrument,
+  // リズム
   rhythmInstrument: (state: MusicState): string => state.rhythm.instrument
 })
 
@@ -112,9 +118,8 @@ export const mutations = mutationTree(state, {
     }: { part: ScorePart; blockName: string; sound: Sound }
   ) {
     const sounds = state.blocks[part][blockName].sounds
-    const newID = sounds.length > 0 ? sounds[sounds.length - 1].id!! + 1 : 1
-    if (!sound.id) sound.id = newID
-    state.blocks[part][blockName].sounds.push(sound)
+    sound.id = (sounds[sounds.length - 1]?.id || 0) + 1
+    sounds.push(sound)
   },
   /**
    * ブロックのsoundを削除する
@@ -156,43 +161,24 @@ export const mutations = mutationTree(state, {
   },
   /**
    * 指定したブロックのdurationを更新する
+   * @param part 更新するブロックのパート
+   * @param blockName 更新するブロックの名前
    */
-  UPDATE_BLOCK_DURATION(
+  REFRESH_BLOCK_DURATION(
     state: MusicState,
-    payload: { part: ScorePart; blockName: string }
+    { part, blockName }: { part: ScorePart; blockName: string }
   ) {
-    const { part, blockName } = payload
-    let lastSound: Sound | null = null
-    let targetBlockHash: BlockHash = {}
-    switch (part) {
-      case 'melody':
-        if (state.blocks.melody[blockName].sounds.length === 0) lastSound = null
-        else
-          lastSound = state.blocks.melody[blockName].sounds.reduce((p, c) =>
-            p.delay + p.duration < c.delay + c.duration ? c : p
-          )
-        targetBlockHash = state.blocks.melody
-        break
-      case 'chord':
-        if (state.blocks.chord[blockName].sounds.length === 0) lastSound = null
-        else
-          lastSound = state.blocks.chord[blockName].sounds.reduce((p, c) =>
-            p.delay + p.duration < c.delay + c.duration ? c : p
-          )
-        targetBlockHash = state.blocks.chord
-        break
-      case 'rhythm':
-        if (state.blocks.rhythm[blockName].sounds.length === 0) lastSound = null
-        else
-          lastSound = state.blocks.rhythm[blockName].sounds.reduce((p, c) =>
-            p.delay + p.duration < c.delay + c.duration ? c : p
-          )
-        targetBlockHash = state.blocks.rhythm
+    const blockHash = state.blocks[part]
+    if (blockHash[blockName].sounds.length) {
+      // 音が存在する場合はdurationの最大値をセット
+      blockHash[blockName].duration = blockHash[blockName].sounds.reduce(
+        (d: number, sound: Sound) => Math.max(sound.delay + sound.duration, d),
+        0
+      )
+    } else {
+      // 音が存在しない場合は4をセット
+      blockHash[blockName].duration = 4
     }
-    if (!lastSound) targetBlockHash[blockName].duration = 4
-    else
-      targetBlockHash[blockName].duration =
-        Math.ceil((lastSound.delay + lastSound.duration) / 4) * 4
   },
   /**
    * 楽譜のブロック配列を置き換える
@@ -332,7 +318,7 @@ export const actions = actionTree(
       }: { part: ScorePart; blockName: string; sound: Sound }
     ) {
       commit('ADD_SOUND', { part, blockName, sound })
-      commit('UPDATE_BLOCK_DURATION', { part, blockName })
+      commit('REFRESH_BLOCK_DURATION', { part, blockName })
     },
     /**
      * ブロックのsoundを削除する
@@ -348,7 +334,7 @@ export const actions = actionTree(
       }: { part: ScorePart; blockName: string; soundId: number }
     ) {
       commit('DELETE_SOUND', { part, blockName, soundId })
-      commit('UPDATE_BLOCK_DURATION', { part, blockName })
+      commit('REFRESH_BLOCK_DURATION', { part, blockName })
     },
     /**
      * ブロックのsoundを変更する
@@ -364,7 +350,7 @@ export const actions = actionTree(
       }: { part: ScorePart; blockName: string; sound: Sound }
     ) {
       commit('UPDATE_SOUND', { part, blockName, sound })
-      commit('UPDATE_BLOCK_DURATION', { part, blockName })
+      commit('REFRESH_BLOCK_DURATION', { part, blockName })
     },
     /**
      * 楽譜のブロック配列を置き換える
