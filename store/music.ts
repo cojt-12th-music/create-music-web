@@ -281,7 +281,6 @@ export const mutations = mutationTree(state, {
    */
   SET_SCORE(state: MusicState, data: Music) {
     Object.assign(state, data)
-    console.log(state)
   }
 })
 

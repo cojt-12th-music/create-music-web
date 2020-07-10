@@ -45,21 +45,6 @@ export default Vue.extend({
       set(input: string) {
         this.$accessor.music.setComposer(input)
       }
-    }
-  },
-  methods: {
-    closeDialog(genre: string): any {
-      switch (genre) {
-        case 'rhythm':
-          this.rhythmDialog = false
-          break
-        case 'chord':
-          this.chordDialog = false
-          break
-        case 'melody':
-          this.melodyDialog = false
-          break
-      }
     },
     seekBarStyle(): Object {
       const style = {
@@ -76,6 +61,21 @@ export default Vue.extend({
         })
       }
       return style
+    }
+  },
+  methods: {
+    closeDialog(genre: string): any {
+      switch (genre) {
+        case 'rhythm':
+          this.rhythmDialog = false
+          break
+        case 'chord':
+          this.chordDialog = false
+          break
+        case 'melody':
+          this.melodyDialog = false
+          break
+      }
     }
   }
 })
