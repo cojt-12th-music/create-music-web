@@ -48,11 +48,6 @@ export interface Preset {
   blockNames: string[]
 }
 
-// プリセットのnameをキーとするオブジェクト
-interface PresetHash {
-  [presetName: string]: Preset
-}
-
 /**
  * Melody: 楽譜の内メロディ全体に関するデータ型
  * instrument: メロディを再生する際の楽器

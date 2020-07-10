@@ -5,12 +5,7 @@
 
 import { getterTree, mutationTree, actionTree } from 'typed-vuex'
 import { Music, Block, Sound, ScorePart } from '@/types/music'
-import {
-  MELODY_BLOCKS,
-  CHORD_BLOCKS,
-  CHORD_PRESETS,
-  RHYTHM_BLOCKS
-} from '@/lib/presets'
+import { MELODY_BLOCKS, CHORD_BLOCKS, RHYTHM_BLOCKS } from '@/lib/presets'
 import { firestoreAccessor } from '@/plugins/firebase'
 
 export const state = (): Music => ({
@@ -193,15 +188,6 @@ export const mutations = mutationTree(state, {
     state[part].blockNames.splice(0, blocksCount, ...blockNames)
   },
   /**
-   * コードのプリセットをセットする
-   * @param presetName セットするプリセット名
-   */
-  SET_CHORD_PRESET(state: MusicState, presetName: string) {
-    const preset = CHORD_PRESETS[presetName]
-    const namesLength = state.chord.blockNames.length
-    state.chord.blockNames.splice(0, namesLength, ...preset.blockNames)
-  },
-  /**
    * リズムの音量を変更する
    * @param rhythmGain セットするゲインの値
    */
@@ -362,13 +348,6 @@ export const actions = actionTree(
       { part, blockNames }: { part: ScorePart; blockNames: string[] }
     ) {
       commit('SET_BLOCK_NAMES', { part, blockNames })
-    },
-    /**
-     * コードのプリセットをセットする
-     * @param presetName セットするプリセット名
-     */
-    setChordPreset({ commit }, presetName: string) {
-      commit('SET_CHORD_PRESET', presetName)
     },
     /**
      * リズムの音量を変更する
