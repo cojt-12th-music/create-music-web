@@ -145,11 +145,7 @@ export default Vue.extend({
     },
     blocks: {
       get(): Block[] {
-        return {
-          rhythm: this.$accessor.music.rhythmBlocks,
-          chord: this.$accessor.music.chordBlocks,
-          melody: this.$accessor.music.melodyBlocks
-        }[this.part]
+        return this.$accessor.music.partBlocks(this.part)
       },
       set(blocks: Block[]) {
         const blockNames = blocks.map((block) => block.name)

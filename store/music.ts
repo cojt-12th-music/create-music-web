@@ -52,7 +52,7 @@ export const getters = getterTree(state, {
   rhythmTemplates: (state: MusicState): Block[] =>
     Object.values(state.blocks.rhythm),
   // 以上を関数化したもの
-  blockTemplates: (state: MusicState): ((part: ScorePart) => Block[]) => (
+  partTemplates: (state: MusicState): ((part: ScorePart) => Block[]) => (
     part: ScorePart
   ) => Object.values(state.blocks[part]),
 
@@ -69,6 +69,10 @@ export const getters = getterTree(state, {
   // リズム
   rhythmBlocks: (state: MusicState): Block[] =>
     state.rhythm.blockNames.map((name) => state.blocks.rhythm[name]),
+  // 以上を関数化したもの
+  partBlocks: (state: MusicState): ((part: ScorePart) => Block[]) => (
+    part: ScorePart
+  ) => state[part].blockNames.map((name) => state.blocks[part][name]),
 
   /**
    * 各パートの楽器名を返す系のgetters

@@ -83,7 +83,7 @@ export default Vue.extend({
   computed: {
     blockGroup(): BlockGroup {
       return this.$accessor.music
-        .blockTemplates(this.part)
+        .partTemplates(this.part)
         .reduce((acc: BlockGroup, cur: Block) => {
           if (!acc[cur.category]) {
             acc[cur.category] = []
