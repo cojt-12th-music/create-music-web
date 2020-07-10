@@ -82,7 +82,7 @@ export default Vue.extend({
       required: true,
       type: Boolean
     },
-    isMuted: {
+    isMute: {
       required: true,
       type: Boolean
     },
@@ -366,7 +366,7 @@ export default Vue.extend({
      * TODO: 音符が増えても影響が出ないよう並列にする
      */
     demoMelody() {
-      if (this.isMuted) {
+      if (this.isMute) {
         return
       }
       this.notes.forEach(({ key, delay, duration }) => {

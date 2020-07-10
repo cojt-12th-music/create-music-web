@@ -1,11 +1,11 @@
 <template>
   <div class="score-part-container">
     <div class="column-title">
-      <div class="part-title-container" @click="isMuted = !isMuted">
-        <v-icon large class="icon" :class="{ disabled: isMuted }">{{
+      <div class="part-title-container" @click="isMute = !isMute">
+        <v-icon large class="icon" :class="{ disabled: isMute }">{{
           partIcon
         }}</v-icon>
-        <div class="part-title" :class="{ disabled: isMuted }">
+        <div class="part-title" :class="{ disabled: isMute }">
           {{ partTitle }}
         </div>
       </div>
@@ -153,12 +153,12 @@ export default Vue.extend({
         melody: 'music_note'
       }[this.part]
     },
-    isMuted: {
+    isMute: {
       get(): boolean {
-        return this.$accessor.player.isMuted[this.part]
+        return this.$accessor.player.isMute[this.part]
       },
-      set(isMuted: boolean) {
-        this.$accessor.player.setMuted({ part: this.part, isMuted })
+      set(isMute: boolean) {
+        this.$accessor.player.setMuted({ part: this.part, isMute })
       }
     },
     blocks: {

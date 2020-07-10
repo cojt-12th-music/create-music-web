@@ -4,7 +4,7 @@ export interface PlayerState {
   context: AudioContext | null
   isPlaying: boolean
   isReady: boolean
-  isMuted: {
+  isMute: {
     [part in ScorePart]: boolean
   }
   playTime: number
