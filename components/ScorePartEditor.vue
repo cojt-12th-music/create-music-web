@@ -82,10 +82,6 @@ export default Vue.extend({
     showsDialog: {
       required: true,
       type: Boolean
-    },
-    blockAreaLength: {
-      type: Number,
-      required: true
     }
   },
   data() {
