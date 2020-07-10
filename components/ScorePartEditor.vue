@@ -30,15 +30,28 @@
           :key="index"
           class="block-item-wrapper"
         >
-          <block-item :block="block" @click.native="clickBlock(block.name)" />
+          <block-item
+            :block="block"
+            @click.native="showEditModal(block.name)"
+          />
         </div>
       </draggable>
       <div class="button-wrapper">
-        <v-icon x-large class="dialog-button" @click.stop="showDialog()">
+        <v-icon x-large class="dialog-button" @click.stop="showBlockList()">
           mdi-plus-circle-outline
         </v-icon>
       </div>
     </div>
+
+    <v-dialog v-model="rhythmDialog" max-width="800">
+      <RhythmBlockList @clickAddBlock="closeDialog" />
+    </v-dialog>
+    <v-dialog v-model="chordDialog" max-width="800">
+      <ChordBlockList @clickAddBlock="closeDialog" />
+    </v-dialog>
+    <v-dialog v-model="melodyDialog" max-width="800">
+      <MelodyBlockList @clickAddBlock="closeDialog" />
+    </v-dialog>
     <!-- ブロックが押されたら編集画面表示 -->
     <v-dialog
       v-if="part === 'melody'"
@@ -63,14 +76,20 @@
 import Vue from 'vue'
 import draggable from 'vuedraggable'
 import BlockItem from '@/components/BlockItem.vue'
-import { Block, ScorePart } from '@/types/music'
+import RhythmBlockList from '@/components/rhythmBlockList.vue'
+import ChordBlockList from '@/components/chordBlockList.vue'
+import MelodyBlockList from '@/components/melodyBlockList.vue'
 import MelodyModal from '@/components/melodyModal.vue'
 import RhythmModal from '@/components/rhythmModal.vue'
+import { Block, ScorePart } from '@/types/music'
 
 export default Vue.extend({
   components: {
     draggable,
     BlockItem,
+    RhythmBlockList,
+    ChordBlockList,
+    MelodyBlockList,
     MelodyModal,
     RhythmModal
   },
@@ -90,10 +109,12 @@ export default Vue.extend({
   },
   data() {
     return {
-      // TODO: store setting
-      enabled: true,
       editModal: false,
-      blockName: ''
+      blockName: '',
+      rhythmDialog: false,
+      chordDialog: false,
+      melodyDialog: false,
+      melodyEditModal: false
     }
   },
   computed: {
@@ -155,12 +176,36 @@ export default Vue.extend({
     }
   },
   methods: {
-    showDialog() {
-      this.$emit('update:showsDialog', true)
+    showBlockList() {
+      switch (this.part) {
+        case 'rhythm':
+          this.rhythmDialog = true
+          break
+        case 'chord':
+          this.chordDialog = true
+          break
+        case 'melody':
+          this.melodyDialog = true
+          break
+      }
     },
-    clickBlock(name: string) {
+    showEditModal(name: string) {
       this.editModal = true
       this.blockName = name
+    },
+    closeDialog() {
+      this.editModal = false
+      switch (this.part) {
+        case 'rhythm':
+          this.rhythmDialog = false
+          break
+        case 'chord':
+          this.chordDialog = false
+          break
+        case 'melody':
+          this.melodyDialog = false
+          break
+      }
     }
   }
 })
@@ -255,6 +300,14 @@ export default Vue.extend({
     color: $-primary-500;
   }
 }
+
+// .open-blocklist {
+//   margin-left: 1rem;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   transform: translateY(-0.5rem);
+// }
 
 @include pc {
 }

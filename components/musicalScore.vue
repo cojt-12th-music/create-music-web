@@ -11,23 +11,11 @@
       </div>
 
       <div class="score-container">
-        <score-part-editor part="rhythm" :shows-dialog.sync="rhythmDialog" />
-        <score-part-editor part="chord" :shows-dialog.sync="chordDialog" />
-        <score-part-editor part="melody" :shows-dialog.sync="melodyDialog" />
+        <score-part-editor part="rhythm" />
+        <score-part-editor part="chord" />
+        <score-part-editor part="melody" />
 
         <div class="seek-bar" />
-
-        <div class="open-blocklist">
-          <v-dialog v-model="rhythmDialog" max-width="800">
-            <RhythmBlockList @clickAddBlock="closeDialog" />
-          </v-dialog>
-          <v-dialog v-model="chordDialog" max-width="800">
-            <ChordBlockList @clickAddBlock="closeDialog" />
-          </v-dialog>
-          <v-dialog v-model="melodyDialog" max-width="800">
-            <MelodyBlockList @clickAddBlock="closeDialog" />
-          </v-dialog>
-        </div>
       </div>
     </v-container>
   </div>
@@ -36,24 +24,10 @@
 <script lang="ts">
 import Vue from 'vue'
 import ScorePartEditor from '@/components/ScorePartEditor.vue'
-import RhythmBlockList from '@/components/rhythmBlockList.vue'
-import ChordBlockList from '@/components/chordBlockList.vue'
-import MelodyBlockList from '@/components/melodyBlockList.vue'
 
 export default Vue.extend({
   components: {
-    ScorePartEditor,
-    RhythmBlockList,
-    ChordBlockList,
-    MelodyBlockList
-  },
-  data() {
-    return {
-      rhythmDialog: false,
-      chordDialog: false,
-      melodyDialog: false,
-      melodyEditModal: false
-    }
+    ScorePartEditor
   },
   computed: {
     scoreTitle: {
@@ -70,21 +44,6 @@ export default Vue.extend({
       },
       set(input: string) {
         this.$accessor.music.setComposer(input)
-      }
-    }
-  },
-  methods: {
-    closeDialog(genre: string): any {
-      switch (genre) {
-        case 'rhythm':
-          this.rhythmDialog = false
-          break
-        case 'chord':
-          this.chordDialog = false
-          break
-        case 'melody':
-          this.melodyDialog = false
-          break
       }
     }
   }
@@ -128,14 +87,6 @@ div#component-frame {
     background-color: red;
     opacity: 0.5;
   }
-}
-
-.open-blocklist {
-  margin-left: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transform: translateY(-0.5rem);
 }
 
 @include pc {
