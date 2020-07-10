@@ -12,6 +12,10 @@ export const state = (): PlayerState => ({
     part: null,
     name: null
   },
+  previewUnitSound: {
+    part: null,
+    key: 0
+  },
   reverbs: []
 })
 
@@ -36,6 +40,12 @@ export const mutations = mutationTree(state, {
     previewPreset: { part: ScorePart | null; name: string | null }
   ) {
     state.previewPreset = { ...previewPreset }
+  },
+  SET_PREVIEW_UNITSOUND(
+    state: PlayerState,
+    previewUnitSound: { part: ScorePart | null; key: number | 0 }
+  ) {
+    state.previewUnitSound = { ...previewUnitSound }
   },
   SET_REVERBS(state: PlayerState, rvs: string[]) {
     state.reverbs = rvs
@@ -68,6 +78,12 @@ export const actions = actionTree(
     },
     stopPresetPreview({ commit }) {
       commit('SET_PREVIEW_PRESET', { part: null, name: null })
+    },
+    playUnitSoundPreview({ commit }, p: { part: ScorePart; key: number }) {
+      commit('SET_PREVIEW_UNITSOUND', p)
+    },
+    stopUnitSoundPreview({ commit }) {
+      commit('SET_PREVIEW_UNITSOUND', { part: null, key: 0 })
     },
     setReverbs({ commit }, rvs: string[]) {
       commit('SET_REVERBS', rvs)

@@ -91,6 +91,10 @@ export default Vue.extend({
       required: false,
       default: null,
       type: Object as Vue.PropType<string | null>
+    },
+    unitSoundPreview: {
+      required: true,
+      type: Number
     }
   },
   data(): DataType {
@@ -135,6 +139,11 @@ export default Vue.extend({
     },
     isReverb() {
       if (this.isReverb) this.setReverb()
+    },
+    unitSoundPreview() {
+      if (this.unitSoundPreview) {
+        this.playNote(this.unitSoundPreview, 0)
+      }
     }
   },
   mounted() {

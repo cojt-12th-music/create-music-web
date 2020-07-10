@@ -10,6 +10,10 @@ export interface PlayerState {
     part: ScorePart | null
     name: string | null
   }
+  previewUnitSound: {
+    part: ScorePart | null
+    key: number | 0
+  }
   reverbs: string[]
 }
 
