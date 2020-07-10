@@ -21,7 +21,7 @@
 
       <!-- 再生エリア -->
       <v-card-title class="play-area">
-        <v-btn icon dark>
+        <v-btn icon dark @click="playPreview()">
           <v-icon color="#F96500" large>play_arrow</v-icon>
         </v-btn>
       </v-card-title>
@@ -69,6 +69,13 @@ export default Vue.extend({
   methods: {
     dialog() {
       this.$emit('dialog', false)
+    },
+    async playPreview() {
+      await this.$accessor.player.stopPresetPreview()
+      await this.$accessor.player.playPresetPreview({
+        part: 'rhythm',
+        name: this.blockName
+      })
     }
   }
 })
