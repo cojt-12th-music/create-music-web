@@ -15,7 +15,7 @@
         <score-part-editor part="chord" />
         <score-part-editor part="melody" />
 
-        <div class="seek-bar" />
+        <div class="seek-bar" :style="seekBarStyle" />
       </div>
     </v-container>
   </div>
@@ -61,21 +61,6 @@ export default Vue.extend({
         })
       }
       return style
-    }
-  },
-  methods: {
-    closeDialog(genre: string): any {
-      switch (genre) {
-        case 'rhythm':
-          this.rhythmDialog = false
-          break
-        case 'chord':
-          this.chordDialog = false
-          break
-        case 'melody':
-          this.melodyDialog = false
-          break
-      }
     }
   }
 })
