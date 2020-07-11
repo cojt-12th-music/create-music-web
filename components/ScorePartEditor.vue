@@ -24,6 +24,8 @@
         class="score-draggable"
         :group="part"
         v-bind="dragOptions"
+        @choose="onChooseItem"
+        @unchoose="onUnchooseItem"
       >
         <div
           v-for="(block, index) in blocks"
@@ -177,6 +179,12 @@ export default Vue.extend({
         part: this.part,
         block: this.currentBlock
       })
+    },
+    onChooseItem() {
+      this.$emit('draggable-trash', this.part)
+    },
+    onUnchooseItem() {
+      this.$emit('draggable-trash', null)
     }
   }
 })

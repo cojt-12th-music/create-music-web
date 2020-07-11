@@ -11,11 +11,33 @@
       </div>
 
       <div class="score-container">
-        <score-part-editor part="rhythm" :score-length="scoreLength" />
-        <score-part-editor part="chord" :score-length="scoreLength" />
-        <score-part-editor part="melody" :score-length="scoreLength" />
+        <score-part-editor
+          part="rhythm"
+          :score-length="scoreLength"
+          @draggable-trash="draggableTrash"
+        />
+        <score-part-editor
+          part="chord"
+          :score-length="scoreLength"
+          @draggable-trash="draggableTrash"
+        />
+        <score-part-editor
+          part="melody"
+          :score-length="scoreLength"
+          @draggable-trash="draggableTrash"
+        />
 
         <div class="seek-bar" :style="seekBarStyle" />
+      </div>
+
+      <div class="score-trash-wrapper">
+        <draggable
+          v-if="trashPart"
+          class="score-draggable-trash"
+          :group="trashPart"
+        >
+          <v-icon class="icon">fa-trash</v-icon>
+        </draggable>
       </div>
     </v-container>
   </div>
@@ -23,12 +45,23 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import draggable from 'vuedraggable'
 import ScorePartEditor from '@/components/ScorePartEditor.vue'
-import { Block } from '@/types/music'
+import { Block, ScorePart } from '@/types/music'
+
+type DataType = {
+  trashPart: ScorePart | null
+}
 
 export default Vue.extend({
   components: {
+    draggable,
     ScorePartEditor
+  },
+  data(): DataType {
+    return {
+      trashPart: null
+    }
   },
   computed: {
     scoreTitle: {
@@ -80,6 +113,11 @@ export default Vue.extend({
       }
       return style
     }
+  },
+  methods: {
+    draggableTrash(trashPart: ScorePart | null) {
+      this.trashPart = trashPart
+    }
   }
 })
 </script>
@@ -87,6 +125,7 @@ export default Vue.extend({
 <style lang="scss" scoped>
 div#component-frame {
   height: 100%;
+  position: relative;
 }
 
 .score-header {
@@ -123,11 +162,30 @@ div#component-frame {
   }
 }
 
-.open-blocklist {
+.score-trash-wrapper {
+  position: absolute;
+  left: 0;
+  bottom: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  transform: translateY(-0.5rem);
+  height: 5rem;
+  width: 100%;
+
+  .score-draggable-trash {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: $-gray-500;
+    border-radius: 50%;
+    height: 3rem;
+    width: 3rem;
+    opacity: 0.5;
+
+    .icon {
+      color: $-gray-100;
+    }
+  }
 }
 
 @include pc {
