@@ -11,9 +11,9 @@
       </div>
 
       <div class="score-container">
-        <score-part-editor part="rhythm" />
-        <score-part-editor part="chord" />
-        <score-part-editor part="melody" />
+        <score-part-editor part="rhythm" :score-length="scoreLength" />
+        <score-part-editor part="chord" :score-length="scoreLength" />
+        <score-part-editor part="melody" :score-length="scoreLength" />
 
         <div class="seek-bar" :style="seekBarStyle" />
       </div>
@@ -24,6 +24,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import ScorePartEditor from '@/components/ScorePartEditor.vue'
+import { Block } from '@/types/music'
 
 export default Vue.extend({
   components: {
@@ -46,17 +47,34 @@ export default Vue.extend({
         this.$accessor.music.setComposer(input)
       }
     },
+    musicDuration(): number {
+      const RhythmDuration: number = this.$accessor.music.rhythmBlocks.reduce(
+        (p: number, x: Block) => p + x.duration,
+        0
+      )
+      const ChordDuration: number = this.$accessor.music.chordBlocks.reduce(
+        (p: number, x: Block) => p + x.duration,
+        0
+      )
+      const MelodyDuration: number = this.$accessor.music.melodyBlocks.reduce(
+        (p: number, x: Block) => p + x.duration,
+        0
+      )
+      return Math.max(RhythmDuration, ChordDuration, MelodyDuration)
+    },
+    scoreLength(): number {
+      return Math.floor(this.musicDuration / 2)
+    },
     seekBarStyle(): Object {
       const style = {
         transform: `translateX(${this.$accessor.player.playTime}rem)`
       }
       if (this.$accessor.player.isPlaying) {
-        const duration = this.$accessor.music.musicDuration + 1
-        const len = Math.floor(duration / 2)
         Object.assign(style, {
-          transform: `translateX(${len * 5}rem)`,
+          transform: `translateX(${this.scoreLength * 5}rem)`,
           transitionProperty: 'transform',
-          transitionDuration: `${(duration * 60) / this.$accessor.music.bpm}s`,
+          transitionDuration: `${(this.musicDuration * 60) /
+            this.$accessor.music.bpm}s`,
           transitionTimingFunction: 'linear'
         })
       }

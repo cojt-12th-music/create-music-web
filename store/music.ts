@@ -15,20 +15,17 @@ export const state = (): Music => ({
   melody: {
     instrument: '',
     blockNames: ['メロ1', 'メロ2', 'メロ3', 'メロ4'],
-    gain: 1,
-    totalDuration: 13
+    gain: 1
   },
   chord: {
     instrument: '',
     blockNames: ['コード1', 'コード2', 'コード3', 'コード4'],
-    gain: 1,
-    totalDuration: 8
+    gain: 1
   },
   rhythm: {
     instrument: '',
     blockNames: ['16ビート', '8ビート', '8ビート', '2ビート', '2ビート'],
-    gain: 1,
-    totalDuration: 10
+    gain: 1
   },
   blocks: {
     // プリセットなどはとりあえず @/lib/presets.ts に定義している
@@ -84,18 +81,7 @@ export const getters = getterTree(state, {
   melodyInstrument: (state: MusicState): string => state.melody.instrument,
   // コード
   chordInstrument: (state: MusicState): string => state.chord.instrument,
-  rhythmInstrument: (state: MusicState): string => state.rhythm.instrument,
-
-  /**
-   * その他のgetters
-   */
-  // 楽譜の総演奏時間を返す
-  musicDuration: (state: MusicState): number =>
-    Math.max(
-      state.rhythm.totalDuration,
-      state.chord.totalDuration,
-      state.melody.totalDuration
-    )
+  rhythmInstrument: (state: MusicState): string => state.rhythm.instrument
 })
 
 export const mutations = mutationTree(state, {
@@ -109,7 +95,6 @@ export const mutations = mutationTree(state, {
     { part, blockName }: { part: ScorePart; blockName: string }
   ) {
     state[part].blockNames.push(blockName)
-    state[part].totalDuration += state.blocks[part][blockName].duration
   },
   /**
    * ブロックをブロックリストに追加する
