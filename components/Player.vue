@@ -10,7 +10,7 @@
           :bpm="bpm"
           :is-playing="isMelodyPlaying"
           :is-ready.sync="isMelodyReady"
-          :is-mute="isMelodyMuted"
+          :is-mute="isMelodyMute"
           :gain-value="gainValue"
           :reverb-path="null"
           :unit-sound-preview="melodyUnitSoundKey"
@@ -23,7 +23,7 @@
           :bpm="bpm"
           :is-playing="isChordPlaying"
           :is-ready.sync="isChordReady"
-          :is-mute="isChordMuted"
+          :is-mute="isChordMute"
           :gain-value="gainValue"
           :unit-sound-preview="chordUnitSoundKey"
         />
@@ -35,7 +35,7 @@
           :bpm="bpm"
           :is-playing="isRhythmPlaying"
           :is-ready.sync="isRhythmReady"
-          :is-mute="isRhythmMuted"
+          :is-mute="isRhythmMute"
           :gain-value="gainValue"
           :unit-sound-preview="rhythmUnitSoundKey"
         />
@@ -161,13 +161,13 @@ export default Vue.extend({
         this.$accessor.player.previewPreset.part === 'rhythm'
       )
     },
-    isMelodyMuted(): Boolean {
+    isMelodyMute(): Boolean {
       return this.$accessor.player.isMute.melody
     },
-    isChordMuted(): Boolean {
+    isChordMute(): Boolean {
       return this.$accessor.player.isMute.chord
     },
-    isRhythmMuted(): Boolean {
+    isRhythmMute(): Boolean {
       return this.$accessor.player.isMute.rhythm
     },
     context(): AudioContext | null {

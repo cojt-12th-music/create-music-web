@@ -56,7 +56,7 @@ export const mutations = mutationTree(state, {
   SET_REVERBS(state: PlayerState, rvs: string[]) {
     state.reverbs = rvs
   },
-  SET_MUTED(
+  SET_MUTE(
     state: PlayerState,
     { part, isMute }: { part: ScorePart; isMute: boolean }
   ) {
@@ -100,11 +100,11 @@ export const actions = actionTree(
     setReverbs({ commit }, rvs: string[]) {
       commit('SET_REVERBS', rvs)
     },
-    setMuted(
+    setMute(
       { commit },
       { part, isMute }: { part: ScorePart; isMute: boolean }
     ) {
-      commit('SET_MUTED', { part, isMute })
+      commit('SET_MUTE', { part, isMute })
     }
   }
 )

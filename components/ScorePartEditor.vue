@@ -140,7 +140,7 @@ export default Vue.extend({
         return this.$accessor.player.isMute[this.part]
       },
       set(isMute: boolean) {
-        this.$accessor.player.setMuted({ part: this.part, isMute })
+        this.$accessor.player.setMute({ part: this.part, isMute })
       }
     },
     blocks: {
