@@ -30,15 +30,12 @@
         <div class="seek-bar" :style="seekBarStyle" />
       </div>
 
-      <div class="score-trash-wrapper">
-        <draggable
-          v-if="trashPart"
-          class="score-draggable-trash"
-          :group="trashPart"
-        >
+      <transition name="trash">
+        <div v-if="trashPart" class="score-trash-wrapper">
+          <draggable class="score-draggable-trash" :group="trashPart" />
           <v-icon class="icon">fa-trash</v-icon>
-        </draggable>
-      </div>
+        </div>
+      </transition>
     </v-container>
   </div>
 </template>
@@ -178,14 +175,26 @@ div#component-frame {
     align-items: center;
     background-color: $-gray-500;
     border-radius: 50%;
-    height: 3rem;
-    width: 3rem;
+    height: 4rem;
+    width: 4rem;
     opacity: 0.5;
-
-    .icon {
-      color: $-gray-100;
-    }
   }
+
+  .icon {
+    position: absolute;
+    color: $-gray-50;
+  }
+}
+
+.trash-enter-active,
+.trash-leave-active {
+  transform: translateY(0) translateZ(0);
+  transition: transform 100ms linear 100ms;
+}
+
+.trash-enter,
+.trash-leave-to {
+  transform: translateY(10vh) translateZ(0);
 }
 
 @include pc {
