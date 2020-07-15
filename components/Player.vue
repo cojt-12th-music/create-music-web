@@ -43,7 +43,10 @@
     </v-row>
     <v-btn @click="test">test</v-btn>
     <v-btn @click="testUnit">testUnit</v-btn>
+    <p>単音</p>
     <v-select v-model="unitKey" :items="keys"> </v-select>
+    <p>小節</p>
+    <v-select v-model="measure" :items="measures"> </v-select>
     <v-slider
       v-model="gainValue"
       ticks
@@ -72,6 +75,8 @@ type DataType = {
   rhythmUnitSoundKey: number
   unitKey: number // デバッグ用
   keys: number[] // デバッグ用
+  measure: number // デバッグ用
+  measures: number[] // デバッグ用
 }
 export default Vue.extend({
   components: {
@@ -100,7 +105,9 @@ export default Vue.extend({
       chordUnitSoundKey: 0,
       rhythmUnitSoundKey: 0,
       unitKey: 0,
-      keys: [48, 60, 64, 67, 72]
+      keys: [48, 60, 64, 67, 72],
+      measure: 0,
+      measures: [1, 2, 3]
     }
   },
   computed: {
@@ -113,6 +120,8 @@ export default Vue.extend({
         const targetTemplate = this.$accessor.music.melodyTemplates.find(
           (t) => t.name === this.$accessor.player.previewPreset.name
         )
+        console.log('target')
+        console.log(targetTemplate)
         if (targetTemplate) return this.flatBlock([targetTemplate])
         else return []
       }
@@ -241,12 +250,17 @@ export default Vue.extend({
       return block
         .map((block) => {
           // 各soundsのdelayに今までのブロックのdurationを足した
-          const sounds = block.sounds.map(({ delay, ...e }) => {
-            return {
-              delay: delay + allDelay,
-              ...e
-            }
-          })
+          const sounds = block.sounds
+            .filter(({ delay }) => {
+              return delay >= this.$accessor.player.playTime
+            })
+            .map(({ delay, ...e }) => {
+              return {
+                delay: delay + allDelay - this.$accessor.player.playTime,
+                ...e
+              }
+            })
+
           allDelay += block.duration
           return sounds
         })
@@ -258,6 +272,7 @@ export default Vue.extend({
       )
     },
     async test() {
+      this.$accessor.player.setPlayTime(this.measure)
       this.$accessor.player.stopPresetPreview()
       await this.$nextTick()
       this.$accessor.player.playPresetPreview({
