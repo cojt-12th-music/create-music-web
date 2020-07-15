@@ -1,13 +1,13 @@
 <template>
-  <div id="component-frame">
+  <div id="rhythm-block-list">
     <v-card class="mx-auto">
       <v-card-title>
-        <p>コードの追加</p>
+        <p>リズムの追加</p>
       </v-card-title>
 
       <v-chip-group v-model="selection" column>
         <v-card-text
-          v-for="(blocks, category, categoryIndex) in chordBlocks"
+          v-for="(blocks, category, categoryIndex) in rhythmBlocks"
           :key="categoryIndex"
         >
           <v-card-text>{{ category }}</v-card-text>
@@ -25,7 +25,13 @@
       </v-chip-group>
 
       <v-card-actions>
-        <v-btn block class="white--text " color="#F96500" @click="addBlock">
+        <v-btn
+          id="rhythm-block-list-add"
+          block
+          class="white--text"
+          color="#F96500"
+          @click="addBlock"
+        >
           Add to Score
         </v-btn>
       </v-card-actions>
@@ -37,7 +43,7 @@
           ><span class="material-icons">warning</span></v-card-title
         >
         <v-card-text class="attention-modal-text">
-          ブロック選べや．ちょっと考えれば分かるやろ．
+          ブロックを選択してください．クソが．
         </v-card-text>
 
         <v-card-actions class="attention-modal-btn">
@@ -70,14 +76,17 @@ export default Vue.extend({
     }
   },
   computed: {
-    chordBlocks(): BlockGroup {
-      return this.$accessor.music.chordTemplates.reduce((acc, cur) => {
-        if (!acc[cur.category]) {
-          acc[cur.category] = []
-        }
-        acc[cur.category].push(cur)
-        return acc
-      }, {} as BlockGroup)
+    rhythmBlocks(): BlockGroup {
+      return this.$accessor.music.rhythmTemplates.reduce(
+        (acc: BlockGroup, cur: Block) => {
+          if (!acc[cur.category]) {
+            acc[cur.category] = []
+          }
+          acc[cur.category].push(cur)
+          return acc
+        },
+        {} as BlockGroup
+      )
     }
   },
   watch: {
@@ -99,10 +108,10 @@ export default Vue.extend({
       } else {
         console.log('選択状態: ' + this.selection)
         this.$accessor.music.cloneBlock({
-          part: 'chord',
+          part: 'rhythm',
           blockName: this.selectedBlockName
         })
-        this.$emit('clickAddBlock', 'chord')
+        this.$emit('closeDialog', 'rhythm')
       }
     },
     setSelectedBlockName(block: Block) {
@@ -121,6 +130,9 @@ export default Vue.extend({
   }
 }
 div#component-frame {
+  height: 100%;
+}
+#rhythm-block-list {
   height: 100%;
 }
 .v-card__text {

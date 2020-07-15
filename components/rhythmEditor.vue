@@ -80,6 +80,7 @@ export default Vue.extend({
             duration: 0.5
           }
         })
+        this.$emit('edit-block')
       }
     },
     deletescore(soundId: number) {
@@ -89,6 +90,7 @@ export default Vue.extend({
         blockName: this.blockName,
         soundId
       })
+      this.$emit('edit-block')
     }
   }
 })

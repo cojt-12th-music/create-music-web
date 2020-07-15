@@ -1,11 +1,11 @@
 <template>
   <div class="score-part-container">
     <div class="column-title">
-      <div class="part-title-container" @click="enabled = !enabled">
-        <v-icon large class="icon" :class="{ disabled: !enabled }">{{
+      <div class="part-title-container" @click="isMute = !isMute">
+        <v-icon large class="icon" :class="{ disabled: isMute }">{{
           partIcon
         }}</v-icon>
-        <div class="part-title" :class="{ disabled: !enabled }">
+        <div class="part-title" :class="{ disabled: isMute }">
           {{ partTitle }}
         </div>
       </div>
@@ -13,9 +13,9 @@
 
     <div
       class="block-area-container"
-      :style="{ width: 5 * (maxLength + 1) + 'rem' }"
+      :style="{ width: 5 * (scoreLength + 2) + 'rem' }"
     >
-      <div v-for="i in maxLength" :key="i" class="block-area"></div>
+      <div v-for="i in scoreLength + 1" :key="i" class="block-area"></div>
     </div>
 
     <div class="draggable-wrapper">
@@ -24,37 +24,54 @@
         class="score-draggable"
         :group="part"
         v-bind="dragOptions"
+        @choose="onChooseItem"
+        @unchoose="onUnchooseItem"
       >
         <div
           v-for="(block, index) in blocks"
           :key="index"
           class="block-item-wrapper"
         >
-          <block-item :block="block" @click.native="clickBlock(block.name)" />
+          <block-item :block="block" @click.native="showEditModal(block)" />
         </div>
       </draggable>
       <div class="button-wrapper">
-        <v-icon x-large class="dialog-button" @click.stop="showDialog()">
+        <v-icon
+          x-large
+          class="dialog-button"
+          @click.stop="showsBlockList = true"
+        >
           mdi-plus-circle-outline
         </v-icon>
       </div>
     </div>
-    <!-- ブロックが押されたら編集画面表示 -->
+
+    <v-dialog v-model="showsBlockList" max-width="800">
+      <block-list :part="part" @closeDialog="showsBlockList = false" />
+    </v-dialog>
     <v-dialog
       v-if="part === 'melody'"
-      v-model="editModal"
+      v-model="showsEditModal"
       fullscreen
       hide-overlay
     >
-      <melody-modal :block-name="blockName" @dialog="editModal = $event" />
+      <melody-modal
+        v-if="currentBlock"
+        :block-name="currentBlock.name"
+        @dialog="showsEditModal = $event"
+      />
     </v-dialog>
     <v-dialog
       v-if="part === 'rhythm'"
-      v-model="editModal"
+      v-model="showsEditModal"
       fullscreen
       hide-overlay
     >
-      <rhythm-modal :block-name="blockName" @dialog="editModal = $event" />
+      <rhythm-modal
+        v-if="currentBlock"
+        :block-name="currentBlock.name"
+        @dialog="closeEditModal"
+      />
     </v-dialog>
   </div>
 </template>
@@ -63,14 +80,22 @@
 import Vue from 'vue'
 import draggable from 'vuedraggable'
 import BlockItem from '@/components/BlockItem.vue'
-import { Block, ScorePart } from '@/types/music'
+import BlockList from '@/components/BlockList.vue'
 import MelodyModal from '@/components/melodyModal.vue'
 import RhythmModal from '@/components/rhythmModal.vue'
+import { Block, ScorePart } from '@/types/music'
+
+type DataType = {
+  showsBlockList: boolean
+  showsEditModal: boolean
+  currentBlock: Block | null
+}
 
 export default Vue.extend({
   components: {
     draggable,
     BlockItem,
+    BlockList,
     MelodyModal,
     RhythmModal
   },
@@ -79,52 +104,24 @@ export default Vue.extend({
       required: true,
       type: String as Vue.PropType<ScorePart>
     },
-    showsDialog: {
+    scoreLength: {
       required: true,
-      type: Boolean
-    },
-    blockAreaLength: {
-      type: Number,
-      required: true
+      type: Number
     }
   },
-  data() {
+  data(): DataType {
     return {
-      // TODO: store setting
-      enabled: true,
-      editModal: false,
-      blockName: ''
+      showsBlockList: false,
+      showsEditModal: false,
+      currentBlock: null
     }
   },
   computed: {
     dragOptions() {
-      console.log(this.$accessor.music.rhythmBlocks)
       return {
         animation: 300,
         disabled: false
       }
-    },
-    maxLength(): number {
-      // 各partにおけるdurationの合計の最大値 / 2 + 1 (追加ボタン分)
-      // TODO: fetch from store
-      const RhythmLength: number = this.$accessor.music.rhythmBlocks.reduce(
-        (p: number, x: Block) => p + x.duration,
-        0
-      )
-      const ChordLength: number = this.$accessor.music.chordBlocks.reduce(
-        (p: number, x: Block) => p + x.duration,
-        0
-      )
-      const MelodyLength: number = this.$accessor.music.melodyBlocks.reduce(
-        (p: number, x: Block) => p + x.duration,
-        0
-      )
-      const maxLength: number = Math.max(
-        RhythmLength,
-        ChordLength,
-        MelodyLength
-      )
-      return Math.floor(maxLength / 2) + 1
     },
     partTitle(): string {
       return {
@@ -140,13 +137,17 @@ export default Vue.extend({
         melody: 'music_note'
       }[this.part]
     },
+    isMute: {
+      get(): boolean {
+        return this.$accessor.player.isMute[this.part]
+      },
+      set(isMute: boolean) {
+        this.$accessor.player.setMute({ part: this.part, isMute })
+      }
+    },
     blocks: {
       get(): Block[] {
-        return {
-          rhythm: this.$accessor.music.rhythmBlocks,
-          chord: this.$accessor.music.chordBlocks,
-          melody: this.$accessor.music.melodyBlocks
-        }[this.part]
+        return this.$accessor.music.partBlocks(this.part)
       },
       set(blocks: Block[]) {
         const blockNames = blocks.map((block) => block.name)
@@ -155,12 +156,35 @@ export default Vue.extend({
     }
   },
   methods: {
-    showDialog() {
-      this.$emit('update:showsDialog', true)
+    showEditModal(block: Block) {
+      // ブロックは編集前の状態を保持できるようdeep copyしておく
+      this.currentBlock = JSON.parse(JSON.stringify(block))
+      this.showsEditModal = true
     },
-    clickBlock(name: string) {
-      this.editModal = true
-      this.blockName = name
+    closeEditModal(isEdited: boolean) {
+      this.showsEditModal = false
+
+      // 編集していないときや, ブロックがユーザが作成したものなときは何もしない
+      if (!isEdited || !this.currentBlock || this.currentBlock.isOriginal) {
+        return
+      }
+
+      // ブロックをコピー
+      this.$accessor.music.copyBlock({
+        part: this.part,
+        blockName: this.currentBlock.name
+      })
+      // もとのブロックは編集前に戻す
+      this.$accessor.music.updateBlock({
+        part: this.part,
+        block: this.currentBlock
+      })
+    },
+    onChooseItem() {
+      this.$emit('draggable-trash', this.part)
+    },
+    onUnchooseItem() {
+      this.$emit('draggable-trash', null)
     }
   }
 })
@@ -234,6 +258,7 @@ export default Vue.extend({
 
   .block-item-wrapper {
     margin-right: 1rem;
+    z-index: 1;
   }
 }
 
@@ -255,6 +280,14 @@ export default Vue.extend({
     color: $-primary-500;
   }
 }
+
+// .open-blocklist {
+//   margin-left: 1rem;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   transform: translateY(-0.5rem);
+// }
 
 @include pc {
 }

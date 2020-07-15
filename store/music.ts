@@ -4,13 +4,8 @@
  */
 
 import { getterTree, mutationTree, actionTree } from 'typed-vuex'
-import { Music, Block, Sound, ScorePart, BlockHash } from '@/types/music'
-import {
-  MELODY_BLOCKS,
-  CHORD_BLOCKS,
-  CHORD_PRESETS,
-  RHYTHM_BLOCKS
-} from '@/lib/presets'
+import { Music, Block, Sound, ScorePart } from '@/types/music'
+import { MELODY_BLOCKS, CHORD_BLOCKS, RHYTHM_BLOCKS } from '@/lib/presets'
 import { firestoreAccessor } from '@/plugins/firebase'
 
 export const state = (): Music => ({
@@ -44,34 +39,47 @@ export type MusicState = ReturnType<typeof state>
 
 export const getters = getterTree(state, {
   /**
-   * テンプレートやプリセットの名前のみを返す系のgetters
+   * テンプレートのブロック配列を返す系のgetters
    * 編集時に使用する
    */
-  // リズム
-  rhythmTemplates: (state: MusicState): Block[] =>
-    Object.values(state.blocks.rhythm),
-  // コード
-  chordTemplates: (state: MusicState): Block[] =>
-    Object.values(state.blocks.chord),
   // メロディー
   melodyTemplates: (state: MusicState): Block[] =>
     Object.values(state.blocks.melody),
+  // コード
+  chordTemplates: (state: MusicState): Block[] =>
+    Object.values(state.blocks.chord),
+  // リズム
+  rhythmTemplates: (state: MusicState): Block[] =>
+    Object.values(state.blocks.rhythm),
+  // 以上を関数化したもの
+  partTemplates: (state: MusicState): ((part: ScorePart) => Block[]) => (
+    part: ScorePart
+  ) => Object.values(state.blocks[part]),
 
   /**
    * 実際に再生する順番でblocksを返す系のgetters
    * 音源の再生時に使用する
    */
-  // メロディーのblocksを返す
+  // メロディー
   melodyBlocks: (state: MusicState): Block[] =>
     state.melody.blockNames.map((name) => state.blocks.melody[name]),
-  // メロディーのblocksを返す
+  // コード
   chordBlocks: (state: MusicState): Block[] =>
     state.chord.blockNames.map((name) => state.blocks.chord[name]),
-  // メロディーのblocksを返す
+  // リズム
   rhythmBlocks: (state: MusicState): Block[] =>
     state.rhythm.blockNames.map((name) => state.blocks.rhythm[name]),
+  // 以上を関数化したもの
+  partBlocks: (state: MusicState): ((part: ScorePart) => Block[]) => (
+    part: ScorePart
+  ) => state[part].blockNames.map((name) => state.blocks[part][name]),
 
+  /**
+   * 各パートの楽器名を返す系のgetters
+   */
+  // メロディー
   melodyInstrument: (state: MusicState): string => state.melody.instrument,
+  // コード
   chordInstrument: (state: MusicState): string => state.chord.instrument,
   rhythmInstrument: (state: MusicState): string => state.rhythm.instrument
 })
@@ -99,6 +107,17 @@ export const mutations = mutationTree(state, {
     state.blocks[part][block.name] = block
   },
   /**
+   * ブロックを変更する
+   * @param part 変更するブロックのパート
+   * @param block 変更するブロック
+   */
+  UPDATE_BLOCK(
+    state: MusicState,
+    { part, block }: { part: ScorePart; block: Block }
+  ) {
+    Object.assign(state.blocks[part], { [block.name]: block })
+  },
+  /**
    * ブロックに新しいsoundを追加する
    * @param blockName 追加するブロックの名前
    * @param sound 追加するsound
@@ -112,9 +131,8 @@ export const mutations = mutationTree(state, {
     }: { part: ScorePart; blockName: string; sound: Sound }
   ) {
     const sounds = state.blocks[part][blockName].sounds
-    const newID = sounds.length > 0 ? sounds[sounds.length - 1].id!! + 1 : 1
-    if (!sound.id) sound.id = newID
-    state.blocks[part][blockName].sounds.push(sound)
+    sound.id = (sounds[sounds.length - 1]?.id || 0) + 1
+    sounds.push(sound)
   },
   /**
    * ブロックのsoundを削除する
@@ -156,43 +174,24 @@ export const mutations = mutationTree(state, {
   },
   /**
    * 指定したブロックのdurationを更新する
+   * @param part 更新するブロックのパート
+   * @param blockName 更新するブロックの名前
    */
-  UPDATE_BLOCK_DURATION(
+  REFRESH_BLOCK_DURATION(
     state: MusicState,
-    payload: { part: ScorePart; blockName: string }
+    { part, blockName }: { part: ScorePart; blockName: string }
   ) {
-    const { part, blockName } = payload
-    let lastSound: Sound | null = null
-    let targetBlockHash: BlockHash = {}
-    switch (part) {
-      case 'melody':
-        if (state.blocks.melody[blockName].sounds.length === 0) lastSound = null
-        else
-          lastSound = state.blocks.melody[blockName].sounds.reduce((p, c) =>
-            p.delay + p.duration < c.delay + c.duration ? c : p
-          )
-        targetBlockHash = state.blocks.melody
-        break
-      case 'chord':
-        if (state.blocks.chord[blockName].sounds.length === 0) lastSound = null
-        else
-          lastSound = state.blocks.chord[blockName].sounds.reduce((p, c) =>
-            p.delay + p.duration < c.delay + c.duration ? c : p
-          )
-        targetBlockHash = state.blocks.chord
-        break
-      case 'rhythm':
-        if (state.blocks.rhythm[blockName].sounds.length === 0) lastSound = null
-        else
-          lastSound = state.blocks.rhythm[blockName].sounds.reduce((p, c) =>
-            p.delay + p.duration < c.delay + c.duration ? c : p
-          )
-        targetBlockHash = state.blocks.rhythm
+    const blockHash = state.blocks[part]
+    if (blockHash[blockName].sounds.length) {
+      // 音が存在する場合はdurationの最大値をセット
+      blockHash[blockName].duration = blockHash[blockName].sounds.reduce(
+        (d: number, sound: Sound) => Math.max(sound.delay + sound.duration, d),
+        0
+      )
+    } else {
+      // 音が存在しない場合は4をセット
+      blockHash[blockName].duration = 4
     }
-    if (!lastSound) targetBlockHash[blockName].duration = 4
-    else
-      targetBlockHash[blockName].duration =
-        Math.ceil((lastSound.delay + lastSound.duration) / 4) * 4
   },
   /**
    * 楽譜のブロック配列を置き換える
@@ -205,15 +204,6 @@ export const mutations = mutationTree(state, {
   ) {
     const blocksCount = state[part].blockNames.length
     state[part].blockNames.splice(0, blocksCount, ...blockNames)
-  },
-  /**
-   * コードのプリセットをセットする
-   * @param presetName セットするプリセット名
-   */
-  SET_CHORD_PRESET(state: MusicState, presetName: string) {
-    const preset = CHORD_PRESETS[presetName]
-    const namesLength = state.chord.blockNames.length
-    state.chord.blockNames.splice(0, namesLength, ...preset.blockNames)
   },
   /**
    * リズムの音量を変更する
@@ -276,7 +266,6 @@ export const mutations = mutationTree(state, {
    */
   SET_SCORE(state: MusicState, data: Music) {
     Object.assign(state, data)
-    console.log(state)
   }
 })
 
@@ -305,6 +294,16 @@ export const actions = actionTree(
       commit('ADD_BLOCK_TO_LIST', { part, block })
     },
     /**
+     * ブロックを変更する
+     * @param block 変更するブロック
+     */
+    updateBlock(
+      { commit },
+      { part, block }: { part: ScorePart; block: Block }
+    ) {
+      commit('UPDATE_BLOCK', { part, block })
+    },
+    /**
      * blockをディープコピーし, 新たなblockを追加する
      * hoge というblockをコピーする場合, hoge' というblockを新しく生成する
      * @param blockName コピーするブロックの名前
@@ -313,10 +312,23 @@ export const actions = actionTree(
       { state, commit },
       { part, blockName }: { part: ScorePart; blockName: string }
     ) {
-      const block = JSON.parse(JSON.stringify(state.blocks[part][blockName]))
-      block.name = `${block.name}'`
+      const block: Block = JSON.parse(
+        JSON.stringify(state.blocks[part][blockName])
+      )
+      // もしhoge'が存在しているならhoge''を見る, これを存在しないところまで繰り返す
+      while (state.blocks[part][block.name]) {
+        block.name = `${block.name}'`
+      }
       block.category = 'マイブロック'
+      block.isOriginal = true
+      // コピー後のブロックをリストに追加する
       commit('ADD_BLOCK_TO_LIST', { part, block })
+
+      // コピー前のブロック名をコピー後のものに置き換える
+      const blockNames = state[part].blockNames.map((name: string) =>
+        name === blockName ? block.name : name
+      )
+      commit('SET_BLOCK_NAMES', { part, blockNames })
     },
     /**
      * ブロックに新しいsoundを追加する
@@ -332,7 +344,7 @@ export const actions = actionTree(
       }: { part: ScorePart; blockName: string; sound: Sound }
     ) {
       commit('ADD_SOUND', { part, blockName, sound })
-      commit('UPDATE_BLOCK_DURATION', { part, blockName })
+      commit('REFRESH_BLOCK_DURATION', { part, blockName })
     },
     /**
      * ブロックのsoundを削除する
@@ -348,7 +360,7 @@ export const actions = actionTree(
       }: { part: ScorePart; blockName: string; soundId: number }
     ) {
       commit('DELETE_SOUND', { part, blockName, soundId })
-      commit('UPDATE_BLOCK_DURATION', { part, blockName })
+      commit('REFRESH_BLOCK_DURATION', { part, blockName })
     },
     /**
      * ブロックのsoundを変更する
@@ -364,7 +376,7 @@ export const actions = actionTree(
       }: { part: ScorePart; blockName: string; sound: Sound }
     ) {
       commit('UPDATE_SOUND', { part, blockName, sound })
-      commit('UPDATE_BLOCK_DURATION', { part, blockName })
+      commit('REFRESH_BLOCK_DURATION', { part, blockName })
     },
     /**
      * 楽譜のブロック配列を置き換える
@@ -376,13 +388,6 @@ export const actions = actionTree(
       { part, blockNames }: { part: ScorePart; blockNames: string[] }
     ) {
       commit('SET_BLOCK_NAMES', { part, blockNames })
-    },
-    /**
-     * コードのプリセットをセットする
-     * @param presetName セットするプリセット名
-     */
-    setChordPreset({ commit }, presetName: string) {
-      commit('SET_CHORD_PRESET', presetName)
     },
     /**
      * リズムの音量を変更する
