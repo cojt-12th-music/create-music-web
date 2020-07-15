@@ -299,6 +299,10 @@ export default Vue.extend({
           duration: this.quantize
         }
       })
+      this.$accessor.player.playUnitSoundPreview({
+        part: 'melody',
+        key: newPos.key
+      })
       return newID
     },
     moveSoundFromPos(x: number, y: number) {
@@ -312,6 +316,10 @@ export default Vue.extend({
           duration: this.selectedSound.duration,
           ...newPos
         }
+      })
+      this.$accessor.player.playUnitSoundPreview({
+        part: 'melody',
+        key: newPos.key
       })
     },
     changeSoundDurationFromPos(x: number, y: number) {
