@@ -22,10 +22,21 @@
             <block-item :block="block" />
           </v-chip>
         </v-card-text>
+
+        <v-card-text v-if="part !== 'chord'">
+          <v-btn class="create-button" @click="createBlock">
+            ブロックを作成する
+          </v-btn>
+        </v-card-text>
       </v-chip-group>
 
       <v-card-actions>
-        <v-btn block class="white--text " color="#F96500" @click="addBlock">
+        <v-btn
+          block
+          class="add-button"
+          :class="{ disabled: selection == null }"
+          @click="addBlock"
+        >
           Add to Score
         </v-btn>
       </v-card-actions>
@@ -58,7 +69,7 @@ import { Block, ScorePart } from '@/types/music'
 
 type BlockGroup = { [category: string]: Block[] }
 type DataType = {
-  selection: number
+  selection: number | null
   selectedBlockName: string
   showsAttention: boolean
 }
@@ -75,7 +86,7 @@ export default Vue.extend({
   },
   data(): DataType {
     return {
-      selection: -1,
+      selection: null,
       selectedBlockName: '',
       showsAttention: false
     }
@@ -108,21 +119,33 @@ export default Vue.extend({
     }
   },
   methods: {
+    async createBlock() {
+      this.$accessor.player.stopPresetPreview()
+      const newBlock = await this.$accessor.music.initBlock(this.part)
+      this.$emit('closeDialog', newBlock)
+    },
     addBlock() {
-      if (this.selection >= 0) {
+      this.$accessor.player.stopPresetPreview()
+      if (this.selection != null) {
         this.$accessor.music.cloneBlock({
           part: this.part,
           blockName: this.selectedBlockName
         })
-        this.$accessor.player.stopPresetPreview()
         this.$emit('closeDialog')
       } else {
         this.showsAttention = true
       }
     },
     async setSelectedBlockName(block: Block) {
-      this.selectedBlockName = block.name
       this.$accessor.player.stopPresetPreview()
+
+      // ブロックの選択解除 (雑実装)
+      if (this.selectedBlockName === block.name) {
+        this.selectedBlockName = ''
+        return
+      }
+
+      this.selectedBlockName = block.name
       await this.$nextTick()
       this.$accessor.player.playPresetPreview({
         part: this.part,
@@ -187,5 +210,21 @@ div#component-frame {
 }
 .attention-modal-btn {
   background-color: $-gray-700;
+}
+
+.create-button {
+  margin-top: 1rem;
+  background-color: $-primary-600 !important;
+  color: $-gray-50;
+}
+
+.add-button {
+  background-color: $-primary-500 !important;
+  color: $-gray-50;
+
+  &.disabled {
+    background-color: $-gray-400 !important;
+    pointer-events: none;
+  }
 }
 </style>
