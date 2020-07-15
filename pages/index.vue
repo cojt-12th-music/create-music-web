@@ -50,6 +50,9 @@
       <operation-area />
     </div>
     <player />
+    <v-btn @click="twitterLogin">Twitterログイン</v-btn>
+    <v-btn @click="signOut">Sign Out</v-btn>
+    <v-btn @click="test">test</v-btn>
   </div>
 </template>
 
@@ -61,7 +64,11 @@ import draggable from 'vuedraggable'
 import MusicalScore from '@/components/musicalScore.vue'
 import OperationArea from '@/components/operationArea.vue'
 import Player from '@/components/Player.vue'
-import { firebaseAuth, firestoreAccessor } from '@/plugins/firebase'
+import {
+  firestoreAccessor,
+  twitterProvider,
+  firebaseAuth
+} from '@/plugins/firebase'
 import { Music, ScorePart } from '@/types/music'
 
 type DataType = {
@@ -77,34 +84,40 @@ export default Vue.extend({
     Player
   },
   async fetch({ route, store }: Context) {
-    firebaseAuth.onAuthStateChanged((user) => {
+    firebaseAuth().onAuthStateChanged((user) => {
       if (user) {
         // User is signed in.
-        console.log(user.isAnonymous)
-        console.log(user.uid)
+        console.log('signed in.')
+        console.log('isAnonymous:' + user.isAnonymous)
+        console.log(firebaseAuth().currentUser?.isAnonymous)
+        console.log(firebaseAuth().currentUser?.uid)
+        console.log(firebaseAuth().currentUser?.providerData)
       } else {
         // User is signed out.
       }
     })
 
-    await firebaseAuth.signInAnonymously().catch((error) => {
-      // Handle Errors here.
-      console.log(error.code)
-      console.log(error.message)
-    })
+    console.log('now')
+    console.log(firebaseAuth().currentUser?.isAnonymous)
+    console.log(firebaseAuth().currentUser?.uid)
+
+    if (!firebaseAuth().currentUser) {
+      firebaseAuth()
+        .signInAnonymously()
+        .catch((error) => {
+          // Handle Errors here.
+          console.log('anonymous error.')
+          console.log(error.code)
+          console.log(error.message)
+        })
+    }
 
     const scoreId = route.query.id
-
     if (scoreId && typeof scoreId === 'string') {
-      await firestoreAccessor.scores
-        .show(scoreId)
-        .then((score: Music) => {
-          // fetchのときは直接dispatchせざるを得ない屈辱
-          store.commit('music/SET_SCORE', score)
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+      await firestoreAccessor.scores.show(scoreId).then((score: Music) => {
+        // fetchのときは直接dispatchせざるを得ない屈辱
+        store.commit('music/SET_SCORE', score)
+      })
     }
   },
   data(): DataType {
@@ -137,6 +150,50 @@ export default Vue.extend({
       set(enabled: boolean) {
         this.$accessor.player.setEditEnabled(enabled)
       }
+    }
+  },
+  async mounted() {
+    await firebaseAuth()
+      .getRedirectResult()
+      .then(function(result) {
+        console.log('accessToken:' + result.credential?.accessToken)
+        console.log('secret:' + result.credential?.secret)
+        console.log('user:' + result.user)
+      })
+      .catch(function(error) {
+        console.log(error)
+      })
+  },
+  methods: {
+    twitterLogin() {
+      firebaseAuth()
+        .signInWithPopup(twitterProvider)
+        .then((result) => {
+          console.log('accessToken:' + result.credential.accessToken)
+          console.log('secret:' + result.credential.secret)
+          console.log('user:' + result.user)
+        })
+        .catch((error) => {
+          console.log(error.code)
+          console.log(error.message)
+        })
+    },
+    signOut() {
+      firebaseAuth()
+        .signOut()
+        .then(() => {
+          // singed out
+          console.log('sign out successful')
+        })
+        .catch((error) => {
+          console.log(error.code)
+          console.log(error.message)
+        })
+    },
+    test() {
+      console.log(firebaseAuth())
+      console.log(firebaseAuth().currentUser?.isAnonymous)
+      console.log(firebaseAuth().currentUser?.uid)
     }
   }
 })
@@ -195,6 +252,7 @@ $operation-area-height: 10vh;
   height: calc(100% - $operation-area-height * 2);
   margin: $operation-area-height 0;
   overflow: scroll;
+
   // for IE, Edge
   -ms-overflow-style: none;
   // for Firefox
