@@ -12,9 +12,10 @@
       <!-- 編集エリア -->
       <v-card class="edit-area">
         <rhythmEditor
-          v-for="i in instrument_keys"
-          :key="i"
-          :drum-key="i"
+          v-for="i in key_inst"
+          :key="i.drum_key"
+          :drum-key="i.drum_key"
+          :inst="i.inst"
           :block-name="blockName"
         />
       </v-card>
@@ -45,7 +46,32 @@ export default Vue.extend({
     }
   },
   data() {
-    return {}
+    return {
+      key_inst: [
+        { drum_key: 48, inst: 'Bass Drum' },
+        { drum_key: 49, inst: 'Side Stick' },
+        { drum_key: 50, inst: 'Side Stick 2' },
+        { drum_key: 51, inst: 'Snare Drum' },
+        { drum_key: 52, inst: 'Snare Drum 2' },
+        { drum_key: 53, inst: 'Snare Drum Dry' },
+        { drum_key: 54, inst: 'Low Tom' },
+        { drum_key: 55, inst: 'Mid Tom' },
+        { drum_key: 56, inst: 'High Tom' },
+        { drum_key: 57, inst: 'Closed Hi-Hat' },
+        { drum_key: 58, inst: 'Open Hi-Hat' },
+        { drum_key: 59, inst: 'Semi Open Hi-Hat' },
+        { drum_key: 60, inst: 'Long Open Hi-Hat' },
+        { drum_key: 61, inst: 'Cymbal 16i Crash' },
+        { drum_key: 62, inst: 'Cymbal 16i Ride' },
+        { drum_key: 63, inst: 'Cymbal 16i Cup' },
+        { drum_key: 64, inst: 'Cymbal 20i Crash' },
+        { drum_key: 65, inst: 'Cymbal 20i Ride' },
+        { drum_key: 66, inst: 'Cymbal 20i Cup' },
+        { drum_key: 67, inst: 'Double Low Tom' },
+        { drum_key: 68, inst: 'Double Mid Tom' },
+        { drum_key: 69, inst: 'Double High Tom' }
+      ]
+    }
   },
   computed: {
     // ドラムの種類（キー）を配列にして返す
