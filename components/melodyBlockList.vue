@@ -103,6 +103,7 @@ export default Vue.extend({
           blockName: this.selectedBlockName
         })
         this.$emit('clickAddBlock', 'melody')
+        this.$accessor.player.stopPresetPreview()
       }
     },
     setSelectedBlockName(block: Block) {
