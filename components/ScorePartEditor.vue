@@ -1,11 +1,11 @@
 <template>
   <div class="score-part-container">
     <div class="column-title">
-      <div class="part-title-container" @click="enabled = !enabled">
-        <v-icon large class="icon" :class="{ disabled: !enabled }">{{
+      <div class="part-title-container" @click="isMute = !isMute">
+        <v-icon large class="icon" :class="{ disabled: isMute }">{{
           partIcon
         }}</v-icon>
-        <div class="part-title" :class="{ disabled: !enabled }">
+        <div class="part-title" :class="{ disabled: isMute }">
           {{ partTitle }}
         </div>
       </div>
@@ -13,9 +13,9 @@
 
     <div
       class="block-area-container"
-      :style="{ width: 5 * (maxLength + 1) + 'rem' }"
+      :style="{ width: 5 * (scoreLength + 2) + 'rem' }"
     >
-      <div v-for="i in maxLength" :key="i" class="block-area"></div>
+      <div v-for="i in scoreLength + 1" :key="i" class="block-area"></div>
     </div>
 
     <div class="draggable-wrapper">
@@ -84,7 +84,6 @@ import RhythmModal from '@/components/rhythmModal.vue'
 import { Block, ScorePart } from '@/types/music'
 
 type DataType = {
-  enabled: boolean
   showsBlockList: boolean
   showsEditModal: boolean
   currentBlock: Block | null
@@ -102,11 +101,14 @@ export default Vue.extend({
     part: {
       required: true,
       type: String as Vue.PropType<ScorePart>
+    },
+    scoreLength: {
+      required: true,
+      type: Number
     }
   },
   data(): DataType {
     return {
-      enabled: true,
       showsBlockList: false,
       showsEditModal: false,
       currentBlock: null
@@ -118,28 +120,6 @@ export default Vue.extend({
         animation: 300,
         disabled: false
       }
-    },
-    maxLength(): number {
-      // 各partにおけるdurationの合計の最大値 / 2 + 1 (追加ボタン分)
-      // TODO: fetch from store
-      const RhythmLength: number = this.$accessor.music.rhythmBlocks.reduce(
-        (p: number, x: Block) => p + x.duration,
-        0
-      )
-      const ChordLength: number = this.$accessor.music.chordBlocks.reduce(
-        (p: number, x: Block) => p + x.duration,
-        0
-      )
-      const MelodyLength: number = this.$accessor.music.melodyBlocks.reduce(
-        (p: number, x: Block) => p + x.duration,
-        0
-      )
-      const maxLength: number = Math.max(
-        RhythmLength,
-        ChordLength,
-        MelodyLength
-      )
-      return Math.floor(maxLength / 2) + 1
     },
     partTitle(): string {
       return {
@@ -154,6 +134,14 @@ export default Vue.extend({
         chord: 'fas fa-guitar',
         melody: 'music_note'
       }[this.part]
+    },
+    isMute: {
+      get(): boolean {
+        return this.$accessor.player.isMute[this.part]
+      },
+      set(isMute: boolean) {
+        this.$accessor.player.setMute({ part: this.part, isMute })
+      }
     },
     blocks: {
       get(): Block[] {
@@ -262,6 +250,7 @@ export default Vue.extend({
 
   .block-item-wrapper {
     margin-right: 1rem;
+    z-index: 1;
   }
 }
 

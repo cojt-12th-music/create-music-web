@@ -39,7 +39,7 @@ export type MusicState = ReturnType<typeof state>
 
 export const getters = getterTree(state, {
   /**
-   * テンプレートやプリセットの名前のみを返す系のgetters
+   * テンプレートのブロック配列を返す系のgetters
    * 編集時に使用する
    */
   // メロディー
@@ -81,7 +81,6 @@ export const getters = getterTree(state, {
   melodyInstrument: (state: MusicState): string => state.melody.instrument,
   // コード
   chordInstrument: (state: MusicState): string => state.chord.instrument,
-  // リズム
   rhythmInstrument: (state: MusicState): string => state.rhythm.instrument
 })
 
@@ -267,7 +266,6 @@ export const mutations = mutationTree(state, {
    */
   SET_SCORE(state: MusicState, data: Music) {
     Object.assign(state, data)
-    console.log(state)
   }
 })
 
