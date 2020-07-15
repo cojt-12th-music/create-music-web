@@ -17,6 +17,7 @@
           :drum-key="i.drum_key"
           :inst="i.inst"
           :block-name="blockName"
+          @edit-block="editBlock"
         />
       </v-card>
 
@@ -70,7 +71,8 @@ export default Vue.extend({
         { drum_key: 67, inst: 'Double Low Tom' },
         { drum_key: 68, inst: 'Double Mid Tom' },
         { drum_key: 69, inst: 'Double High Tom' }
-      ]
+      ],
+      isEdited: false
     }
   },
   computed: {
@@ -94,7 +96,10 @@ export default Vue.extend({
   },
   methods: {
     dialog() {
-      this.$emit('dialog', false)
+      this.$emit('dialog', this.isEdited)
+    },
+    editBlock() {
+      this.isEdited = true
     },
     async playPreview() {
       await this.$accessor.player.stopPresetPreview()

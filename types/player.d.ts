@@ -4,6 +4,10 @@ export interface PlayerState {
   context: AudioContext | null
   isPlaying: boolean
   isReady: boolean
+  isMute: {
+    [part in ScorePart]: boolean
+  }
+  playTime: number
   loadingProgress: number
   instruments: Instrument[]
   previewPreset: {

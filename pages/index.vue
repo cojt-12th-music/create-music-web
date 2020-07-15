@@ -77,7 +77,7 @@ export default {
 }
 
 #musical-score-wrapper {
-  height: 65vh;
+  height: calc(100% - 10vh);
   margin-bottom: 3vh;
   overflow: scroll;
   // for IE, Edge
