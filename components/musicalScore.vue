@@ -31,7 +31,7 @@
       </div>
 
       <transition name="trash">
-        <div v-if="trashPart" class="score-trash-wrapper">
+        <div v-if="!isPlaying && trashPart" class="score-trash-wrapper">
           <draggable class="score-draggable-trash" :group="trashPart" />
           <v-icon class="icon">fa-trash</v-icon>
         </div>
@@ -101,7 +101,7 @@ export default Vue.extend({
       }
       if (this.$accessor.player.isPlaying) {
         Object.assign(style, {
-          transform: `translateX(${this.scoreLength * 5}rem)`,
+          transform: `translateX(${(this.scoreLength + 1) * 5}rem)`,
           transitionProperty: 'transform',
           transitionDuration: `${(this.musicDuration * 60) /
             this.$accessor.music.bpm}s`,
@@ -109,6 +109,9 @@ export default Vue.extend({
         })
       }
       return style
+    },
+    isPlaying(): boolean {
+      return this.$accessor.player.isPlaying
     }
   },
   methods: {
