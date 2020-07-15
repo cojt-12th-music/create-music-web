@@ -1,10 +1,14 @@
 <template>
-  <div class="score-part-container">
+  <div :id="`${part}-score`" class="score-part-container">
     <div class="column-title">
-      <div class="part-title-container" @click="isMute = !isMute">
-        <v-icon large class="icon" :class="{ disabled: isMute }">{{
-          partIcon
-        }}</v-icon>
+      <div
+        :id="`${part}-header`"
+        class="part-title-container"
+        @click="isMute = !isMute"
+      >
+        <v-icon large class="icon" :class="{ disabled: isMute }">
+          {{ partIcon }}
+        </v-icon>
         <div class="part-title" :class="{ disabled: isMute }">
           {{ partTitle }}
         </div>
@@ -18,7 +22,7 @@
       <div v-for="i in scoreLength + 1" :key="i" class="block-area"></div>
     </div>
 
-    <div class="draggable-wrapper">
+    <div :id="`${part}-edit-area`" class="draggable-wrapper">
       <draggable
         v-model="blocks"
         class="score-draggable"
@@ -37,9 +41,10 @@
       </draggable>
       <div class="button-wrapper">
         <v-icon
+          :id="`${part}-plus-button`"
           x-large
           class="dialog-button"
-          @click.stop="showsBlockList = true"
+          @click.stop="showDialog()"
         >
           mdi-plus-circle-outline
         </v-icon>

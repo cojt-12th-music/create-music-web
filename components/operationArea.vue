@@ -3,26 +3,24 @@
     <v-container>
       <v-row justify="center">
         <v-col>
-          <v-btn icon @click="config">
+          <v-btn id="menu-button" icon @click="config">
             <v-icon size="300%" color="#F96500">mdi-menu</v-icon>
           </v-btn>
         </v-col>
         <v-col align-self="center">
           <div class="iconCenter">
-            <div v-if="isPlaying">
-              <v-btn :disabled="!isReady" icon @click="stop">
+            <div id="play-button" class="play-button-container">
+              <v-btn v-if="isPlaying" :disabled="!isReady" icon @click="stop">
                 <v-icon size="400%" color="#F96500">mdi-stop</v-icon>
               </v-btn>
-            </div>
-            <div v-else>
-              <v-btn :disabled="!isReady" icon @click="play">
+              <v-btn v-else :disabled="!isReady" icon @click="play">
                 <v-icon size="400%" color="#F96500">mdi-play</v-icon>
               </v-btn>
             </div>
           </div>
         </v-col>
         <v-col align-self="center">
-          <div class="iconRight">
+          <div id="share-button" class="iconRight">
             <a
               id="shareTag"
               href="https://twitter.com/intent/tweet?url=http://localhost:3000/ &text=音楽を作ってみました♪"
@@ -384,6 +382,10 @@ div#component-frame {
 }
 div.iconCenter {
   text-align: center;
+
+  .play-button-container {
+    width: max-content;
+  }
 }
 div.iconRight {
   text-align: right;

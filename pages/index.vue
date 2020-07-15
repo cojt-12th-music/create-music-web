@@ -1,5 +1,5 @@
 <template>
-  <div id="component-frame">
+  <div class="component-frame">
     <div id="musical-score-wrapper">
       <musical-score />
     </div>
@@ -7,13 +7,17 @@
     <div id="operation-area-wrapper">
       <operation-area />
     </div>
+
     <player />
+    <lesson v-if="isReady && lessonAvailable" />
   </div>
 </template>
 
 <script lang="ts">
+import Vue from 'vue'
 import { Context } from '@nuxt/types'
 
+import Lesson from '@/components/Lesson.vue'
 import MusicalScore from '@/components/musicalScore.vue'
 import OperationArea from '@/components/operationArea.vue'
 import Player from '@/components/Player.vue'
@@ -21,11 +25,12 @@ import { firebaseAuth, firestoreAccessor } from '@/plugins/firebase'
 import { Music } from '@/types/music'
 
 type DataType = {
-  dialog: boolean
+  lessonAvailable: string | (string | null)[]
 }
 
-export default {
+export default Vue.extend({
   components: {
+    Lesson,
     MusicalScore,
     OperationArea,
     Player
@@ -61,19 +66,27 @@ export default {
         })
     }
   },
-  data(): DataType {
+  asyncData({ route }: Context): DataType {
+    const lessonAvailable = route.query.lesson
     return {
-      dialog: false
+      lessonAvailable
+    }
+  },
+  computed: {
+    isReady(): boolean {
+      return this.$accessor.player.isReady
     }
   }
-}
+})
 </script>
 
 <style lang="scss" scoped>
-#component-frame {
-  background-color: $-gray-800;
+.component-frame {
+  background-color: $-gray-800 !important;
   height: 100vh;
   color: $-gray-500;
+  position: relative;
+  width: 100%;
 }
 
 #musical-score-wrapper {
@@ -97,7 +110,7 @@ export default {
 
 #operation-area-wrapper {
   height: 10vh;
-  width: 100vw;
+  width: 100%;
   position: fixed;
   bottom: 0;
 }
