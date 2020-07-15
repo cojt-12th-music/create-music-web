@@ -298,13 +298,17 @@ export const actions = actionTree(
      * @param part ブロックのパート
      * @param blockName ブロックの名前
      */
-    initBlock({ commit }, part: ScorePart): Block {
+    initBlock({ state, commit }, part: ScorePart): Block {
       const block: Block = {
         name: '無題',
         category: 'マイブロック',
         sounds: new Array<Sound>(0),
         duration: 0,
         isOriginal: true
+      }
+      // もしhoge'が存在しているならhoge''を見る, これを存在しないところまで繰り返す
+      while (state.blocks[part][block.name]) {
+        block.name = `${block.name}'`
       }
       commit('ADD_BLOCK_TO_LIST', { part, block })
       commit('CLONE_BLOCK', { part, blockName: block.name })
