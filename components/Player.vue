@@ -120,8 +120,6 @@ export default Vue.extend({
         const targetTemplate = this.$accessor.music.melodyTemplates.find(
           (t) => t.name === this.$accessor.player.previewPreset.name
         )
-        console.log('target')
-        console.log(targetTemplate)
         if (targetTemplate) return this.flatBlock([targetTemplate])
         else return []
       }
@@ -250,16 +248,16 @@ export default Vue.extend({
       return block
         .map((block) => {
           // 各soundsのdelayに今までのブロックのdurationを足した
-          const sounds = block.sounds
-            .filter(({ delay }) => {
-              return delay >= this.$accessor.player.playTime
-            })
-            .map(({ delay, ...e }) => {
-              return {
-                delay: delay + allDelay - this.$accessor.player.playTime,
-                ...e
-              }
-            })
+          const filter = block.sounds.filter(({ delay }) => {
+            return delay + allDelay >= this.$accessor.player.playTime
+          })
+
+          const sounds = filter.map(({ delay, ...e }) => {
+            return {
+              delay: delay + allDelay - this.$accessor.player.playTime,
+              ...e
+            }
+          })
 
           allDelay += block.duration
           return sounds

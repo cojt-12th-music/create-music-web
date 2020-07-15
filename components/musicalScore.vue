@@ -27,6 +27,14 @@
           @draggable-trash="draggableTrash"
         />
 
+        <div
+          v-for="i in scoreLength + 1"
+          :key="i"
+          class="play-time"
+          :style="playTimeStyle(i)"
+          @mousedown="mouseDown(i)"
+        />
+
         <div class="seek-bar" :style="seekBarStyle" />
       </div>
 
@@ -97,13 +105,15 @@ export default Vue.extend({
     },
     seekBarStyle(): Object {
       const style = {
-        transform: `translateX(${this.$accessor.player.playTime}rem)`
+        transform: `translateX(${(this.$accessor.player.playTime * 5) / 2}rem)`
       }
       if (this.$accessor.player.isPlaying) {
         Object.assign(style, {
           transform: `translateX(${(this.scoreLength + 1) * 5}rem)`,
           transitionProperty: 'transform',
-          transitionDuration: `${(this.musicDuration * 60) /
+          transitionDuration: `${((this.musicDuration -
+            this.$accessor.player.playTime) *
+            60) /
             this.$accessor.music.bpm}s`,
           transitionTimingFunction: 'linear'
         })
@@ -117,6 +127,16 @@ export default Vue.extend({
   methods: {
     draggableTrash(trashPart: ScorePart | null) {
       this.trashPart = trashPart
+    },
+    playTimeStyle(key: number): Object {
+      const style = {
+        transform: `translateX(${(key - 1) * 5}rem)`
+      }
+      return style
+    },
+    mouseDown(playTime: number) {
+      this.$accessor.player.setPlayTime(playTime * 2 - 2)
+      console.log(this.$accessor.player.playTime)
     }
   }
 })
@@ -150,6 +170,16 @@ div#component-frame {
   border-style: solid solid none solid;
   border-width: 1px;
   height: 21rem;
+
+  .play-time {
+    position: absolute;
+    left: calc(6rem - 11px);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid $-gray-500;
+  }
 
   .seek-bar {
     position: absolute;

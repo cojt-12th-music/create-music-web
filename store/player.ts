@@ -22,7 +22,6 @@ export const state = (): PlayerState => ({
     part: null,
     key: 0
   },
-  playTime: 0,
   reverbs: []
 })
 
