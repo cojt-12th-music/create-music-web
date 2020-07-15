@@ -30,31 +30,46 @@
           :key="index"
           class="block-item-wrapper"
         >
-          <block-item :block="block" @click.native="clickBlock(block.name)" />
+          <block-item :block="block" @click.native="showEditModal(block)" />
         </div>
       </draggable>
       <div class="button-wrapper">
-        <v-icon x-large class="dialog-button" @click.stop="showDialog()">
+        <v-icon
+          x-large
+          class="dialog-button"
+          @click.stop="showsBlockList = true"
+        >
           mdi-plus-circle-outline
         </v-icon>
       </div>
     </div>
-    <!-- ブロックが押されたら編集画面表示 -->
+
+    <v-dialog v-model="showsBlockList" max-width="800">
+      <block-list :part="part" @closeDialog="showsBlockList = false" />
+    </v-dialog>
     <v-dialog
       v-if="part === 'melody'"
-      v-model="editModal"
+      v-model="showsEditModal"
       fullscreen
       hide-overlay
     >
-      <melody-modal :block-name="blockName" @dialog="editModal = $event" />
+      <melody-modal
+        v-if="currentBlock"
+        :block-name="currentBlock.name"
+        @dialog="showsEditModal = $event"
+      />
     </v-dialog>
     <v-dialog
       v-if="part === 'rhythm'"
-      v-model="editModal"
+      v-model="showsEditModal"
       fullscreen
       hide-overlay
     >
-      <rhythm-modal :block-name="blockName" @dialog="editModal = $event" />
+      <rhythm-modal
+        v-if="currentBlock"
+        :block-name="currentBlock.name"
+        @dialog="closeEditModal"
+      />
     </v-dialog>
   </div>
 </template>
@@ -63,14 +78,23 @@
 import Vue from 'vue'
 import draggable from 'vuedraggable'
 import BlockItem from '@/components/BlockItem.vue'
-import { Block, ScorePart } from '@/types/music'
+import BlockList from '@/components/BlockList.vue'
 import MelodyModal from '@/components/melodyModal.vue'
 import RhythmModal from '@/components/rhythmModal.vue'
+import { Block, ScorePart } from '@/types/music'
+
+type DataType = {
+  enabled: boolean
+  showsBlockList: boolean
+  showsEditModal: boolean
+  currentBlock: Block | null
+}
 
 export default Vue.extend({
   components: {
     draggable,
     BlockItem,
+    BlockList,
     MelodyModal,
     RhythmModal
   },
@@ -78,27 +102,18 @@ export default Vue.extend({
     part: {
       required: true,
       type: String as Vue.PropType<ScorePart>
-    },
-    showsDialog: {
-      required: true,
-      type: Boolean
-    },
-    blockAreaLength: {
-      type: Number,
-      required: true
     }
   },
-  data() {
+  data(): DataType {
     return {
-      // TODO: store setting
       enabled: true,
-      editModal: false,
-      blockName: ''
+      showsBlockList: false,
+      showsEditModal: false,
+      currentBlock: null
     }
   },
   computed: {
     dragOptions() {
-      console.log(this.$accessor.music.rhythmBlocks)
       return {
         animation: 300,
         disabled: false
@@ -142,11 +157,7 @@ export default Vue.extend({
     },
     blocks: {
       get(): Block[] {
-        return {
-          rhythm: this.$accessor.music.rhythmBlocks,
-          chord: this.$accessor.music.chordBlocks,
-          melody: this.$accessor.music.melodyBlocks
-        }[this.part]
+        return this.$accessor.music.partBlocks(this.part)
       },
       set(blocks: Block[]) {
         const blockNames = blocks.map((block) => block.name)
@@ -155,12 +166,29 @@ export default Vue.extend({
     }
   },
   methods: {
-    showDialog() {
-      this.$emit('update:showsDialog', true)
+    showEditModal(block: Block) {
+      // ブロックは編集前の状態を保持できるようdeep copyしておく
+      this.currentBlock = JSON.parse(JSON.stringify(block))
+      this.showsEditModal = true
     },
-    clickBlock(name: string) {
-      this.editModal = true
-      this.blockName = name
+    closeEditModal(isEdited: boolean) {
+      this.showsEditModal = false
+
+      // 編集していないときや, ブロックがユーザが作成したものなときは何もしない
+      if (!isEdited || !this.currentBlock || this.currentBlock.isOriginal) {
+        return
+      }
+
+      // ブロックをコピー
+      this.$accessor.music.copyBlock({
+        part: this.part,
+        blockName: this.currentBlock.name
+      })
+      // もとのブロックは編集前に戻す
+      this.$accessor.music.updateBlock({
+        part: this.part,
+        block: this.currentBlock
+      })
     }
   }
 })
@@ -255,6 +283,14 @@ export default Vue.extend({
     color: $-primary-500;
   }
 }
+
+// .open-blocklist {
+//   margin-left: 1rem;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   transform: translateY(-0.5rem);
+// }
 
 @include pc {
 }
