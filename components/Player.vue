@@ -10,7 +10,6 @@
           :bpm="bpm"
           :is-playing="isMelodyPlaying"
           :is-ready.sync="isMelodyReady"
-          :is-mute="isMelodyMute"
           :gain-value="gainValue"
           :reverb-path="null"
           :unit-sound-preview="melodyUnitSoundKey"
@@ -23,7 +22,6 @@
           :bpm="bpm"
           :is-playing="isChordPlaying"
           :is-ready.sync="isChordReady"
-          :is-mute="isChordMute"
           :gain-value="gainValue"
           :unit-sound-preview="chordUnitSoundKey"
         />
@@ -35,7 +33,6 @@
           :bpm="bpm"
           :is-playing="isRhythmPlaying"
           :is-ready.sync="isRhythmReady"
-          :is-mute="isRhythmMute"
           :gain-value="gainValue"
           :unit-sound-preview="rhythmUnitSoundKey"
         />
@@ -115,6 +112,10 @@ export default Vue.extend({
       return this.$accessor.player.previewUnitSound.key
     },
     melodyNotes(): Sound[] {
+      if (this.$accessor.player.isMute.melody) {
+        return []
+      }
+
       // プレビュー用
       if (this.$accessor.player.previewPreset.part === 'melody') {
         const targetTemplate = this.$accessor.music.melodyTemplates.find(
@@ -126,6 +127,10 @@ export default Vue.extend({
       return this.flatBlock(this.$accessor.music.melodyBlocks)
     },
     chordNotes(): Sound[] {
+      if (this.$accessor.player.isMute.chord) {
+        return []
+      }
+
       // プレビュー用
       if (this.$accessor.player.previewPreset.part === 'chord') {
         const targetTemplate = this.$accessor.music.chordTemplates.find(
@@ -137,6 +142,10 @@ export default Vue.extend({
       return this.flatBlock(this.$accessor.music.chordBlocks)
     },
     rhythmNotes(): Sound[] {
+      if (this.$accessor.player.isMute.rhythm) {
+        return []
+      }
+
       // プレビュー用
       if (this.$accessor.player.previewPreset.part === 'rhythm') {
         const targetTemplate = this.$accessor.music.rhythmTemplates.find(
@@ -167,15 +176,6 @@ export default Vue.extend({
         this.$accessor.player.isPlaying ||
         this.$accessor.player.previewPreset.part === 'rhythm'
       )
-    },
-    isMelodyMute(): Boolean {
-      return this.$accessor.player.isMute.melody
-    },
-    isChordMute(): Boolean {
-      return this.$accessor.player.isMute.chord
-    },
-    isRhythmMute(): Boolean {
-      return this.$accessor.player.isMute.rhythm
     },
     context(): AudioContext | null {
       return this.$accessor.player.context
