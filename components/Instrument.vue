@@ -305,12 +305,10 @@ export default Vue.extend({
       // リリース対応
       if (target.ampeg_release) {
         const releaseGain = this.context.createGain()
-        releaseGain.gain.linearRampToValueAtTime(
+        releaseGain.gain.setTargetAtTime(
           0,
-          this.context.currentTime +
-            delay +
-            duration +
-            Number(target.ampeg_release)
+          this.context.currentTime + delay + duration,
+          Number(target.ampeg_release)
         )
         nodes.push(releaseGain)
       }
