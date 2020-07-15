@@ -30,7 +30,7 @@
           :key="index"
           class="block-item-wrapper"
         >
-          <block-item :block="block" @click.native="editModal = true" />
+          <block-item :block="block" @click.native="clickBlock(block.name)" />
         </div>
       </draggable>
       <div class="button-wrapper">
@@ -46,7 +46,7 @@
       fullscreen
       hide-overlay
     >
-      <melody-modal @dialog="editModal = $event" />
+      <melody-modal :block-name="blockName" @dialog="editModal = $event" />
     </v-dialog>
     <v-dialog
       v-if="part === 'rhythm'"
@@ -54,7 +54,7 @@
       fullscreen
       hide-overlay
     >
-      <rhythm-modal @dialog="editModal = $event" />
+      <rhythm-modal :block-name="blockName" @dialog="editModal = $event" />
     </v-dialog>
   </div>
 </template>
@@ -82,17 +82,23 @@ export default Vue.extend({
     showsDialog: {
       required: true,
       type: Boolean
+    },
+    blockAreaLength: {
+      type: Number,
+      required: true
     }
   },
   data() {
     return {
       // TODO: store setting
       enabled: true,
-      editModal: false
+      editModal: false,
+      blockName: ''
     }
   },
   computed: {
     dragOptions() {
+      console.log(this.$accessor.music.rhythmBlocks)
       return {
         animation: 300,
         disabled: false
@@ -101,7 +107,24 @@ export default Vue.extend({
     maxLength(): number {
       // 各partにおけるdurationの合計の最大値 / 2 + 1 (追加ボタン分)
       // TODO: fetch from store
-      return Math.floor(13 / 2) + 1
+      const RhythmLength: number = this.$accessor.music.rhythmBlocks.reduce(
+        (p: number, x: Block) => p + x.duration,
+        0
+      )
+      const ChordLength: number = this.$accessor.music.chordBlocks.reduce(
+        (p: number, x: Block) => p + x.duration,
+        0
+      )
+      const MelodyLength: number = this.$accessor.music.melodyBlocks.reduce(
+        (p: number, x: Block) => p + x.duration,
+        0
+      )
+      const maxLength: number = Math.max(
+        RhythmLength,
+        ChordLength,
+        MelodyLength
+      )
+      return Math.floor(maxLength / 2) + 1
     },
     partTitle(): string {
       return {
@@ -134,6 +157,10 @@ export default Vue.extend({
   methods: {
     showDialog() {
       this.$emit('update:showsDialog', true)
+    },
+    clickBlock(name: string) {
+      this.editModal = true
+      this.blockName = name
     }
   }
 })

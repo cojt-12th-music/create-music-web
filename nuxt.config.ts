@@ -36,7 +36,7 @@ const config: Configuration = {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['plugins/vuetify'],
+  plugins: ['plugins/vuetify', '~/plugins/firebase'],
   /*
    ** Nuxt.js dev-modules
    */
@@ -116,6 +116,20 @@ const config: Configuration = {
       if (ctx.isClient) {
         if (config.plugins) config.plugins.push(instPlugin, reverbPlugin)
         else config.plugins = [instPlugin, reverbPlugin]
+      }
+    },
+    babel: {
+      presets({ isServer }) {
+        return [
+          [
+            require.resolve('@nuxt/babel-preset-app'),
+            // require.resolve('@nuxt/babel-preset-app-edge'), // For nuxt-edge users
+            {
+              buildTarget: isServer ? 'server' : 'client',
+              corejs: { version: 3 }
+            }
+          ]
+        ]
       }
     }
   }

@@ -1,8 +1,8 @@
 <template>
-  <div id="component-frame">
+  <div id="rhythm-block-list">
     <v-card class="mx-auto">
       <v-card-title>
-        <p>リズムの選択</p>
+        <p>リズムの追加</p>
       </v-card-title>
 
       <v-chip-group v-model="selection" column>
@@ -17,6 +17,7 @@
             :key="category + index"
             label
             large
+            @click="setSelectedBlockName(block)"
           >
             <block-item :block="block" />
           </v-chip>
@@ -24,11 +25,35 @@
       </v-chip-group>
 
       <v-card-actions>
-        <v-btn block class="white--text" color="#F96500">
+        <v-btn
+          id="rhythm-block-list-add"
+          block
+          class="white--text"
+          color="#F96500"
+          @click="addBlock"
+        >
           Add to Score
         </v-btn>
       </v-card-actions>
     </v-card>
+
+    <v-dialog v-model="attention" max-width="1000">
+      <v-card>
+        <v-card-title class="attention-modal-title"
+          ><span class="material-icons">warning</span></v-card-title
+        >
+        <v-card-text class="attention-modal-text">
+          ブロックを選択してください．クソが．
+        </v-card-text>
+
+        <v-card-actions class="attention-modal-btn">
+          <v-spacer></v-spacer>
+          <v-btn color="orange darken-1" text @click="attention = false">
+            Agree
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -45,18 +70,23 @@ export default Vue.extend({
   },
   data() {
     return {
-      selection: null
+      selection: undefined,
+      selectedBlockName: '',
+      attention: false
     }
   },
   computed: {
     rhythmBlocks(): BlockGroup {
-      return this.$accessor.music.rhythmTemplates.reduce((acc, cur) => {
-        if (!acc[cur.category]) {
-          acc[cur.category] = []
-        }
-        acc[cur.category].push(cur)
-        return acc
-      }, {} as BlockGroup)
+      return this.$accessor.music.rhythmTemplates.reduce(
+        (acc: BlockGroup, cur: Block) => {
+          if (!acc[cur.category]) {
+            acc[cur.category] = []
+          }
+          acc[cur.category].push(cur)
+          return acc
+        },
+        {} as BlockGroup
+      )
     }
   },
   watch: {
@@ -68,6 +98,25 @@ export default Vue.extend({
         part: 'melody',
         name: 'メロ1'
       })
+    }
+  },
+  methods: {
+    addBlock() {
+      if (this.selection === undefined) {
+        console.log('未選択')
+        this.attention = true
+      } else {
+        console.log('選択状態: ' + this.selection)
+        this.$accessor.music.cloneBlock({
+          part: 'rhythm',
+          blockName: this.selectedBlockName
+        })
+        this.$emit('clickAddBlock', 'rhythm')
+        this.$accessor.player.stopPresetPreview()
+      }
+    },
+    setSelectedBlockName(block: Block) {
+      this.selectedBlockName = block.name
     }
   }
 })
@@ -82,6 +131,9 @@ export default Vue.extend({
   }
 }
 div#component-frame {
+  height: 100%;
+}
+#rhythm-block-list {
   height: 100%;
 }
 .v-card__text {
@@ -110,5 +162,22 @@ div#component-frame {
 .v-divider {
   background-color: $-gray-500;
   margin-bottom: 5px;
+}
+.attention-modal-title {
+  background-color: $-gray-700;
+  .material-icons {
+    color: $-primary-500;
+    font-size: 30px;
+  }
+}
+.attention-modal-text.v-card__text {
+  background-color: $-gray-700;
+  color: $-gray-50;
+  text-align: center;
+  margin: 0;
+  padding: 30px;
+}
+.attention-modal-btn {
+  background-color: $-gray-700;
 }
 </style>

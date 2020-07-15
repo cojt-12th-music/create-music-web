@@ -12,9 +12,13 @@
 </template>
 
 <script lang="ts">
+import { Context } from '@nuxt/types'
+
 import MusicalScore from '@/components/musicalScore.vue'
 import OperationArea from '@/components/operationArea.vue'
 import Player from '@/components/Player.vue'
+import { firebaseAuth, firestoreAccessor } from '@/plugins/firebase'
+import { Music } from '@/types/music'
 
 type DataType = {
   dialog: boolean
@@ -25,6 +29,37 @@ export default {
     MusicalScore,
     OperationArea,
     Player
+  },
+  async fetch({ route, store }: Context) {
+    firebaseAuth.onAuthStateChanged((user) => {
+      if (user) {
+        // User is signed in.
+        console.log(user.isAnonymous)
+        console.log(user.uid)
+      } else {
+        // User is signed out.
+      }
+    })
+
+    await firebaseAuth.signInAnonymously().catch((error) => {
+      // Handle Errors here.
+      console.log(error.code)
+      console.log(error.message)
+    })
+
+    const scoreId = route.query.id
+
+    if (scoreId && typeof scoreId === 'string') {
+      await firestoreAccessor.scores
+        .show(scoreId)
+        .then((score: Music) => {
+          // fetchのときは直接dispatchせざるを得ない屈辱
+          store.commit('music/SET_SCORE', score)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    }
   },
   data(): DataType {
     return {
@@ -45,7 +80,6 @@ export default {
   height: 65vh;
   margin-bottom: 3vh;
   overflow: scroll;
-
   // for IE, Edge
   -ms-overflow-style: none;
   // for Firefox
