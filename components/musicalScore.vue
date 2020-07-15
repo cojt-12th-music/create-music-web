@@ -11,24 +11,54 @@
       </div>
 
       <div class="score-container">
-        <score-part-editor part="rhythm" :score-length="scoreLength" />
-        <score-part-editor part="chord" :score-length="scoreLength" />
-        <score-part-editor part="melody" :score-length="scoreLength" />
+        <score-part-editor
+          part="rhythm"
+          :score-length="scoreLength"
+          @draggable-trash="draggableTrash"
+        />
+        <score-part-editor
+          part="chord"
+          :score-length="scoreLength"
+          @draggable-trash="draggableTrash"
+        />
+        <score-part-editor
+          part="melody"
+          :score-length="scoreLength"
+          @draggable-trash="draggableTrash"
+        />
 
         <div class="seek-bar" :style="seekBarStyle" />
       </div>
+
+      <transition name="trash">
+        <div v-if="!isPlaying && trashPart" class="score-trash-wrapper">
+          <draggable class="score-draggable-trash" :group="trashPart" />
+          <v-icon class="icon">fa-trash</v-icon>
+        </div>
+      </transition>
     </v-container>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import draggable from 'vuedraggable'
 import ScorePartEditor from '@/components/ScorePartEditor.vue'
-import { Block } from '@/types/music'
+import { Block, ScorePart } from '@/types/music'
+
+type DataType = {
+  trashPart: ScorePart | null
+}
 
 export default Vue.extend({
   components: {
+    draggable,
     ScorePartEditor
+  },
+  data(): DataType {
+    return {
+      trashPart: null
+    }
   },
   computed: {
     scoreTitle: {
@@ -71,7 +101,7 @@ export default Vue.extend({
       }
       if (this.$accessor.player.isPlaying) {
         Object.assign(style, {
-          transform: `translateX(${this.scoreLength * 5}rem)`,
+          transform: `translateX(${(this.scoreLength + 1) * 5}rem)`,
           transitionProperty: 'transform',
           transitionDuration: `${(this.musicDuration * 60) /
             this.$accessor.music.bpm}s`,
@@ -79,6 +109,14 @@ export default Vue.extend({
         })
       }
       return style
+    },
+    isPlaying(): boolean {
+      return this.$accessor.player.isPlaying
+    }
+  },
+  methods: {
+    draggableTrash(trashPart: ScorePart | null) {
+      this.trashPart = trashPart
     }
   }
 })
@@ -87,6 +125,7 @@ export default Vue.extend({
 <style lang="scss" scoped>
 div#component-frame {
   height: 100%;
+  position: relative;
 }
 
 .score-header {
@@ -123,11 +162,42 @@ div#component-frame {
   }
 }
 
-.open-blocklist {
+.score-trash-wrapper {
+  position: absolute;
+  left: 0;
+  bottom: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  transform: translateY(-0.5rem);
+  height: 5rem;
+  width: 100%;
+
+  .score-draggable-trash {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: $-gray-500;
+    border-radius: 50%;
+    height: 4rem;
+    width: 4rem;
+    opacity: 0.5;
+  }
+
+  .icon {
+    position: absolute;
+    color: $-gray-50;
+  }
+}
+
+.trash-enter-active,
+.trash-leave-active {
+  transform: translateY(0) translateZ(0);
+  transition: transform 100ms linear 100ms;
+}
+
+.trash-enter,
+.trash-leave-to {
+  transform: translateY(10vh) translateZ(0);
 }
 
 @include pc {
