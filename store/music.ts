@@ -32,7 +32,8 @@ export const state = (): Music => ({
     melody: MELODY_BLOCKS,
     chord: CHORD_BLOCKS,
     rhythm: RHYTHM_BLOCKS
-  }
+  },
+  id: ''
 })
 
 export type MusicState = ReturnType<typeof state>
@@ -452,11 +453,13 @@ export const actions = actionTree(
       const data = { ...state }
       // blocksはデカいのでとりあえず全て除外
       // TODO: 初期のプリセットのみ除外するように
+      /**
       data.blocks = {
         rhythm: {},
         chord: {},
         melody: {}
       }
+      */
 
       firestoreAccessor.scores
         .create(data)

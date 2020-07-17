@@ -25,7 +25,7 @@
           <div class="iconRight">
             <a
               id="shareTag"
-              href="https://twitter.com/intent/tweet?url=http://localhost:3000/ &text=音楽を作ってみました♪"
+              :href="this.twitterURL()"
               target="blank_"
               style="text-decoration: none;"
             >
@@ -35,6 +35,13 @@
                 </v-icon>
               </v-btn>
             </a>
+          </div>
+        </v-col>
+        <v-col cols="4" align-self="center">
+          <div class="iconRight">
+            <v-btn icon @click="upload">
+              <v-icon size="300%" color="#c4c4c4">upload</v-icon>
+            </v-btn>
           </div>
         </v-col>
       </v-row>
@@ -301,6 +308,9 @@ export default Vue.extend({
       //   location.href +
       //   '&text=音楽を作ってみました♪'
       // shareTag.href=shareURL
+    },
+    twitterURL() {
+      return `https://twitter.com/intent/tweet?url=http://localhost:3000/?id=${this.$accessor.music.id}&text=音楽を作ってみました♪`
     },
     // 初めの初期化（コンテキスト生成）
     // 各パートの楽器を初期化
