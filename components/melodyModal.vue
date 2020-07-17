@@ -69,6 +69,8 @@ type DataType = {
   editMode: 'border' | 'move' | null
   guidelines: { [key: string]: number[] }
   selectedGuideLineName: string
+  maxkey: number
+  minkey: number
 }
 
 export default Vue.extend({
@@ -94,7 +96,10 @@ export default Vue.extend({
         明るい: [0, 2, 4, 5, 7, 9, 11],
         暗い: [0, 2, 3, 5, 7, 9, 11]
       },
-      selectedGuideLineName: '明るい'
+      selectedGuideLineName: '明るい',
+      // 最高キーと最低キーの決め打ち。ここを変えれば全部うまくいく。
+      maxkey: 70,
+      minkey: 30
     }
   },
   computed: {
@@ -112,15 +117,15 @@ export default Vue.extend({
     },
     keys(): boolean[] {
       const guideline = this.guidelines[this.selectedGuideLineName]
-      return [...Array(100).keys()].map((k) =>
-        guideline.some((g) => k % 12 === g)
+      return [...Array(this.maxkey - this.minkey).keys()].map((k) =>
+        guideline.some((g) => (this.maxkey - k) % 12 === g)
       )
     }
   },
   methods: {
     calcBlock(s: Sound): Rect {
       return {
-        top: this.heightPerBlock * s.key,
+        top: this.heightPerBlock * (this.maxkey - s.key),
         left: this.widthPerNote * s.delay,
         width: this.widthPerNote * s.duration,
         height: this.heightPerBlock
@@ -128,7 +133,7 @@ export default Vue.extend({
     },
     posToSound(x: number, y: number): { key: number; delay: number } {
       return {
-        key: Math.floor(y / this.heightPerBlock),
+        key: this.maxkey - Math.floor(y / this.heightPerBlock),
         delay: Math.round(x / this.widthPerNote / this.quantize) * this.quantize
       }
     },
