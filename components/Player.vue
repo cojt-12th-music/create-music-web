@@ -10,7 +10,7 @@
           :bpm="bpm"
           :is-playing="isMelodyPlaying"
           :is-ready.sync="isMelodyReady"
-          :gain-value="gainValue"
+          :gain-value="melodyGain"
           :reverb-path="null"
           :unit-sound-preview="melodyUnitSoundKey"
         />
@@ -22,7 +22,7 @@
           :bpm="bpm"
           :is-playing="isChordPlaying"
           :is-ready.sync="isChordReady"
-          :gain-value="gainValue"
+          :gain-value="chordGain"
           :unit-sound-preview="chordUnitSoundKey"
         />
         <instrument
@@ -33,7 +33,7 @@
           :bpm="bpm"
           :is-playing="isRhythmPlaying"
           :is-ready.sync="isRhythmReady"
-          :gain-value="gainValue"
+          :gain-value="rhythmGain"
           :unit-sound-preview="rhythmUnitSoundKey"
         />
       </v-col>
@@ -169,6 +169,15 @@ export default Vue.extend({
     },
     rhythmInstrument(): string {
       return this.$accessor.music.rhythmInstrument
+    },
+    melodyGain(): Number {
+      return this.$accessor.music.melody.gain
+    },
+    chordGain(): Number {
+      return this.$accessor.music.chord.gain
+    },
+    rhythmGain(): Number {
+      return this.$accessor.music.rhythm.gain
     }
   },
   watch: {
