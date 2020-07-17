@@ -4,6 +4,13 @@
       <musical-score :trash-part.sync="trashPart" />
     </div>
 
+    <transition name="trash">
+      <div v-if="!isPlaying && trashPart" class="score-trash-wrapper">
+        <draggable class="score-draggable-trash" :group="trashPart" />
+        <v-icon class="icon">fa-trash</v-icon>
+      </div>
+    </transition>
+
     <div id="operation-area-wrapper">
       <transition name="trash">
         <div v-if="!isPlaying && trashPart" class="score-trash-wrapper">
