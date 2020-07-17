@@ -12,8 +12,12 @@ const config: Configuration = {
    ** Headers of the page
    */
   head: {
-    titleTemplate: '%s - ' + process.env.npm_package_name,
-    title: process.env.npm_package_name || '',
+    htmlAttrs: {
+      lang: 'ja',
+      prefix: 'og: http://ogp.me/ns#'
+    },
+    titleTemplate: '%s - サブタイトル',
+    title: '気軽に音楽を作ろう',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -21,7 +25,22 @@ const config: Configuration = {
         hid: 'description',
         name: 'description',
         content: process.env.npm_package_description || ''
+      },
+      { hid: 'og:site_name', property: 'og:site_name', content: 'サイト名' },
+      { hid: 'og:type', property: 'og:type', content: 'website' },
+      {
+        hid: 'og:url',
+        property: 'og:url',
+        content: 'https://www.google.co.jp'
+      },
+      { hid: 'og:title', property: 'og:title', content: 'サイトタイトル' },
+      {
+        hid: 'og:description',
+        property: 'og:description',
+        content: '共通ディスクリプション'
       }
+      // { hid: 'og:image', property: 'og:image', content: '画像のurl' },
+      // { name: 'twitter:card', content: 'summary' },
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
   },
