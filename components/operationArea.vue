@@ -10,12 +10,12 @@
         <v-col align-self="center">
           <div class="iconCenter">
             <div v-if="isPlaying">
-              <v-btn :disabled="!isReady" icon @click="stop">
+              <v-btn :disabled="isNotReady" icon @click="stop">
                 <v-icon size="400%" color="#F96500">mdi-stop</v-icon>
               </v-btn>
             </div>
             <div v-else>
-              <v-btn :disabled="!isReady" icon @click="play">
+              <v-btn :disabled="isNotReady" icon @click="play">
                 <v-icon size="400%" color="#F96500">mdi-play</v-icon>
               </v-btn>
             </div>
@@ -193,13 +193,22 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="initialized" persistent>
+    <v-dialog v-model="isNotReady" persistent>
       <v-card color="#0A0A0A">
         <v-card-title class="justify-center">
           <div class="textColoring">音楽を作ってみましょう♪</div>
         </v-card-title>
-        <div class="iconCenter pa-2">
-          <v-btn @click="init">始める！</v-btn>
+        <div v-if="initialized">
+          <div class="iconCenter pa-2">
+            <v-btn @click="init">始める！</v-btn>
+          </div>
+        </div>
+        <div v-else style="text-align: center;">
+          <v-progress-circular
+            indeterminate
+            color="white"
+            class="ma-2"
+          ></v-progress-circular>
         </div>
       </v-card>
     </v-dialog>
@@ -259,6 +268,9 @@ export default Vue.extend({
     },
     isReady() {
       return this.$accessor.player.isReady
+    },
+    isNotReady() {
+      return !this.$accessor.player.isReady
     }
   },
   watch: {
