@@ -94,7 +94,7 @@ export default Vue.extend({
       return Math.max(RhythmDuration, ChordDuration, MelodyDuration)
     },
     scoreLength(): number {
-      return Math.floor(this.musicDuration / 2)
+      return Math.floor(this.musicDuration / 4)
     },
     seekBarStyle(): Object {
       const style = {

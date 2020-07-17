@@ -35,7 +35,7 @@ export default Vue.extend({
   computed: {
     // 半小節を1つ分の長さに
     blockLength(): number {
-      return this.block.duration / 2
+      return this.block.duration / 4
     }
   }
 })
