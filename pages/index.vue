@@ -1,5 +1,33 @@
 <template>
   <div id="component-frame">
+    <div class="score-header">
+      <div class="score-title-wrapper">
+        <h2 class="score-header-title">
+          <input
+            v-model="scoreTitle"
+            :disabled="!editEnabled"
+            placeholder="Add Music Name"
+          />
+        </h2>
+        <div class="score-header-creator">
+          <input
+            v-model="scoreComposer"
+            :disabled="!editEnabled"
+            placeholder="Add Your Name"
+          />
+        </div>
+      </div>
+      <div class="mode-switch-wrapper">
+        <v-switch
+          v-model="editEnabled"
+          dark
+          class="mode-switch"
+          color="orange"
+        />
+        <div class="mode-switch-label">Edit</div>
+      </div>
+    </div>
+
     <div id="musical-score-wrapper">
       <musical-score :trash-part.sync="trashPart" />
     </div>
@@ -83,6 +111,32 @@ export default Vue.extend({
     return {
       dialog: false,
       trashPart: null
+    }
+  },
+  computed: {
+    scoreTitle: {
+      get() {
+        return this.$accessor.music.title
+      },
+      set(input: string) {
+        this.$accessor.music.setTitle(input)
+      }
+    },
+    scoreComposer: {
+      get() {
+        return this.$accessor.music.composer
+      },
+      set(input: string) {
+        this.$accessor.music.setComposer(input)
+      }
+    },
+    editEnabled: {
+      get() {
+        return this.$accessor.player.editEnabled
+      },
+      set(enabled: boolean) {
+        this.$accessor.player.setEditEnabled(enabled)
+      }
     }
   }
 })

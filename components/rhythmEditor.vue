@@ -73,6 +73,8 @@ export default Vue.extend({
   },
   methods: {
     addscore(event: any) {
+      if (!this.$accessor.player.editEnabled) return
+
       console.log(event.clientX)
       if (event.clientX > 100) {
         this.$accessor.music.addSound({
@@ -88,6 +90,8 @@ export default Vue.extend({
       }
     },
     deletescore(soundId: number) {
+      if (!this.$accessor.player.editEnabled) return
+
       console.log('deleteSoundId:' + soundId)
       this.$accessor.music.deleteSound({
         part: 'rhythm',

@@ -1,15 +1,6 @@
 <template>
   <div id="component-frame">
     <v-container>
-      <div class="score-header">
-        <h2 class="score-header-title">
-          <input v-model="scoreTitle" placeholder="Add Music Name" />
-        </h2>
-        <div class="score-header-creator">
-          <input v-model="scoreComposer" placeholder="Add Your Name" />
-        </div>
-      </div>
-
       <div class="score-container">
         <score-part-editor
           part="rhythm"
@@ -62,22 +53,6 @@ export default Vue.extend({
     }
   },
   computed: {
-    scoreTitle: {
-      get() {
-        return this.$accessor.music.title
-      },
-      set(input: string) {
-        this.$accessor.music.setTitle(input)
-      }
-    },
-    scoreComposer: {
-      get() {
-        return this.$accessor.music.composer
-      },
-      set(input: string) {
-        this.$accessor.music.setComposer(input)
-      }
-    },
     musicDuration(): number {
       const RhythmDuration: number = this.$accessor.music.rhythmBlocks.reduce(
         (p: number, x: Block) => p + x.duration,
@@ -140,20 +115,6 @@ export default Vue.extend({
 div#component-frame {
   height: 100%;
   position: relative;
-}
-
-.score-header {
-  padding: 1rem;
-  display: flex;
-  align-items: center;
-
-  .score-header-title {
-    color: $-gray-50;
-    margin-right: 1rem;
-  }
-  .score-header-creator {
-    color: $-gray-100;
-  }
 }
 
 .score-container {

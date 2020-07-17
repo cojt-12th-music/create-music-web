@@ -1,7 +1,7 @@
 <template>
   <div id="melody-modal">
     <v-app-bar extension-height="64px" dark>
-      <v-toolbar-title>メロディ編集</v-toolbar-title>
+      <v-toolbar-title>{{ blockName }}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn icon @click="$emit('dialog', false)">
         <v-icon>mdi-close</v-icon>
@@ -282,9 +282,13 @@ export default Vue.extend({
         e.changedTouches[0].clientY
       )
       if (this.startPos.x === pos.x && this.startPos.y === pos.y) {
+        if (!this.$accessor.player.editEnabled) return
+
         if (!this.selectedSoundID) {
           this.addSoundFromPos(pos.x, pos.y)
-        } else this.deleteSound(this.selectedSoundID)
+        } else {
+          this.deleteSound(this.selectedSoundID)
+        }
       }
       this.selectedSoundID = null
     },

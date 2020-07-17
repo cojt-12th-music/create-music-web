@@ -7,6 +7,7 @@ export interface PlayerState {
   isMute: {
     [part in ScorePart]: boolean
   }
+  editEnabled: boolean
   playTime: number
   loadingProgress: number
   instruments: Instrument[]
