@@ -31,8 +31,8 @@
           v-for="i in scoreLength + 1"
           :key="i"
           class="play-time"
-          :style="playTimeStyle(i)"
-          @mousedown="mouseDown(i)"
+          :style="playTimeStyle(i - 1)"
+          @mousedown="mouseDown(i - 1)"
         />
 
         <div class="seek-bar" :style="seekBarStyle" />
@@ -56,6 +56,7 @@ import { Block, ScorePart } from '@/types/music'
 
 type DataType = {
   trashPart: ScorePart | null
+  blockLength: number
 }
 
 export default Vue.extend({
@@ -65,7 +66,8 @@ export default Vue.extend({
   },
   data(): DataType {
     return {
-      trashPart: null
+      trashPart: null,
+      blockLength: 2
     }
   },
   computed: {
@@ -105,7 +107,8 @@ export default Vue.extend({
     },
     seekBarStyle(): Object {
       const style = {
-        transform: `translateX(${(this.$accessor.player.playTime * 5) / 2}rem)`
+        transform: `translateX(${(this.$accessor.player.playTime * 5) /
+          this.blockLength}rem)`
       }
       if (this.$accessor.player.isPlaying) {
         Object.assign(style, {
@@ -128,15 +131,15 @@ export default Vue.extend({
     draggableTrash(trashPart: ScorePart | null) {
       this.trashPart = trashPart
     },
-    playTimeStyle(key: number): Object {
+    playTimeStyle(playTime: number): Object {
       const style = {
-        transform: `translateX(${(key - 1) * 5}rem)`
+        transform: `translateX(${playTime * 5}rem)`
       }
       return style
     },
     mouseDown(playTime: number) {
-      this.$accessor.player.setPlayTime(playTime * 2 - 2)
-      console.log(this.$accessor.player.playTime)
+      if (!this.$accessor.player.isPlaying)
+        this.$accessor.player.setPlayTime(playTime * this.blockLength)
     }
   }
 })
@@ -178,7 +181,7 @@ div#component-frame {
     height: 0;
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
-    border-bottom: 10px solid $-gray-500;
+    border-bottom: 15px solid $-gray-300;
   }
 
   .seek-bar {

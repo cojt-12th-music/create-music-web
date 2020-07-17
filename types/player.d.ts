@@ -18,7 +18,6 @@ export interface PlayerState {
     part: ScorePart | null
     key: number | 0
   }
-  playTime: number
   reverbs: string[]
 }
 
