@@ -4,14 +4,14 @@
       <musical-score :trash-part.sync="trashPart" />
     </div>
 
-    <transition name="trash">
-      <div v-if="!isPlaying && trashPart" class="score-trash-wrapper">
-        <draggable class="score-draggable-trash" :group="trashPart" />
-        <v-icon class="icon">fa-trash</v-icon>
-      </div>
-    </transition>
-
     <div id="operation-area-wrapper">
+      <transition name="trash">
+        <div v-if="!isPlaying && trashPart" class="score-trash-wrapper">
+          <draggable class="score-draggable-trash" :group="trashPart" />
+          <v-icon class="icon">fa-trash</v-icon>
+        </div>
+      </transition>
+
       <operation-area />
     </div>
     <player />
@@ -88,11 +88,51 @@ $operation-area-height: 10vh;
   background-color: $-gray-800;
   height: 100vh;
   color: $-gray-500;
+  position: relative;
+}
+
+.score-header {
+  height: $operation-area-height;
+  width: 100%;
+  box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: $-gray-900;
+
+  .score-header-title {
+    margin-bottom: 0.2rem;
+    input {
+      color: $-gray-50 !important;
+    }
+  }
+  .score-header-creator {
+    input {
+      color: $-gray-100;
+    }
+  }
+
+  .mode-switch-wrapper {
+    text-align: center;
+
+    .mode-switch-label {
+      font-size: 16px;
+      font-weight: bold;
+      color: $-gray-100;
+    }
+
+    .mode-switch {
+      margin: 0 0 -1rem 0;
+    }
+  }
 }
 
 #musical-score-wrapper {
-  height: calc(100% - 10vh);
-  margin-bottom: 3vh;
+  height: calc(100% - $operation-area-height * 2);
+  margin: $operation-area-height 0;
   overflow: scroll;
   // for IE, Edge
   -ms-overflow-style: none;
@@ -111,7 +151,7 @@ $operation-area-height: 10vh;
 
 #operation-area-wrapper {
   height: $operation-area-height;
-  width: 100vw;
+  width: 100%;
   position: fixed;
   bottom: 0;
 }
