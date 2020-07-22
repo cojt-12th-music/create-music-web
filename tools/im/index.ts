@@ -1,7 +1,7 @@
 import path from 'path'
 import fs from 'fs-extra'
 import consola from 'consola'
-import list from '../../instruments.json'
+import instrumentsList from '../../instruments.json'
 import { downloadAndUnzip } from './downloader'
 import { transform } from './transform'
 
@@ -31,7 +31,7 @@ export async function main() {
   fs.remove(path.resolve(__dirname, './instruments'))
   await mkdirIfNotExist('./instruments')
   await Promise.all(
-    list.map(async (inst) => {
+    instrumentsList.map(async (inst) => {
       await downloadAndUnzip(inst.url, inst.name)
     })
   )
@@ -45,10 +45,15 @@ export async function main() {
     })
   )
 
-  const jsfzs = dir(
-    path.resolve(__dirname, './instruments'),
-    '.jsfz'
-  ).map((p) => path.relative(__dirname, p).replace(/\\/g, '/'))
+  const jsfzs = dir(path.resolve(__dirname, './instruments'), '.jsfz').map(
+    (p) => ({
+      name: fs.readFileSync(
+        `${path.dirname(p)}/${path.basename(p, '.jsfz')}__name.txt`,
+        'utf-8'
+      ),
+      path: path.relative(__dirname, p).replace(/\\/g, '/')
+    })
+  )
 
   await fs.writeFile(
     path.resolve(__dirname, './instruments/instruments.json'),

@@ -1,42 +1,32 @@
 <template>
   <div id="component-frame">
     <v-container>
-      <div id="wrapper">
-        <ul id="rhythm" class="blue darken-1">
-          <li class="column-title">リズム</li>
-          <li>
-            <draggable element="ul" class="draggable" group="rhythm">
-              <li v-for="block in rhythmBlocks" :key="block">
-                <block :text="block" block-type="#4FC3F7" />
-              </li>
-            </draggable>
-          </li>
-        </ul>
-        <ul id="code" class="green lighten-1">
-          <li class="column-title">コード</li>
-          <li>
-            <draggable element="ul" class="draggable" group="chord">
-              <li v-for="block in codeBlocks" :key="block">
-                <block :text="block" block-type="#81C784" />
-              </li>
-            </draggable>
-          </li>
-        </ul>
-        <ul id="melody" class="pink lighten-1">
-          <li class="column-title">メロディ</li>
-          <li>
-            <draggable
-              element="ul"
-              class="draggable"
-              group="melody"
-              @end="dragEnd"
-            >
-              <li v-for="block in melodyBlocks" :key="block">
-                <block :text="block" block-type="#F06292" />
-              </li>
-            </draggable>
-          </li>
-        </ul>
+      <div class="score-container">
+        <score-part-editor
+          part="rhythm"
+          :score-length="scoreLength"
+          @draggable-trash="draggableTrash"
+        />
+        <score-part-editor
+          part="chord"
+          :score-length="scoreLength"
+          @draggable-trash="draggableTrash"
+        />
+        <score-part-editor
+          part="melody"
+          :score-length="scoreLength"
+          @draggable-trash="draggableTrash"
+        />
+
+        <div
+          v-for="i in scoreLength + 1"
+          :key="i"
+          class="play-time"
+          :style="playTimeStyle(i - 1)"
+          @mousedown="mouseDown(i - 1)"
+        />
+
+        <div class="seek-bar" :style="seekBarStyle" />
       </div>
     </v-container>
   </div>
@@ -44,38 +34,78 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import draggable from 'vuedraggable'
+import ScorePartEditor from '@/components/ScorePartEditor.vue'
+import { Block, ScorePart } from '@/types/music'
 
-import block from '~/components/block.vue'
+type DataType = {
+  trashPart: ScorePart | null
+  blockLength: number
+}
+
 export default Vue.extend({
   components: {
-    draggable,
-    block
+    ScorePartEditor
   },
-  data() {
+  data(): DataType {
     return {
-      rhythmBlocks: [
-        '16ビート',
-        '16ビート',
-        '8ビート',
-        '8ビート',
-        '2ビート',
-        '2ビート'
-      ],
-      codeBlocks: ['王道', '王道', '小室', '小室', 'カノン', 'かノン']
+      trashPart: null,
+      blockLength: 4
     }
   },
   computed: {
-    melodyBlocks(): Array<string> {
-      return this.$accessor.music.melody.blockNames
+    musicDuration(): number {
+      const RhythmDuration: number = this.$accessor.music.rhythmBlocks.reduce(
+        (p: number, x: Block) => p + x.duration,
+        0
+      )
+      const ChordDuration: number = this.$accessor.music.chordBlocks.reduce(
+        (p: number, x: Block) => p + x.duration,
+        0
+      )
+      const MelodyDuration: number = this.$accessor.music.melodyBlocks.reduce(
+        (p: number, x: Block) => p + x.duration,
+        0
+      )
+      return Math.max(RhythmDuration, ChordDuration, MelodyDuration)
+    },
+    scoreLength(): number {
+      return Math.floor(this.musicDuration / 4)
+    },
+    seekBarStyle(): Object {
+      const style = {
+        transform: `translateX(${(this.$accessor.player.playTime * 5) /
+          this.blockLength}rem)`
+      }
+      if (this.$accessor.player.isPlaying) {
+        Object.assign(style, {
+          transform: `translateX(${(this.scoreLength + 1) * 5}rem)`,
+          transitionProperty: 'transform',
+          transitionDuration: `${((this.musicDuration -
+            this.$accessor.player.playTime) *
+            60) /
+            this.$accessor.music.bpm}s`,
+          transitionTimingFunction: 'linear'
+        })
+      }
+      return style
+    },
+    isPlaying(): boolean {
+      return this.$accessor.player.isPlaying
     }
   },
   methods: {
-    dragEnd(event: { oldIndex: number; newIndex: number }) {
-      const oldIndex = event.oldIndex
-      const newIndex = event.newIndex
-      this.$accessor.music.moveBlock({ oldIndex, newIndex })
-      console.log(this.$accessor.music.melody.blockNames)
+    draggableTrash(trashPart: ScorePart | null) {
+      this.trashPart = trashPart
+    },
+    playTimeStyle(playTime: number): Object {
+      const style = {
+        transform: `translateX(${playTime * 5}rem)`
+      }
+      return style
+    },
+    mouseDown(playTime: number) {
+      if (!this.$accessor.player.isPlaying)
+        this.$accessor.player.setPlayTime(playTime * this.blockLength)
     }
   }
 })
@@ -84,48 +114,39 @@ export default Vue.extend({
 <style lang="scss" scoped>
 div#component-frame {
   height: 100%;
-}
-#wrapper {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 1em;
+  position: relative;
 }
 
-ul {
-  display: block;
-  list-style: none;
-  text-align: center;
-  padding: 0;
-}
-ul.draggable {
-  li {
-    margin: 1rem;
-    display: block;
-    height: 5rem;
+.score-container {
+  position: relative;
+  box-sizing: border-box;
+  width: max-content;
+  border-color: $-gray-500;
+  border-style: solid solid none solid;
+  border-width: 1px;
+  height: 21rem;
+
+  .play-time {
+    position: absolute;
+    left: calc(6rem - 11px);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 15px solid $-gray-300;
+  }
+
+  .seek-bar {
+    position: absolute;
+    top: 0;
+    left: calc(6rem - 2px);
+    width: 2px;
+    height: 100%;
+    background-color: red;
+    opacity: 0.5;
   }
 }
 
 @include pc {
-  #wrapper {
-    display: block;
-  }
-  ul {
-    text-align: left;
-    li {
-      display: inline-block;
-    }
-  }
-  .column-title {
-    width: 5rem;
-  }
-  ul.draggable {
-    text-align: center;
-    li {
-      margin: 1rem;
-      display: inline-block;
-      height: 5rem;
-      width: 5rem;
-    }
-  }
 }
 </style>

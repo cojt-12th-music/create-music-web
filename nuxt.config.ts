@@ -1,8 +1,10 @@
 import colors from 'vuetify/es5/util/colors'
 import { Configuration } from '@nuxt/types'
 import { InstPlugin } from './tools/im/plugin'
+import { ReverbPlugin } from './tools/reverb/plugin'
 
 const instPlugin = new InstPlugin()
+const reverbPlugin = new ReverbPlugin()
 
 const config: Configuration = {
   mode: 'universal',
@@ -34,7 +36,7 @@ const config: Configuration = {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [],
+  plugins: ['plugins/vuetify', '~/plugins/firebase'],
   /*
    ** Nuxt.js dev-modules
    */
@@ -112,8 +114,22 @@ const config: Configuration = {
     transpile: [/typed-vuex/],
     extend(config, ctx) {
       if (ctx.isClient) {
-        if (config.plugins) config.plugins.push(instPlugin)
-        else config.plugins = [instPlugin]
+        if (config.plugins) config.plugins.push(instPlugin, reverbPlugin)
+        else config.plugins = [instPlugin, reverbPlugin]
+      }
+    },
+    babel: {
+      presets({ isServer }) {
+        return [
+          [
+            require.resolve('@nuxt/babel-preset-app'),
+            // require.resolve('@nuxt/babel-preset-app-edge'), // For nuxt-edge users
+            {
+              buildTarget: isServer ? 'server' : 'client',
+              corejs: { version: 3 }
+            }
+          ]
+        ]
       }
     }
   }

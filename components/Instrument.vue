@@ -38,6 +38,17 @@ type DataType = {
    * 再生する音のソースノード
    */
   scheduledSourceNode: AudioScheduledSourceNode[]
+
+  /**
+   * 再生する音の全てのソースノード
+   */
+  allSourceNode: AudioNode[][]
+  /**
+   * 音量調節用のgainNode
+   */
+  gainNode: GainNode
+
+  reverbNode: ConvolverNode
 }
 
 export default Vue.extend({
@@ -70,6 +81,20 @@ export default Vue.extend({
     isReady: {
       required: true,
       type: Boolean
+    },
+    gainValue: {
+      required: false,
+      default: 1.0,
+      type: Number
+    },
+    reverbPath: {
+      required: false,
+      default: null,
+      type: Object as Vue.PropType<string | null>
+    },
+    unitSoundPreview: {
+      required: true,
+      type: Number
     }
   },
   data(): DataType {
@@ -77,7 +102,10 @@ export default Vue.extend({
       sampleDefinition: [],
       samples: {},
       logs: [],
-      scheduledSourceNode: []
+      scheduledSourceNode: [],
+      allSourceNode: [],
+      gainNode: this.context.createGain(),
+      reverbNode: this.context.createConvolver()
     }
   },
   computed: {
@@ -86,6 +114,9 @@ export default Vue.extend({
     },
     encodedSfzParentPath(): string {
       return this.encodePath(this.parentDir(this.sfzPath))
+    },
+    isReverb() {
+      return this.reverbPath !== null
     }
   },
   watch: {
@@ -96,17 +127,30 @@ export default Vue.extend({
       // sfzPathが変更された（楽器が変更された）ら新しいsfzをロード
       this.load()
     },
-
     isPlaying() {
       if (!this.isPlaying) {
         this.stop()
       } else {
         this.demoMelody()
       }
+    },
+    gainValue() {
+      this.gainNode.gain.value = this.gainValue
+    },
+    isReverb() {
+      if (this.isReverb) this.setReverb()
+    },
+    unitSoundPreview() {
+      if (this.unitSoundPreview) {
+        this.playNote(this.unitSoundPreview, 0)
+      }
     }
   },
   mounted() {
     if (this.sfzPath) this.load()
+    this.gainNode.gain.value = this.gainValue
+    this.reverbNode = this.context.createConvolver()
+    if (this.isReverb) this.setReverb()
   },
   methods: {
     /**
@@ -117,7 +161,9 @@ export default Vue.extend({
 
       // sfzファイルを取得
       await fetch(this.encodedSfzPath)
-        .then((res) => res.json())
+        .then((res) => {
+          return res.json()
+        })
         .then((sfz) => {
           this.sampleDefinition = sfz.sfz
           return Promise.all(
@@ -143,6 +189,23 @@ export default Vue.extend({
           this.$emit('update:isReady', true)
         })
     },
+
+    async setReverb() {
+      this.$emit('update:isLoading', false)
+      if (!this.reverbPath) return
+      await fetch(this.reverbPath)
+        .then((res) => res.text())
+        .then((b64) => {
+          this.context
+            .decodeAudioData(this.base64ToArrayBuffer(b64))
+            .then((audioBuffer) => {
+              this.reverbNode.buffer = audioBuffer
+            })
+        })
+        .then(() => {
+          this.$emit('update:isReady', true)
+        })
+    },
     /**
      * 音を鳴らす
      * @param key 鍵盤番号
@@ -155,20 +218,53 @@ export default Vue.extend({
 
       const nodes = this.constructGraph(key, fixedDelay, fixedDuration)
       nodes.forEach((n, i, nodes) =>
-        nodes[i + 1] ? n.connect(nodes[i + 1]) : n.connect(this.node)
+        nodes[i + 1] ? n.connect(nodes[i + 1]) : n.connect(this.gainNode)
       )
+
+      if (this.isReverb) {
+        this.gainNode.connect(this.reverbNode)
+        this.reverbNode.connect(this.node)
+      } else {
+        this.reverbNode.disconnect()
+        this.gainNode.connect(this.node)
+      }
+
       ;(nodes[0] as AudioScheduledSourceNode).start(
         this.context.currentTime + fixedDelay
       )
       this.scheduledSourceNode.push(nodes[0] as AudioScheduledSourceNode)
+      this.allSourceNode.push(nodes)
     },
     constructGraph(key: number, delay = 0, duration = 0.5): AudioNode[] {
       // 指定された鍵盤番号の音を鳴らすのに必要な音データを探す
-      const target = this.sampleDefinition.find(
+      // リズムは乱数によって少し違う音を格納する
+      const targetArray = this.sampleDefinition.filter(
         (s) =>
           s.key === key ||
           (s.lokey && s.lokey <= key && s.hikey && key <= s.hikey)
       )
+
+      // 鳴らす音データを格納する変数
+      let target
+      // リズムの乱数用
+      const rand = Math.random()
+
+      for (let i = 0; i < targetArray.length; i++) {
+        // lorandが定義されていない音データ（メロディ，コード，一部のリズム）については始めに見つかった音データを格納
+        if (targetArray[i].lorand === undefined) {
+          target = targetArray[i]
+          break
+        }
+        // lorandが定義されている音データ（リズムのほぼ全部）について，randに適する音データを格納
+        else if (
+          targetArray[i].lorand! <= rand &&
+          rand <= targetArray[i].hirand!
+        ) {
+          target = targetArray[i]
+          break
+        }
+      }
+
       if (!target) return [] // 対応するものが無ければ何もしない
 
       const nodes: AudioNode[] = []
@@ -219,7 +315,7 @@ export default Vue.extend({
         nodes.push(releaseGain)
       }
 
-      // フィルター
+      // フィルター対応
       if (target.fil_type && target.cutoff) {
         const filter = this.context.createBiquadFilter()
         let resonance = 1 / Math.sqrt(2)
@@ -277,7 +373,13 @@ export default Vue.extend({
       this.scheduledSourceNode.forEach((source) => {
         source.stop()
       })
+      this.allSourceNode.forEach((nodes) => {
+        nodes.forEach((node) => {
+          node.disconnect()
+        })
+      })
       this.scheduledSourceNode = []
+      this.allSourceNode = []
     },
     /**
      * urlに直接指定できない文字列をエンコードするヘルパー関数
