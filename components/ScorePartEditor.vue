@@ -24,6 +24,7 @@
         class="score-draggable"
         :group="part"
         v-bind="dragOptions"
+        :disabled="!editEnabled"
         @choose="onChooseItem"
         @unchoose="onUnchooseItem"
       >
@@ -136,6 +137,9 @@ export default Vue.extend({
         chord: 'fas fa-guitar',
         melody: 'music_note'
       }[this.part]
+    },
+    editEnabled(): boolean {
+      return this.$accessor.player.editEnabled
     },
     isMute: {
       get(): boolean {

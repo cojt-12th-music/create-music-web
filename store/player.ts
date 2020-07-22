@@ -11,6 +11,7 @@ export const state = (): PlayerState => ({
     chord: false,
     rhythm: false
   },
+  editEnabled: false,
   playTime: 0,
   loadingProgress: 0,
   instruments: [],
@@ -40,6 +41,9 @@ export const mutations = mutationTree(state, {
   },
   SET_INSTRUMENTS(state: PlayerState, insts: Instrument[]) {
     state.instruments = insts
+  },
+  SET_EDIT_ENABLED(state: PlayerState, enabled: boolean) {
+    state.editEnabled = enabled
   },
   SET_PREVIEW_PRESET(
     state: PlayerState,
@@ -111,6 +115,9 @@ export const actions = actionTree(
       { part, isMute }: { part: ScorePart; isMute: boolean }
     ) {
       commit('SET_MUTE', { part, isMute })
+    },
+    setEditEnabled({ commit }, enabled: boolean) {
+      commit('SET_EDIT_ENABLED', enabled)
     }
   }
 )

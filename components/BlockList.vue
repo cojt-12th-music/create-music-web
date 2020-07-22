@@ -24,7 +24,11 @@
         </v-card-text>
 
         <v-card-text v-if="part !== 'chord'">
-          <v-btn class="create-button" @click="createBlock">
+          <v-btn
+            class="create-button"
+            :class="{ disabled: !editEnabled }"
+            @click="createBlock"
+          >
             ブロックを作成する
           </v-btn>
         </v-card-text>
@@ -34,7 +38,7 @@
         <v-btn
           block
           class="add-button"
-          :class="{ disabled: selection == null }"
+          :class="{ disabled: !editEnabled || selection == null }"
           @click="addBlock"
         >
           Add to Score
@@ -116,6 +120,9 @@ export default Vue.extend({
         chord: 'ブロック選べや．ちょっと考えれば分かるやろ．',
         melody: 'ちゃんとブロック選択しいや'
       }[this.part]
+    },
+    editEnabled(): boolean {
+      return this.$accessor.player.editEnabled
     }
   },
   methods: {
@@ -221,7 +228,9 @@ div#component-frame {
 .add-button {
   background-color: $-primary-500 !important;
   color: $-gray-50;
+}
 
+button.v-btn {
   &.disabled {
     background-color: $-gray-400 !important;
     pointer-events: none;
