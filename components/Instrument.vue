@@ -217,6 +217,7 @@ export default Vue.extend({
       const fixedDuration = (duration * 60) / bpm
 
       const nodes = this.constructGraph(key, fixedDelay, fixedDuration)
+      if (!nodes.length) return
       nodes.forEach((n, i, nodes) =>
         nodes[i + 1] ? n.connect(nodes[i + 1]) : n.connect(this.gainNode)
       )
@@ -302,18 +303,22 @@ export default Vue.extend({
 
       nodes.push(source)
 
+      const releaseGain = this.context.createGain()
       // リリース対応
       if (target.ampeg_release) {
-        const releaseGain = this.context.createGain()
-        releaseGain.gain.linearRampToValueAtTime(
+        releaseGain.gain.setTargetAtTime(
           0,
-          this.context.currentTime +
-            delay +
-            duration +
-            Number(target.ampeg_release)
+          this.context.currentTime + delay + duration,
+          Number(target.ampeg_release * 0.3)
         )
-        nodes.push(releaseGain)
+      } else {
+        releaseGain.gain.setTargetAtTime(
+          0,
+          this.context.currentTime + delay + duration,
+          0.1
+        )
       }
+      nodes.push(releaseGain)
 
       // フィルター対応
       if (target.fil_type && target.cutoff) {

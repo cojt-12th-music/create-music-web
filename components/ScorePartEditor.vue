@@ -36,6 +36,7 @@
           <block-item :block="block" @click.native="showEditModal(block)" />
         </div>
       </draggable>
+
       <div class="button-wrapper">
         <v-icon
           x-large

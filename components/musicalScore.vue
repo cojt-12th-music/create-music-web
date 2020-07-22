@@ -95,7 +95,7 @@ export default Vue.extend({
   },
   methods: {
     draggableTrash(trashPart: ScorePart | null) {
-      this.trashPart = trashPart
+      this.$emit('update:trash-part', trashPart)
     },
     playTimeStyle(playTime: number): Object {
       const style = {
