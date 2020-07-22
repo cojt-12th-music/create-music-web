@@ -17,6 +17,12 @@
           />
         </div>
       </div>
+
+      <!-- <div class="login-button-wrapper">
+        <v-btn v-if="currentUser" @click="signOut">ログアウト</v-btn>
+        <v-btn v-else @click="twitterLogin">ログイン</v-btn>
+      </div> -->
+
       <div class="mode-switch-wrapper">
         <v-switch
           v-model="editEnabled"
@@ -31,13 +37,6 @@
     <div id="musical-score-wrapper">
       <musical-score :trash-part.sync="trashPart" />
     </div>
-
-    <transition name="trash">
-      <div v-if="!isPlaying && trashPart" class="score-trash-wrapper">
-        <draggable class="score-draggable-trash" :group="trashPart" />
-        <v-icon class="icon">fa-trash</v-icon>
-      </div>
-    </transition>
 
     <div id="operation-area-wrapper">
       <transition name="trash">
@@ -61,7 +60,11 @@ import draggable from 'vuedraggable'
 import MusicalScore from '@/components/musicalScore.vue'
 import OperationArea from '@/components/operationArea.vue'
 import Player from '@/components/Player.vue'
-import { firebaseAuth, firestoreAccessor } from '@/plugins/firebase'
+import {
+  firestoreAccessor,
+  twitterProvider,
+  firebaseAuth
+} from '@/plugins/firebase'
 import { Music, ScorePart } from '@/types/music'
 
 type DataType = {
@@ -77,34 +80,23 @@ export default Vue.extend({
     Player
   },
   async fetch({ route, store }: Context) {
-    firebaseAuth.onAuthStateChanged((user) => {
-      if (user) {
-        // User is signed in.
-        console.log(user.isAnonymous)
-        console.log(user.uid)
-      } else {
-        // User is signed out.
-      }
-    })
-
-    await firebaseAuth.signInAnonymously().catch((error) => {
-      // Handle Errors here.
-      console.log(error.code)
-      console.log(error.message)
-    })
+    if (!firebaseAuth().currentUser) {
+      firebaseAuth()
+        .signInAnonymously()
+        .catch((error) => {
+          // Handle Errors here.
+          console.log('anonymous error.')
+          console.log(error.code)
+          console.log(error.message)
+        })
+    }
 
     const scoreId = route.query.id
-
     if (scoreId && typeof scoreId === 'string') {
-      await firestoreAccessor.scores
-        .show(scoreId)
-        .then((score: Music) => {
-          // fetchのときは直接dispatchせざるを得ない屈辱
-          store.commit('music/SET_SCORE', score)
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+      await firestoreAccessor.scores.show(scoreId).then((score: Music) => {
+        // fetchのときは直接dispatchせざるを得ない屈辱
+        store.commit('music/SET_SCORE', score)
+      })
     }
   },
   data(): DataType {
@@ -137,6 +129,40 @@ export default Vue.extend({
       set(enabled: boolean) {
         this.$accessor.player.setEditEnabled(enabled)
       }
+    },
+    isPlaying(): boolean {
+      return this.$accessor.player.isPlaying
+    }
+  },
+  async mounted() {
+    await firebaseAuth()
+      .getRedirectResult()
+      .catch(function(error) {
+        console.log(error)
+      })
+  },
+  methods: {
+    twitterLogin() {
+      firebaseAuth()
+        .signInWithPopup(twitterProvider)
+        .then(() => {
+          console.log('signed in successfully')
+        })
+        .catch((error) => {
+          console.log(error.code)
+          console.log(error.message)
+        })
+    },
+    signOut() {
+      firebaseAuth()
+        .signOut()
+        .then(() => {
+          console.log('signed out successfully')
+        })
+        .catch((error) => {
+          console.log(error.code)
+          console.log(error.message)
+        })
     }
   }
 })
@@ -195,6 +221,7 @@ $operation-area-height: 10vh;
   height: calc(100% - $operation-area-height * 2);
   margin: $operation-area-height 0;
   overflow: scroll;
+
   // for IE, Edge
   -ms-overflow-style: none;
   // for Firefox
