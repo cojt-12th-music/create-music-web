@@ -308,7 +308,7 @@ export default Vue.extend({
         releaseGain.gain.setTargetAtTime(
           0,
           this.context.currentTime + delay + duration,
-          Number(target.ampeg_release * 0.2)
+          Number(target.ampeg_release * 0.3)
         )
       } else {
         releaseGain.gain.setTargetAtTime(
