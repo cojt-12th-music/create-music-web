@@ -17,6 +17,12 @@
           />
         </div>
       </div>
+
+      <!-- <div class="login-button-wrapper">
+        <v-btn v-if="currentUser" @click="signOut">ログアウト</v-btn>
+        <v-btn v-else @click="twitterLogin">ログイン</v-btn>
+      </div> -->
+
       <div class="mode-switch-wrapper">
         <v-switch
           v-model="editEnabled"
@@ -32,13 +38,6 @@
       <musical-score :trash-part.sync="trashPart" />
     </div>
 
-    <transition name="trash">
-      <div v-if="!isPlaying && trashPart" class="score-trash-wrapper">
-        <draggable class="score-draggable-trash" :group="trashPart" />
-        <v-icon class="icon">fa-trash</v-icon>
-      </div>
-    </transition>
-
     <div id="operation-area-wrapper">
       <transition name="trash">
         <div v-if="!isPlaying && trashPart" class="score-trash-wrapper">
@@ -50,9 +49,6 @@
       <operation-area />
     </div>
     <player />
-    <v-btn @click="twitterLogin">Twitterログイン</v-btn>
-    <v-btn @click="signOut">Sign Out</v-btn>
-    <v-btn @click="test">test</v-btn>
   </div>
 </template>
 
@@ -84,23 +80,6 @@ export default Vue.extend({
     Player
   },
   async fetch({ route, store }: Context) {
-    firebaseAuth().onAuthStateChanged((user) => {
-      if (user) {
-        // User is signed in.
-        console.log('signed in.')
-        console.log('isAnonymous:' + user.isAnonymous)
-        console.log(firebaseAuth().currentUser?.isAnonymous)
-        console.log(firebaseAuth().currentUser?.uid)
-        console.log(firebaseAuth().currentUser?.providerData)
-      } else {
-        // User is signed out.
-      }
-    })
-
-    console.log('now')
-    console.log(firebaseAuth().currentUser?.isAnonymous)
-    console.log(firebaseAuth().currentUser?.uid)
-
     if (!firebaseAuth().currentUser) {
       firebaseAuth()
         .signInAnonymously()
@@ -150,16 +129,14 @@ export default Vue.extend({
       set(enabled: boolean) {
         this.$accessor.player.setEditEnabled(enabled)
       }
+    },
+    isPlaying(): boolean {
+      return this.$accessor.player.isPlaying
     }
   },
   async mounted() {
     await firebaseAuth()
       .getRedirectResult()
-      .then(function(result) {
-        console.log('accessToken:' + result.credential?.accessToken)
-        console.log('secret:' + result.credential?.secret)
-        console.log('user:' + result.user)
-      })
       .catch(function(error) {
         console.log(error)
       })
@@ -168,10 +145,8 @@ export default Vue.extend({
     twitterLogin() {
       firebaseAuth()
         .signInWithPopup(twitterProvider)
-        .then((result) => {
-          console.log('accessToken:' + result.credential.accessToken)
-          console.log('secret:' + result.credential.secret)
-          console.log('user:' + result.user)
+        .then(() => {
+          console.log('signed in successfully')
         })
         .catch((error) => {
           console.log(error.code)
@@ -182,18 +157,12 @@ export default Vue.extend({
       firebaseAuth()
         .signOut()
         .then(() => {
-          // singed out
-          console.log('sign out successful')
+          console.log('signed out successfully')
         })
         .catch((error) => {
           console.log(error.code)
           console.log(error.message)
         })
-    },
-    test() {
-      console.log(firebaseAuth())
-      console.log(firebaseAuth().currentUser?.isAnonymous)
-      console.log(firebaseAuth().currentUser?.uid)
     }
   }
 })
