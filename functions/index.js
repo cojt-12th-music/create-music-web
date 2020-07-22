@@ -18,5 +18,14 @@ exports.returnDynamicOGP = functions.https.onRequest((req, res) => {
     userAgent.includes('developers.google.com')
   )
 
+  // const path = req.path // "/"
+
+  if (isBot) {
+    // bot の場合
+    // ogp を設定した html を返す
+  } else {
+    // bot 以外（ユーザー）の場合
+    // ogp を抜いたパスにリダイレクトしてあげる
+  }
   res.send(isBot)
 })
