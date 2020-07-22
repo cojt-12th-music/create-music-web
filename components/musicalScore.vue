@@ -67,7 +67,7 @@ export default Vue.extend({
   data(): DataType {
     return {
       trashPart: null,
-      blockLength: 2
+      blockLength: 4
     }
   },
   computed: {
