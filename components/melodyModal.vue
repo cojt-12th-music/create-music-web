@@ -69,8 +69,6 @@ type DataType = {
   editMode: 'border' | 'move' | null
   guidelines: { [key: string]: number[] }
   selectedGuideLineName: string
-  maxkey: number
-  minkey: number
 }
 
 export default Vue.extend({
@@ -96,10 +94,7 @@ export default Vue.extend({
         明るい: [0, 2, 4, 5, 7, 9, 11],
         暗い: [0, 2, 3, 5, 7, 9, 11]
       },
-      selectedGuideLineName: '明るい',
-      // 最高キーと最低キーの決め打ち。ここを変えれば全部うまくいく。
-      maxkey: 70,
-      minkey: 30
+      selectedGuideLineName: '明るい'
     }
   },
   computed: {
@@ -119,6 +114,20 @@ export default Vue.extend({
       const guideline = this.guidelines[this.selectedGuideLineName]
       return [...Array(this.maxkey - this.minkey).keys()].map((k) =>
         guideline.some((g) => (this.maxkey - k) % 12 === g)
+      )
+    },
+    maxkey() {
+      return (
+        this.$accessor.player.instruments.find(
+          (i) => i.path === this.$accessor.music.melodyInstrument
+        )?.hiKey || 100
+      )
+    },
+    minkey() {
+      return (
+        this.$accessor.player.instruments.find(
+          (i) => i.path === this.$accessor.music.melodyInstrument
+        )?.loKey || 0
       )
     }
   },

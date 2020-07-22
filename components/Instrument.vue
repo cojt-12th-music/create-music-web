@@ -166,6 +166,17 @@ export default Vue.extend({
         })
         .then((sfz) => {
           this.sampleDefinition = sfz.sfz
+          const hiKey = this.sampleDefinition.reduce((p, c) =>
+            (p.hikey || p.key || 0) < (c.hikey || c.key || 0) ? c : p
+          )
+          const loKey = this.sampleDefinition.reduce((p, c) =>
+            (p.lokey || p.key || 0) > (c.lokey || c.key || 0) ? c : p
+          )
+          this.$emit('on-key-range-detected', {
+            hiKey: hiKey.hikey || hiKey.key || 0,
+            loKey: loKey.lokey || loKey.key || 0
+          })
+
           return Promise.all(
             Object.keys(sfz.samples).map((key) =>
               this.context
