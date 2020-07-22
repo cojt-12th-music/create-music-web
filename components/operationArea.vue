@@ -25,7 +25,7 @@
           <div class="iconRight">
             <a
               id="shareTag"
-              :href="this.twitterURL()"
+              :href="twitterURL()"
               target="blank_"
               style="text-decoration: none;"
             >
@@ -322,7 +322,6 @@ export default Vue.extend({
       // shareTag.href=shareURL
     },
     twitterURL() {
-      this.upload()
       return `https://twitter.com/intent/tweet?url=http://localhost:3000/?id=${this.$accessor.music.id}&text=音楽を作ってみました♪`
     },
     // 初めの初期化（コンテキスト生成）
