@@ -14,5 +14,29 @@
   {
     "name": "ドラム",
     "url": "http://freepats.zenvoid.org/Percussion/ColomboAcousticDrumKit/ColomboADK-FreePats-SFZ-20200530.tar.xz"
+  },
+  {
+    "name": "オルガン",
+    "url": "http://freepats.zenvoid.org/Organ/ChurchOrganEmulation/ChurchOrganEmulation-SFZ-20190924.tar.xz"
+  },
+  {
+    "name": "クラリネット",
+    "url": "http://freepats.zenvoid.org/Reed/Clarinet1/Clarinet-SFZ-20190818.tar.xz"
+  },
+  {
+    "name": "シンセベース",
+    "url": "http://freepats.zenvoid.org/Synthesizer/SynthBass1/SynthBass1-SFZ-20190723.tar.xz"
+  },
+  {
+    "name": "木琴",
+    "url": "http://freepats.zenvoid.org/ChromaticPercussion/Xylophone1/Xylophone-MediumMallets-SFZ-20200706.tar.xz"
+  },
+  {
+    "name": "ハープ",
+    "url": "http://freepats.zenvoid.org/OrchestralStrings/ConcertHarp/ConcertHarp-SFZ-20200702.tar.xz"
+  },
+  {
+    "name": "パーカッション",
+    "url": "http://freepats.zenvoid.org/Percussion/SynthesizerPercussion/SynthesizerPercussion-SFZ-20200518.tar.xz"
   }
 ]

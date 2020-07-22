@@ -248,11 +248,29 @@ export default Vue.extend({
     return {
       initialized: true,
       configDialog: false,
-      rhythmInstruments: ['ドラム'],
+      rhythmInstruments: ['ドラム', 'パーカッション'],
       selectedRhythmInst: 'ドラム',
-      chordInstruments: ['エレキ', 'ギター', 'ピアノ'],
+      chordInstruments: [
+        'エレキ',
+        'ギター',
+        'ピアノ',
+        'オルガン',
+        'クラリネット',
+        'シンセベース',
+        '木琴',
+        'ハープ'
+      ],
       selectedChordInst: 'ギター',
-      melodyInstruments: ['エレキ', 'ギター', 'ピアノ'],
+      melodyInstruments: [
+        'エレキ',
+        'ギター',
+        'ピアノ',
+        'オルガン',
+        'クラリネット',
+        'シンセベース',
+        '木琴',
+        'ハープ'
+      ],
       selectedMelodyInst: 'ピアノ',
       colorThema: ['ダークモード', 'ライトモード'],
       selectedColorThema: 'ダークモード',

@@ -14,17 +14,17 @@ export const state = (): Music => ({
   bpm: 100,
   melody: {
     instrument: '',
-    blockNames: ['メロ1', 'メロ2', 'メロ3', 'メロ4'],
+    blockNames: [],
     gain: 1
   },
   chord: {
     instrument: '',
-    blockNames: ['コード1', 'コード2', 'コード3', 'コード4'],
+    blockNames: [],
     gain: 1
   },
   rhythm: {
     instrument: '',
-    blockNames: ['16ビート', '8ビート', '8ビート', '2ビート', '2ビート'],
+    blockNames: [],
     gain: 1
   },
   blocks: {
