@@ -217,6 +217,7 @@ export default Vue.extend({
       const fixedDuration = (duration * 60) / bpm
 
       const nodes = this.constructGraph(key, fixedDelay, fixedDuration)
+      if (!nodes.length) return
       nodes.forEach((n, i, nodes) =>
         nodes[i + 1] ? n.connect(nodes[i + 1]) : n.connect(this.gainNode)
       )
