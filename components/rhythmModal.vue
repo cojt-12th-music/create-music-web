@@ -2,15 +2,15 @@
   <div id="component-frame">
     <v-card>
       <!-- 編集画面上部 -->
-      <v-card-title class="top-area">
-        リズム編集画面
+      <v-card-title class="top-area rounded-0">
+        <h2>{{ blockName }}</h2>
         <v-btn icon dark @click="dialog">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
 
       <!-- 編集エリア -->
-      <v-card class="edit-area">
+      <v-card class="edit-area rounded-0">
         <rhythmEditor
           v-for="i in key_inst"
           :key="i.drum_key"
@@ -24,7 +24,7 @@
       <!-- 再生エリア -->
       <v-card-title class="play-area">
         <v-btn icon dark @click="playPreview()">
-          <v-icon color="#F96500" large>play_arrow</v-icon>
+          <v-icon size="350%" color="#F96500">play_arrow</v-icon>
         </v-btn>
       </v-card-title>
     </v-card>
@@ -124,6 +124,8 @@ div#component-frame {
 .top-area {
   font-size: 80%;
   background-color: $-gray-900;
+  display: flex;
+  justify-content: space-between;
 }
 
 .play-area {
