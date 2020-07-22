@@ -25,7 +25,8 @@
           <div class="iconRight">
             <a
               id="shareTag"
-              href="https://twitter.com/intent/tweet?url=http://localhost:3000/ &text=音楽を作ってみました♪"
+              href="https://twitter.com/intent/tweet?url=https://us-central1-create-music-web.cloudfunctions.net/returnDynamicOGP
+ &text=音楽を作ってみました♪"
               target="blank_"
               style="text-decoration: none;"
             >
