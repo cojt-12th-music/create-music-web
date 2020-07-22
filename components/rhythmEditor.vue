@@ -3,7 +3,7 @@
     <div class="column-title">
       <div class="part-title-container">
         <v-icon large class="icon">fa-drum</v-icon>
-        <div class="part-title">Key:{{ drumKey }}</div>
+        <div class="part-title">{{ inst }}</div>
       </div>
     </div>
 
@@ -26,6 +26,10 @@ export default Vue.extend({
   props: {
     drumKey: {
       type: Number,
+      required: true
+    },
+    inst: {
+      type: String,
       required: true
     },
     blockName: {
