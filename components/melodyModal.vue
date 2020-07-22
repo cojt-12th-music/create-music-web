@@ -110,7 +110,7 @@ export default Vue.extend({
       return this.$accessor.music.blocks.melody[this.blockName]
     },
     blockDuration(): number {
-      return Math.ceil(this.soundBlock.duration)
+      return Math.ceil(this.soundBlock.duration) || 4
     },
     selectedSound(): Sound | undefined {
       return this.sounds.find((s) => s.id === this.selectedSoundID)
