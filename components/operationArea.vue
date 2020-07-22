@@ -310,6 +310,7 @@ export default Vue.extend({
       // shareTag.href=shareURL
     },
     twitterURL() {
+      this.upload()
       return `https://twitter.com/intent/tweet?url=http://localhost:3000/?id=${this.$accessor.music.id}&text=音楽を作ってみました♪`
     },
     // 初めの初期化（コンテキスト生成）
@@ -378,8 +379,9 @@ export default Vue.extend({
     melodhyVolumeChanged() {
       this.$accessor.music.setMelodyGain(this.melodyVolume / 80)
     },
-    upload() {
+    async upload() {
       this.$accessor.music.addScore()
+      await this.$nextTick()
     }
   }
 })
