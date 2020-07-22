@@ -47,7 +47,7 @@
     </div>
 
     <v-dialog v-model="showsBlockList" max-width="800">
-      <block-list :part="part" @closeDialog="showsBlockList = false" />
+      <block-list :part="part" @closeDialog="closeDialog" />
     </v-dialog>
     <v-dialog
       v-if="part === 'melody'"
@@ -179,6 +179,13 @@ export default Vue.extend({
         part: this.part,
         block: this.currentBlock
       })
+    },
+    // ブロックが渡された場合は編集モーダルを開く
+    closeDialog(block: Block | null = null) {
+      this.showsBlockList = false
+      if (block) {
+        this.showEditModal(block)
+      }
     },
     onChooseItem() {
       this.$emit('draggable-trash', this.part)
