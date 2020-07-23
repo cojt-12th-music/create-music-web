@@ -115,10 +115,6 @@ export default Vue.extend({
       return this.$accessor.player.previewUnitSound.key
     },
     melodyNotes(): Sound[] {
-      if (this.$accessor.player.isMute.melody) {
-        return []
-      }
-
       // プレビュー用
       if (this.$accessor.player.previewPreset.part === 'melody') {
         const targetTemplate = this.$accessor.music.melodyTemplates.find(
@@ -127,13 +123,14 @@ export default Vue.extend({
         if (targetTemplate) return this.flatBlock([targetTemplate])
         else return []
       }
-      return this.flatBlock(this.$accessor.music.melodyBlocks)
-    },
-    chordNotes(): Sound[] {
-      if (this.$accessor.player.isMute.chord) {
+
+      if (this.$accessor.player.isMute.melody) {
         return []
       }
 
+      return this.flatBlock(this.$accessor.music.melodyBlocks)
+    },
+    chordNotes(): Sound[] {
       // プレビュー用
       if (this.$accessor.player.previewPreset.part === 'chord') {
         const targetTemplate = this.$accessor.music.chordTemplates.find(
@@ -142,13 +139,14 @@ export default Vue.extend({
         if (targetTemplate) return this.flatBlock([targetTemplate])
         else return []
       }
-      return this.flatBlock(this.$accessor.music.chordBlocks)
-    },
-    rhythmNotes(): Sound[] {
-      if (this.$accessor.player.isMute.rhythm) {
+
+      if (this.$accessor.player.isMute.chord) {
         return []
       }
 
+      return this.flatBlock(this.$accessor.music.chordBlocks)
+    },
+    rhythmNotes(): Sound[] {
       // プレビュー用
       if (this.$accessor.player.previewPreset.part === 'rhythm') {
         const targetTemplate = this.$accessor.music.rhythmTemplates.find(
@@ -157,6 +155,11 @@ export default Vue.extend({
         if (targetTemplate) return this.flatBlock([targetTemplate])
         else return []
       }
+
+      if (this.$accessor.player.isMute.rhythm) {
+        return []
+      }
+
       return this.flatBlock(this.$accessor.music.rhythmBlocks)
     },
     bpm(): number {
