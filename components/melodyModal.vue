@@ -3,7 +3,7 @@
     <v-app-bar extension-height="64px" dark>
       <v-toolbar-title>{{ blockName }}</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn icon @click="$emit('dialog', false)">
+      <v-btn icon @click="$emit('dialog', isEdited)">
         <v-icon>mdi-close</v-icon>
       </v-btn>
       <template v-slot:extension>
@@ -57,6 +57,7 @@ import { Sound, Block } from '../types/music'
 
 type Rect = { top: number; left: number; height: number; width: number }
 type DataType = {
+  isEdited: boolean
   heightPerBlock: number
   widthPerNote: number
   quantize: number
@@ -80,6 +81,7 @@ export default Vue.extend({
   },
   data(): DataType {
     return {
+      isEdited: false,
       heightPerBlock: 25,
       widthPerNote: 60,
       quantize: 0.5,
@@ -99,6 +101,7 @@ export default Vue.extend({
   },
   computed: {
     sounds(): Sound[] {
+      console.log(this.soundBlock.sounds)
       return this.soundBlock.sounds
     },
     soundBlock(): Block {
@@ -204,6 +207,7 @@ export default Vue.extend({
       clientY: number
     ): { x: number; y: number } {
       if (!this.$refs.editInner) throw new Error('ref参照がありません')
+
       const inner = this.$refs.editInner as HTMLElement
       const pos = {
         x: clientX - inner.getBoundingClientRect().left,
@@ -213,6 +217,7 @@ export default Vue.extend({
     },
     mouseDown(e: MouseEvent) {
       if ('ontouchstart' in window) return
+
       const pos = this.calcPosInEditInner(e.clientX, e.clientY)
       this.startOffsetInBlock = { x: e.offsetX, y: e.offsetX }
       this.startPos = { x: pos.x, y: pos.y }
@@ -230,6 +235,7 @@ export default Vue.extend({
     },
     mouseMove(e: MouseEvent) {
       if ('ontouchmove' in window) return
+
       if (this.isMouseDown) {
         const pos = this.calcPosInEditInner(e.clientX, e.clientY)
 
@@ -242,6 +248,7 @@ export default Vue.extend({
     },
     mouseUp(e: MouseEvent) {
       if ('ontouchend' in window) return
+
       const pos = this.calcPosInEditInner(e.clientX, e.clientY)
 
       if (
@@ -276,6 +283,7 @@ export default Vue.extend({
     },
     touchMove(e: TouchEvent) {
       if (!this.selectedSoundID) return
+
       e.preventDefault()
       const pos = this.calcPosInEditInner(
         e.touches[0].clientX,
@@ -309,7 +317,7 @@ export default Vue.extend({
           : 1
       this.$accessor.music.addSound({
         part: 'melody',
-        blockName: this.soundBlock.name,
+        blockName: this.blockName,
         sound: {
           id: newID,
           key: newPos.key,
@@ -321,14 +329,17 @@ export default Vue.extend({
         part: 'melody',
         key: newPos.key
       })
+      this.isEdited = true
+
       return newID
     },
     moveSoundFromPos(x: number, y: number) {
       if (!this.selectedSound) return
+
       const newPos = this.posToSound(x - this.startOffsetInBlock.x, y)
       this.$accessor.music.updateSound({
         part: 'melody',
-        blockName: this.soundBlock.name,
+        blockName: this.blockName,
         sound: {
           id: this.selectedSound.id,
           duration: this.selectedSound.duration,
@@ -339,13 +350,16 @@ export default Vue.extend({
         part: 'melody',
         key: newPos.key
       })
+
+      this.isEdited = true
     },
     changeSoundDurationFromPos(x: number, y: number) {
       if (!this.selectedSound) return
+
       const newPos = this.posToSound(x, y)
       this.$accessor.music.updateSound({
         part: 'melody',
-        blockName: this.soundBlock.name,
+        blockName: this.blockName,
         sound: {
           id: this.selectedSound.id,
           duration: Math.max(
@@ -356,6 +370,8 @@ export default Vue.extend({
           key: this.selectedSound.key
         }
       })
+
+      this.isEdited = true
     },
     deleteSound(soundId: number) {
       this.$accessor.music.deleteSound({
@@ -363,6 +379,8 @@ export default Vue.extend({
         blockName: this.blockName,
         soundId
       })
+
+      this.isEdited = true
     }
   }
 })
