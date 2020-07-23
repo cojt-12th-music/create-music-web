@@ -214,25 +214,26 @@ export const mutations = mutationTree(state, {
     state[part].blockNames.splice(0, blocksCount, ...blockNames)
   },
   /**
-   * リズムの音量を変更する
-   * @param rhythmGain セットするゲインの値
+   * 楽譜の音量を変更する
+   * @param part 音量を変更するパート
+   * @param gain セットするゲインの値
    */
-  SET_RHYTHM_GAIN(state: MusicState, rhythmGain: number) {
-    state.rhythm.gain = rhythmGain
+  SET_GAIN(
+    state: MusicState,
+    { part, gain }: { part: ScorePart; gain: number }
+  ) {
+    state[part].gain = gain
   },
   /**
-   * コードの音量を変更する
-   * @param chordGain セットするゲインの値
+   * 楽譜の楽器を変更する
+   * @param part 楽器を変更するパート
+   * @param inst セットする楽器名
    */
-  SET_CHORD_GAIN(state: MusicState, chordGain: number) {
-    state.chord.gain = chordGain
-  },
-  /**
-   * メロディの音量を変更する
-   * @param melodyGain セットするゲインの値
-   */
-  SET_MELODY_GAIN(state: MusicState, melodyGain: number) {
-    state.melody.gain = melodyGain
+  SET_INSTRUMENT(
+    state: MusicState,
+    { part, inst }: { part: ScorePart; inst: string }
+  ) {
+    state[part].instrument = inst
   },
   /**
    * BPMを変更する
@@ -242,29 +243,16 @@ export const mutations = mutationTree(state, {
     state.bpm = bpm
   },
   /**
-   * リズムの楽器を変更する
-   * @param rhythmInst セットする楽器名
+   * 楽曲名を変更する
+   * @param input セットする楽曲名
    */
-  SET_RHYTHM_INSTRUMENT(state: MusicState, rhythmInst: string) {
-    state.rhythm.instrument = rhythmInst
-  },
-  /**
-   * コードの楽器を変更する
-   * @param chordInst セットする楽器名
-   */
-  SET_CHORD_INSTRUMENT(state: MusicState, chordInst: string) {
-    state.chord.instrument = chordInst
-  },
-  /**
-   * メロディの楽器を変更する
-   * @param melodyInst セットする楽器名
-   */
-  SET_MELODY_INSTRUMENT(state: MusicState, melodyInst: string) {
-    state.melody.instrument = melodyInst
-  },
   SET_TITLE(state: MusicState, input: string) {
     state.title = input
   },
+  /**
+   * 作曲者を変更する
+   * @param input セットする作曲者名
+   */
   SET_COMPOSER(state: MusicState, input: string) {
     state.composer = input
   },
@@ -420,25 +408,18 @@ export const actions = actionTree(
       commit('SET_BLOCK_NAMES', { part, blockNames })
     },
     /**
-     * リズムの音量を変更する
-     * @param rhythmGain セットするゲインの値
+     * 楽譜の音量を変更する
+     * @param gain セットするゲインの値
      */
-    setRhythmGain({ commit }, rhythmGain: number) {
-      commit('SET_RHYTHM_GAIN', rhythmGain)
+    setGain({ commit }, param: { part: ScorePart; gain: number }) {
+      commit('SET_GAIN', param)
     },
     /**
-     * コードの音量を変更する
-     * @param chordGain セットするゲインの値
+     * メロディの楽器を変更する
+     * @param inst セットする楽器名
      */
-    setChordGain({ commit }, chordGain: number) {
-      commit('SET_CHORD_GAIN', chordGain)
-    },
-    /**
-     * メロディの音量を変更する
-     * @param melodyGain セットするゲインの値
-     */
-    setMelodyGain({ commit }, melodyGain: number) {
-      commit('SET_MELODY_GAIN', melodyGain)
+    setInstrument({ commit }, param: { part: ScorePart; inst: string }) {
+      commit('SET_INSTRUMENT', param)
     },
     /**
      * BPMを変更する
@@ -446,27 +427,6 @@ export const actions = actionTree(
      */
     setBpm({ commit }, bpm: number) {
       commit('SET_BPM', bpm)
-    },
-    /**
-     * リズムの楽器を変更する
-     * @param rhythmInst セットする楽器名
-     */
-    setRhythmInstrument({ commit }, rhythmInst: string) {
-      commit('SET_RHYTHM_INSTRUMENT', rhythmInst)
-    },
-    /**
-     * コードの楽器を変更する
-     * @param chordInst セットする楽器名
-     */
-    setChordInstrument({ commit }, chordInst: string) {
-      commit('SET_CHORD_INSTRUMENT', chordInst)
-    },
-    /**
-     * メロディの楽器を変更する
-     * @param melodyInst セットする楽器名
-     */
-    setMelodyInstrument({ commit }, MelodyInst: string) {
-      commit('SET_MELODY_INSTRUMENT', MelodyInst)
     },
     setTitle({ commit }, Input: string) {
       commit('SET_TITLE', Input)
@@ -479,19 +439,8 @@ export const actions = actionTree(
      * @param presetName セットするプリセット名
      */
     addScore({ commit, state }) {
-      const data = { ...state }
-      // blocksはデカいのでとりあえず全て除外
-      // TODO: 初期のプリセットのみ除外するように
-      /**
-      data.blocks = {
-        rhythm: {},
-        chord: {},
-        melody: {}
-      }
-      */
-
       firestoreAccessor.scores
-        .create(data)
+        .create({ ...state })
         .then((score) => commit('SET_SCORE', score))
     }
   }
