@@ -3,6 +3,7 @@
  * ユーザが作成する楽譜に関するstore
  */
 
+import Vue from 'vue'
 import { getterTree, mutationTree, actionTree } from 'typed-vuex'
 import { Music, Block, Sound, ScorePart } from '@/types/music'
 import { MELODY_BLOCKS, CHORD_BLOCKS, RHYTHM_BLOCKS } from '@/lib/presets'
@@ -98,25 +99,15 @@ export const mutations = mutationTree(state, {
     state[part].blockNames.push(blockName)
   },
   /**
-   * ブロックをブロックリストに追加する
-   * @param block 追加するブロック
-   */
-  ADD_BLOCK_TO_LIST(
-    state: MusicState,
-    { part, block }: { part: ScorePart; block: Block }
-  ) {
-    state.blocks[part][block.name] = block
-  },
-  /**
    * ブロックを変更する
    * @param part 変更するブロックのパート
    * @param block 変更するブロック
    */
-  UPDATE_BLOCK(
+  UPDATE_BLOCK_LIST(
     state: MusicState,
     { part, block }: { part: ScorePart; block: Block }
   ) {
-    Object.assign(state.blocks[part], { [block.name]: block })
+    Vue.set(state.blocks[part], block.name, block)
   },
   /**
    * ブロックに新しいsoundを追加する
@@ -287,7 +278,17 @@ export const actions = actionTree(
       { commit },
       { part, block }: { part: ScorePart; block: Block }
     ) {
-      commit('ADD_BLOCK_TO_LIST', { part, block })
+      commit('UPDATE_BLOCK_LIST', { part, block })
+    },
+    /**
+     * ブロックを変更する
+     * @param block 変更するブロック
+     */
+    updateBlock(
+      { commit },
+      { part, block }: { part: ScorePart; block: Block }
+    ) {
+      commit('UPDATE_BLOCK_LIST', { part, block })
     },
     /**
      * 初期ブロックを作成する
@@ -299,27 +300,17 @@ export const actions = actionTree(
         name: '無題',
         category: 'マイブロック',
         sounds: new Array<Sound>(0),
-        duration: 0,
+        duration: 4,
         isOriginal: true
       }
       // もしhoge'が存在しているならhoge''を見る, これを存在しないところまで繰り返す
       while (state.blocks[part][block.name]) {
         block.name = `${block.name}'`
       }
-      commit('ADD_BLOCK_TO_LIST', { part, block })
+      commit('UPDATE_BLOCK_LIST', { part, block })
       commit('CLONE_BLOCK', { part, blockName: block.name })
 
       return block
-    },
-    /**
-     * ブロックを変更する
-     * @param block 変更するブロック
-     */
-    updateBlock(
-      { commit },
-      { part, block }: { part: ScorePart; block: Block }
-    ) {
-      commit('UPDATE_BLOCK', { part, block })
     },
     /**
      * blockをディープコピーし, 新たなblockを追加する
@@ -340,7 +331,7 @@ export const actions = actionTree(
       block.category = 'マイブロック'
       block.isOriginal = true
       // コピー後のブロックをリストに追加する
-      commit('ADD_BLOCK_TO_LIST', { part, block })
+      commit('UPDATE_BLOCK_LIST', { part, block })
 
       // コピー前のブロック名をコピー後のものに置き換える
       const blockNames = state[part].blockNames.map((name: string) =>

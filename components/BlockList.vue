@@ -127,18 +127,16 @@ export default Vue.extend({
   },
   methods: {
     async createBlock() {
-      this.$accessor.player.stopPresetPreview()
       const newBlock = await this.$accessor.music.initBlock(this.part)
-      this.$emit('closeDialog', newBlock)
+      this.$emit('close-block-list', newBlock)
     },
     addBlock() {
-      this.$accessor.player.stopPresetPreview()
       if (this.selection != null) {
         this.$accessor.music.cloneBlock({
           part: this.part,
           blockName: this.selectedBlockName
         })
-        this.$emit('closeDialog')
+        this.$emit('close-block-list')
       } else {
         this.showsAttention = true
       }

@@ -23,9 +23,16 @@
 
       <!-- 再生エリア -->
       <v-card-title class="play-area">
-        <v-btn icon dark @click="playPreview()">
-          <v-icon size="350%" color="#F96500">play_arrow</v-icon>
-        </v-btn>
+        <div v-if="isPlaying">
+          <v-btn icon dark @click="stopPreview()">
+            <v-icon size="350%" color="#F96500">mdi-stop</v-icon>
+          </v-btn>
+        </div>
+        <div v-else>
+          <v-btn icon dark @click="playPreview()">
+            <v-icon size="350%" color="#F96500">mdi-play</v-icon>
+          </v-btn>
+        </div>
       </v-card-title>
     </v-card>
   </div>
@@ -72,7 +79,8 @@ export default Vue.extend({
         { drum_key: 68, inst: 'Double Mid Tom' },
         { drum_key: 69, inst: 'Double High Tom' }
       ],
-      isEdited: false
+      isEdited: false,
+      isPlaying: false
     }
   },
   computed: {
@@ -101,12 +109,16 @@ export default Vue.extend({
     editBlock() {
       this.isEdited = true
     },
-    async playPreview() {
-      await this.$accessor.player.stopPresetPreview()
-      await this.$accessor.player.playPresetPreview({
+    playPreview() {
+      this.$accessor.player.playPresetPreview({
         part: 'rhythm',
         name: this.blockName
       })
+      this.isPlaying = true
+    },
+    stopPreview() {
+      this.$accessor.player.stopPresetPreview()
+      this.isPlaying = false
     }
   }
 })
