@@ -140,7 +140,11 @@ export default Vue.extend({
       .catch(function(error) {
         console.log(error)
       })
-    this.$accessor.music.setUserId(firebaseAuth().currentUser?.uid || '')
+    const userId = firebaseAuth().currentUser?.uid || ''
+
+    if (!this.$accessor.music.id || userId === this.$accessor.music.userId) {
+      this.editEnabled = true
+    }
   },
   methods: {
     twitterLogin() {

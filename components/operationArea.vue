@@ -320,12 +320,11 @@ export default Vue.extend({
     // シェアボタンの動作
     async share() {
       // 楽譜がFirestoreに保存されており, userIdが自身と一致する場合はupdate
-      if (
-        this.$accessor.music.id &&
-        firebaseAuth().currentUser?.uid === this.$accessor.music.userId
-      ) {
+      const userId = firebaseAuth().currentUser?.uid || ''
+      if (this.$accessor.music.id && userId === this.$accessor.music.userId) {
         await this.$accessor.music.updateScore()
       } else {
+        this.$accessor.music.setUserId(userId)
         await this.$accessor.music.addScore()
       }
       const scoreUrl = `${location.origin}/ogp/?id=${this.$accessor.music.id}`
