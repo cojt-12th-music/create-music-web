@@ -306,14 +306,6 @@ export default Vue.extend({
   }
 }
 
-// .open-blocklist {
-//   margin-left: 1rem;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   transform: translateY(-0.5rem);
-// }
-
 @include pc {
 }
 </style>

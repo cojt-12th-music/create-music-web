@@ -1,7 +1,7 @@
 <template>
   <div id="component-frame">
     <v-card class="mx-auto">
-      <v-card-title>
+      <v-card-title class="block-list-header">
         <p>{{ partName }}の追加</p>
       </v-card-title>
 
@@ -34,7 +34,7 @@
         </v-card-text>
       </v-chip-group>
 
-      <v-card-actions>
+      <v-card-actions class="block-list-footer">
         <v-btn
           block
           class="add-button"
@@ -171,6 +171,7 @@ export default Vue.extend({
 }
 div#component-frame {
   height: 100%;
+  position: relative;
 }
 .v-card__text {
   color: $-gray-50;
@@ -221,6 +222,24 @@ div#component-frame {
   margin-top: 1rem;
   background-color: $-primary-600 !important;
   color: $-gray-50;
+}
+
+.mx-auto {
+  position: relative;
+
+  .block-list-header {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  .block-list-footer {
+    position: -webkit-sticky;
+    position: sticky;
+    height: 4rem;
+    bottom: 0;
+  }
 }
 
 .add-button {
