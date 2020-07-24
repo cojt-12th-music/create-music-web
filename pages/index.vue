@@ -206,13 +206,13 @@ $operation-area-height: 10vh;
     text-align: center;
 
     .mode-switch-label {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: bold;
       color: $-gray-100;
     }
 
     .mode-switch {
-      margin: 0 0 -1rem 0;
+      margin: 1rem 0 -1rem 0;
     }
   }
 }

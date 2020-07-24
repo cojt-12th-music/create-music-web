@@ -198,14 +198,14 @@
         <v-card-title class="justify-center">
           <div class="textColoring">音楽を作ってみましょう♪</div>
         </v-card-title>
-        <div v-if="isLoading">
+        <div v-if="isLoading" style="text-align: center;">
           <v-progress-circular
             indeterminate
             color="white"
             class="ma-2"
           ></v-progress-circular>
         </div>
-        <div v-else style="text-align: center;">
+        <div v-else>
           <div class="iconCenter pa-2">
             <v-btn @click="init">始める！</v-btn>
           </div>
