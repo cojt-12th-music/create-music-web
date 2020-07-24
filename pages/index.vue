@@ -193,11 +193,13 @@ $operation-area-height: 10vh;
 
   .score-header-title {
     margin-bottom: 0.2rem;
+    -webkit-text-fill-color: $-gray-50;
     input {
       color: $-gray-50 !important;
     }
   }
   .score-header-creator {
+    -webkit-text-fill-color: $-gray-50;
     input {
       color: $-gray-100;
     }
