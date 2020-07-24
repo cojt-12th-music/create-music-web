@@ -184,11 +184,18 @@ export const mutations = mutationTree(state, {
   ) {
     const blockHash = state.blocks[part]
     if (blockHash[blockName].sounds.length) {
-      // 音が存在する場合はdurationの最大値をセット
-      blockHash[blockName].duration = blockHash[blockName].sounds.reduce(
-        (d: number, sound: Sound) => Math.max(sound.delay + sound.duration, d),
-        0
-      )
+      /*
+        音が存在する場合はdurationの最大値以上の数値で最小の4の倍数をセット
+        (4拍子を想定)
+      */
+      blockHash[blockName].duration =
+        Math.ceil(
+          blockHash[blockName].sounds.reduce(
+            (d: number, sound: Sound) =>
+              Math.max(sound.delay + sound.duration, d),
+            0
+          ) / 4
+        ) * 4
     } else {
       // 音が存在しない場合は4をセット
       blockHash[blockName].duration = 4

@@ -25,4 +25,6 @@ export interface PlayerState {
 export interface Instrument {
   name: string
   path: string
+  hiKey: number
+  loKey: number
 }
