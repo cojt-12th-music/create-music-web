@@ -48,7 +48,7 @@
       </div>
     </div>
 
-    <v-dialog v-model="showsBlockList" max-width="800">
+    <v-dialog v-model="showsBlockList" max-width="800" scrollable>
       <block-list :part="part" @close-block-list="closeBlockList" />
     </v-dialog>
     <v-dialog

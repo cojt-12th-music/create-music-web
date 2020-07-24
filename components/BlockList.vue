@@ -2,7 +2,10 @@
   <div id="component-frame">
     <v-card class="mx-auto">
       <v-card-title class="block-list-header">
-        <p>{{ partName }}の追加</p>
+        <p>{{ partName }}ブロックの追加</p>
+        <v-btn icon @click="$emit('close-block-list')">
+          <v-icon color="white">mdi-close</v-icon>
+        </v-btn>
       </v-card-title>
 
       <v-chip-group v-model="selection" column>
@@ -34,16 +37,16 @@
         </v-card-text>
       </v-chip-group>
 
-      <v-card-actions class="block-list-footer">
-        <v-btn
-          block
-          class="add-button"
-          :class="{ disabled: !editEnabled || selection == null }"
-          @click="addBlock"
+      <transition name="add">
+        <v-card-actions
+          v-if="editEnabled && selection != null"
+          class="block-list-footer"
         >
-          Add to Score
-        </v-btn>
-      </v-card-actions>
+          <v-btn block class="add-button" @click="addBlock">
+            楽譜に追加する
+          </v-btn>
+        </v-card-actions>
+      </transition>
     </v-card>
 
     <v-dialog v-model="showsAttention" max-width="1000">
@@ -163,7 +166,7 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .v-card__title {
-  background-color: $-gray-900;
+  background-color: $-gray-800;
   color: $-gray-50;
   p {
     margin: 0;
@@ -186,7 +189,9 @@ div#component-frame {
   height: 64px;
 }
 .v-card__actions {
-  background-color: $-gray-900;
+  background-color: $-gray-800;
+  box-sizing: border-box;
+  height: 2rem;
   padding: 10px;
 }
 .v-chip-group .v-chip--active {
@@ -220,18 +225,21 @@ div#component-frame {
 
 .create-button {
   margin-top: 1rem;
-  background-color: $-primary-600 !important;
+  background-color: $-gray-600 !important;
   color: $-gray-50;
 }
 
 .mx-auto {
   position: relative;
+  background-color: $-gray-700;
 
   .block-list-header {
     position: -webkit-sticky;
     position: sticky;
     top: 0;
     z-index: 1;
+    display: flex;
+    justify-content: space-between;
   }
 
   .block-list-footer {
@@ -245,12 +253,24 @@ div#component-frame {
 .add-button {
   background-color: $-primary-500 !important;
   color: $-gray-50;
+  font-size: 1rem;
 }
 
-button.v-btn {
+.v-btn {
   &.disabled {
     background-color: $-gray-400 !important;
     pointer-events: none;
   }
+}
+
+.add-enter-active,
+.add-leave-active {
+  transform: translateY(0) translateZ(0);
+  transition: transform 150ms linear 100ms;
+}
+
+.add-enter,
+.add-leave-to {
+  transform: translateY(10vh) translateZ(0);
 }
 </style>
