@@ -228,6 +228,7 @@ type DataType = {
   rhythmVolume: number
   chordVolume: number
   melodyVolume: number
+  setId: NodeJS.Timeout | null
 }
 
 export default Vue.extend({
@@ -264,7 +265,8 @@ export default Vue.extend({
       bpm: 100,
       rhythmVolume: 80,
       chordVolume: 80,
-      melodyVolume: 80
+      melodyVolume: 80,
+      setId: null
     }
   },
   computed: {
@@ -297,8 +299,7 @@ export default Vue.extend({
     // 音楽を再生
     play() {
       this.$accessor.player.play()
-
-      setTimeout(
+      this.setId = setTimeout(
         this.stop,
         ((this.$accessor.music.maxDuration * 60) / this.$accessor.music.bpm +
           1) *
@@ -308,6 +309,9 @@ export default Vue.extend({
     // 音楽再生をストップ
     stop() {
       this.$accessor.player.stop()
+      if (this.setId) {
+        clearTimeout(this.setId)
+      }
     },
     // 設定変更画面(ポップアップ)を表示
     config() {
