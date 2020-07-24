@@ -218,7 +218,7 @@ $operation-area-height: 10vh;
 }
 
 #musical-score-wrapper {
-  height: calc(100% - $operation-area-height * 2);
+  height: calc(100% - #{$operation-area-height} * 2);
   margin: $operation-area-height 0;
   overflow: scroll;
 
