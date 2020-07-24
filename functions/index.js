@@ -2,7 +2,7 @@
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 
-exports.returnDynamicOGP = functions.https.onRequest(async (req, res) => {
+exports.returnDynamicOGP = functions.https.onRequest((req, res) => {
   const userAgent = req.headers['user-agent'].toLowerCase()
 
   // ユーザーアクセスはリダイレクト
@@ -12,24 +12,25 @@ exports.returnDynamicOGP = functions.https.onRequest(async (req, res) => {
   }
 
   admin.initializeApp()
-  const doc = await admin
+  admin
     .firestore()
     .collection('scores')
     .doc(req.query.id)
     .get()
+    .then((doc) => {
+      // 存在しないIDなら404を返す
+      if (!doc.exists) {
+        res.send(404)
+        return
+      }
 
-  // 存在しないIDなら404を返す
-  if (!doc.exists) {
-    res.send(404)
-    return
-  }
+      const data = doc.data()
+      const composer = data.composer
+      const title = data.title
 
-  const data = doc.data()
-  const composer = data.composer
-  const title = data.title
-
-  const html = createHtml(title, composer)
-  res.status(200).send(html)
+      const html = createHtml(title, composer)
+      res.status(200).send(html)
+    })
 })
 
 const isBot = (userAgent) =>
