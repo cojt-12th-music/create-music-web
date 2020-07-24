@@ -2,10 +2,38 @@
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 
-exports.returnDynamicOGP = functions.https.onRequest((req, res) => {
+exports.returnDynamicOGP = functions.https.onRequest(async (req, res) => {
   const userAgent = req.headers['user-agent'].toLowerCase()
 
-  const isBot = !!(
+  // ユーザーアクセスはリダイレクト
+  if (!isBot(userAgent)) {
+    res.redirect('/?id=' + res.query.id)
+    return
+  }
+
+  admin.initializeApp()
+  const doc = await admin
+    .firestore()
+    .collection('scores')
+    .doc(req.query.id)
+    .get()
+
+  // 存在しないIDなら404を返す
+  if (!doc.exists) {
+    res.send(404)
+    return
+  }
+
+  const data = doc.data()
+  const composer = data.composer
+  const title = data.title
+
+  const html = createHtml(title, composer)
+  res.status(200).send(html)
+})
+
+const isBot = (userAgent) =>
+  !!(
     userAgent.includes('googlebot') ||
     userAgent.includes('yahoou') ||
     userAgent.includes('bingbot') ||
@@ -19,45 +47,6 @@ exports.returnDynamicOGP = functions.https.onRequest((req, res) => {
     userAgent.includes('twitterbot') ||
     userAgent.includes('developers.google.com')
   )
-
-  let data
-  let composer = ''
-  let title = ''
-
-  admin.initializeApp()
-  admin
-    .firestore()
-    .collection('scores')
-    .doc(req.query.id)
-    .get()
-    .then((doc) => {
-      if (doc.exists) {
-        data = doc.data()
-        composer = data.composer
-        title = data.title
-        // res.send(composer + ' ' + title + ' ' + req.path)
-      } else {
-        console.log('404')
-        res.send('404')
-      }
-    })
-    .catch((error) => {
-      console.log(`データが取得できず${error}`)
-    })
-
-  // const path = req.path // "/"
-
-  if (isBot) {
-    // bot の場合
-    // ogp を設定した html を返す
-    const html = createHtml(title, composer)
-    res.status(200).send(html)
-  } else {
-    // bot 以外（ユーザー）の場合
-    // ogp を抜いたパスにリダイレクトしてあげる
-    res.redirect('/?id=' + res.query.id)
-  }
-})
 
 const createHtml = (title, description) => {
   return `<!DOCTYPE html>
