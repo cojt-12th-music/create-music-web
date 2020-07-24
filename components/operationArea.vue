@@ -210,6 +210,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { firebaseAuth } from '@/plugins/firebase'
 
 type DataType = {
   // 初めのinitモーダル
@@ -318,7 +319,15 @@ export default Vue.extend({
     },
     // シェアボタンの動作
     async share() {
-      await this.$accessor.music.addScore()
+      // 楽譜がFirestoreに保存されており, userIdが自身と一致する場合はupdate
+      if (
+        this.$accessor.music.id &&
+        firebaseAuth().currentUser?.uid === this.$accessor.music.userId
+      ) {
+        await this.$accessor.music.updateScore()
+      } else {
+        await this.$accessor.music.addScore()
+      }
       const scoreUrl = `${location.origin}/ogp/?id=${this.$accessor.music.id}`
       const text = '音楽を作ってみました♪'
       location.href = `https://twitter.com/intent/tweet?url=${scoreUrl}&text=${text}`

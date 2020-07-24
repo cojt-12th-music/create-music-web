@@ -433,13 +433,15 @@ export const actions = actionTree(
       commit('SET_USER_ID', userId)
     },
     /**
-     * コードのプリセットをセットする
-     * @param presetName セットするプリセット名
+     * 楽譜をFirestoreに登録する
      */
-    addScore({ commit, state }) {
-      firestoreAccessor.scores
+    async addScore({ commit, state }) {
+      await firestoreAccessor.scores
         .create({ ...state })
         .then((score) => commit('SET_SCORE', score))
+    },
+    updateScore({ state }) {
+      firestoreAccessor.scores.update(state.id, { ...state })
     }
   }
 )
