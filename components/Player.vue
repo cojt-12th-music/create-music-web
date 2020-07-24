@@ -13,6 +13,7 @@
           :gain-value="gainValue"
           :reverb-path="null"
           :unit-sound-preview="melodyUnitSoundKey"
+          @on-key-range-detected="onMelodyKeyRangeDetected"
         />
         <instrument
           :sfz-path="chordInstrument"
@@ -24,6 +25,7 @@
           :is-ready.sync="isChordReady"
           :gain-value="gainValue"
           :unit-sound-preview="chordUnitSoundKey"
+          @on-key-range-detected="onChordKeyRangeDetected"
         />
         <instrument
           :sfz-path="rhythmInstrument"
@@ -35,6 +37,7 @@
           :is-ready.sync="isRhythmReady"
           :gain-value="gainValue"
           :unit-sound-preview="rhythmUnitSoundKey"
+          @on-key-range-detected="onRhythmKeyRangeDetected"
         />
       </v-col>
     </v-row>
@@ -224,8 +227,14 @@ export default Vue.extend({
   mounted() {
     fetch('/instruments/instruments.json')
       .then((res) => res.json())
-      .then((res) => {
-        this.$accessor.player.setInstruments(res)
+      .then((res: { name: string; path: string }[]) => {
+        this.$accessor.player.setInstruments(
+          res.map((i) => ({
+            hiKey: 100,
+            loKey: 0,
+            ...i
+          }))
+        )
         this.$accessor.music.setMelodyInstrument(
           this.$accessor.player.instruments[1].path
         )
@@ -282,6 +291,24 @@ export default Vue.extend({
       this.$accessor.player.playUnitSoundPreview({
         part: 'melody',
         key: this.unitKey
+      })
+    },
+    onMelodyKeyRangeDetected(e: { hiKey: number; loKey: number }) {
+      this.$accessor.player.updateKeyRange({
+        ...e,
+        path: this.melodyInstrument
+      })
+    },
+    onChordKeyRangeDetected(e: { hiKey: number; loKey: number }) {
+      this.$accessor.player.updateKeyRange({
+        ...e,
+        path: this.chordInstrument
+      })
+    },
+    onRhythmKeyRangeDetected(e: { hiKey: number; loKey: number }) {
+      this.$accessor.player.updateKeyRange({
+        ...e,
+        path: this.rhythmInstrument
       })
     }
   }

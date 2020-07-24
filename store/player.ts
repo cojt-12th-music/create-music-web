@@ -68,6 +68,16 @@ export const mutations = mutationTree(state, {
     { part, isMute }: { part: ScorePart; isMute: boolean }
   ) {
     state.isMute[part] = isMute
+  },
+  UPDATE_KEY_RANGE(
+    state: PlayerState,
+    e: { hiKey: number; loKey: number; path: string }
+  ) {
+    const target = state.instruments.find((i) => i.path === e.path)
+    if (target) {
+      target.hiKey = e.hiKey
+      target.loKey = e.loKey
+    }
   }
 })
 
@@ -118,6 +128,12 @@ export const actions = actionTree(
     },
     setEditEnabled({ commit }, enabled: boolean) {
       commit('SET_EDIT_ENABLED', enabled)
+    },
+    updateKeyRange(
+      { commit },
+      e: { hiKey: number; loKey: number; path: string }
+    ) {
+      commit('UPDATE_KEY_RANGE', e)
     }
   }
 )
