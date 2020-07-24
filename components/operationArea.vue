@@ -297,7 +297,13 @@ export default Vue.extend({
     // 音楽を再生
     play() {
       this.$accessor.player.play()
-      setTimeout(this.stop, this.$accessor.player.maxLength * 1000)
+
+      setTimeout(
+        this.stop,
+        ((this.$accessor.music.maxDuration * 60) / this.$accessor.music.bpm +
+          1) *
+          1000
+      )
     },
     // 音楽再生をストップ
     stop() {

@@ -106,26 +106,7 @@ export default Vue.extend({
     },
     maxLength(): number {
       // 各partにおけるdurationの合計の最大値 / 2 + 1 (追加ボタン分)
-      // TODO: fetch from store
-      const RhythmLength: number = this.$accessor.music.rhythmBlocks.reduce(
-        (p: number, x: Block) => p + x.duration,
-        0
-      )
-      const ChordLength: number = this.$accessor.music.chordBlocks.reduce(
-        (p: number, x: Block) => p + x.duration,
-        0
-      )
-      const MelodyLength: number = this.$accessor.music.melodyBlocks.reduce(
-        (p: number, x: Block) => p + x.duration,
-        0
-      )
-      const maxLength: number = Math.max(
-        RhythmLength,
-        ChordLength,
-        MelodyLength
-      )
-      this.$accessor.player.setMaxLength(Math.floor(maxLength / 2))
-      return Math.floor(maxLength / 2) + 1
+      return Math.floor(this.$accessor.music.maxDuration / 2) + 1
     },
     partTitle(): string {
       return {
