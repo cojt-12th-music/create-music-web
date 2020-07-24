@@ -23,18 +23,11 @@
         </v-col>
         <v-col align-self="center">
           <div class="iconRight">
-            <a
-              id="shareTag"
-              :href="twitterURL()"
-              target="blank_"
-              style="text-decoration: none;"
-            >
-              <v-btn icon @click="share">
-                <v-icon size="300%" color="#F96500">
-                  mdi-share-variant
-                </v-icon>
-              </v-btn>
-            </a>
+            <v-btn icon @click="share">
+              <v-icon size="300%" color="#F96500">
+                mdi-share-variant
+              </v-icon>
+            </v-btn>
           </div>
         </v-col>
       </v-row>
@@ -324,17 +317,11 @@ export default Vue.extend({
       this.configDialog = true
     },
     // シェアボタンの動作
-    // twitterシェアのURLを取得
-    share() {
-      // const shareTag = <HTMLAnchorElement>document.getElementById("shareTag")
-      // const shareURL =
-      //   'https://twitter.com/intent/tweet?url=' +
-      //   location.href +
-      //   '&text=音楽を作ってみました♪'
-      // shareTag.href=shareURL
-    },
-    twitterURL() {
-      return `https://twitter.com/intent/tweet?url=http://localhost:3000/?id=${this.$accessor.music.id}&text=音楽を作ってみました♪`
+    async share() {
+      await this.$accessor.music.addScore()
+      const scoreUrl = `${location.origin}/ogp/?id=${this.$accessor.music.id}`
+      const text = '音楽を作ってみました♪'
+      location.href = `https://twitter.com/intent/tweet?url=${scoreUrl}&text=${text}`
     },
     // 初めの初期化（コンテキスト生成）
     // 各パートの楽器を初期化
@@ -391,11 +378,7 @@ export default Vue.extend({
       this.$accessor.music.setInstrument({ part: 'melody', inst: path })
     },
     // カラーモード選択
-    selectColorTheme() {},
-    async upload() {
-      this.$accessor.music.addScore()
-      await this.$nextTick()
-    }
+    selectColorTheme() {}
   }
 })
 </script>
