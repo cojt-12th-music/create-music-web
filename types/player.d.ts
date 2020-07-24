@@ -15,6 +15,7 @@ export interface PlayerState {
     key: number | 0
   }
   reverbs: string[]
+  maxLength: number
 }
 
 export interface Instrument {

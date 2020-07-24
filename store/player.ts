@@ -16,7 +16,8 @@ export const state = (): PlayerState => ({
     part: null,
     key: 0
   },
-  reverbs: []
+  reverbs: [],
+  maxLength: 0
 })
 
 export const mutations = mutationTree(state, {
@@ -49,6 +50,9 @@ export const mutations = mutationTree(state, {
   },
   SET_REVERBS(state: PlayerState, rvs: string[]) {
     state.reverbs = rvs
+  },
+  SET_MAXLENGTH(state: PlayerState, length: number) {
+    state.maxLength = length
   }
 })
 
@@ -87,6 +91,9 @@ export const actions = actionTree(
     },
     setReverbs({ commit }, rvs: string[]) {
       commit('SET_REVERBS', rvs)
+    },
+    setMaxLength({ commit }, length: number) {
+      commit('SET_MAXLENGTH', length)
     }
   }
 )

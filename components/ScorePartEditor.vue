@@ -2,9 +2,9 @@
   <div class="score-part-container">
     <div class="column-title">
       <div class="part-title-container" @click="enabled = !enabled">
-        <v-icon large class="icon" :class="{ disabled: !enabled }">{{
-          partIcon
-        }}</v-icon>
+        <v-icon large class="icon" :class="{ disabled: !enabled }">
+          {{ partIcon }}
+        </v-icon>
         <div class="part-title" :class="{ disabled: !enabled }">
           {{ partTitle }}
         </div>
@@ -34,9 +34,9 @@
         </div>
       </draggable>
       <div class="button-wrapper">
-        <v-icon x-large class="dialog-button" @click.stop="showDialog()">
-          mdi-plus-circle-outline
-        </v-icon>
+        <v-icon x-large class="dialog-button" @click.stop="showDialog()"
+          >mdi-plus-circle-outline</v-icon
+        >
       </div>
     </div>
     <!-- ブロックが押されたら編集画面表示 -->
@@ -124,6 +124,7 @@ export default Vue.extend({
         ChordLength,
         MelodyLength
       )
+      this.$accessor.player.setMaxLength(Math.floor(maxLength / 2))
       return Math.floor(maxLength / 2) + 1
     },
     partTitle(): string {

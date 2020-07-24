@@ -30,9 +30,7 @@
               style="text-decoration: none;"
             >
               <v-btn icon @click="share">
-                <v-icon size="300%" color="#F96500">
-                  mdi-share-variant
-                </v-icon>
+                <v-icon size="300%" color="#F96500">mdi-share-variant</v-icon>
               </v-btn>
             </a>
           </div>
@@ -43,9 +41,7 @@
     <v-dialog v-model="configDialog" max-width="80%">
       <v-card color="#0A0A0A">
         <v-card-title class="justify-center">
-          <div class="textColoring" style="text-align: center;">
-            設定
-          </div>
+          <div class="textColoring" style="text-align: center;">設定</div>
         </v-card-title>
 
         <v-list color="#333333">
@@ -301,6 +297,7 @@ export default Vue.extend({
     // 音楽を再生
     play() {
       this.$accessor.player.play()
+      setTimeout(this.stop, this.$accessor.player.maxLength * 1000)
     },
     // 音楽再生をストップ
     stop() {
