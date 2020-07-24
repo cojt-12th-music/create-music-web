@@ -48,6 +48,19 @@
         />
       </div>
     </div>
+
+    <div class="play-area">
+      <div v-if="isPlaying">
+        <v-btn icon dark @click="stopPreview()">
+          <v-icon size="350%" color="#F96500">mdi-stop</v-icon>
+        </v-btn>
+      </div>
+      <div v-else>
+        <v-btn icon dark @click="playPreview()">
+          <v-icon size="350%" color="#F96500">mdi-play</v-icon>
+        </v-btn>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -70,6 +83,7 @@ type DataType = {
   editMode: 'border' | 'move' | null
   guidelines: { [key: string]: number[] }
   selectedGuideLineName: string
+  isPlaying: boolean
 }
 
 export default Vue.extend({
@@ -96,12 +110,12 @@ export default Vue.extend({
         明るい: [0, 2, 4, 5, 7, 9, 11],
         暗い: [0, 2, 3, 5, 7, 9, 11]
       },
-      selectedGuideLineName: '明るい'
+      selectedGuideLineName: '明るい',
+      isPlaying: false
     }
   },
   computed: {
     sounds(): Sound[] {
-      console.log(this.soundBlock.sounds)
       return this.soundBlock.sounds
     },
     soundBlock(): Block {
@@ -381,6 +395,17 @@ export default Vue.extend({
       })
 
       this.isEdited = true
+    },
+    playPreview() {
+      this.$accessor.player.playPresetPreview({
+        part: 'melody',
+        name: this.blockName
+      })
+      this.isPlaying = true
+    },
+    stopPreview() {
+      this.$accessor.player.stopPresetPreview()
+      this.isPlaying = false
     }
   }
 })
@@ -431,5 +456,16 @@ export default Vue.extend({
     width: 4px;
     border-radius: 2px;
   }
+}
+
+.play-area {
+  background-color: $-gray-900;
+  position: fixed;
+  bottom: 0px;
+  height: 81px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
