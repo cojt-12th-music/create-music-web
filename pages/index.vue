@@ -140,6 +140,7 @@ export default Vue.extend({
       .catch(function(error) {
         console.log(error)
       })
+    this.$accessor.music.setUserId(firebaseAuth().currentUser?.uid || '')
   },
   methods: {
     twitterLogin() {

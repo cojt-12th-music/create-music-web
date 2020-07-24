@@ -10,6 +10,8 @@ import { MELODY_BLOCKS, CHORD_BLOCKS, RHYTHM_BLOCKS } from '@/lib/presets'
 import { firestoreAccessor } from '@/plugins/firebase'
 
 export const state = (): Music => ({
+  id: '',
+  userId: '',
   title: '無題のタイトル',
   composer: '名無しの作曲者',
   bpm: 100,
@@ -33,8 +35,7 @@ export const state = (): Music => ({
     melody: MELODY_BLOCKS,
     chord: CHORD_BLOCKS,
     rhythm: RHYTHM_BLOCKS
-  },
-  id: ''
+  }
 })
 
 export type MusicState = ReturnType<typeof state>
@@ -247,6 +248,9 @@ export const mutations = mutationTree(state, {
   SET_COMPOSER(state: MusicState, input: string) {
     state.composer = input
   },
+  SET_USER_ID(state: MusicState, userId: string) {
+    state.userId = userId
+  },
   /**
    * 楽譜データをFirestoreからfetchしてstateにセットする
    * @param presetName セットするプリセット名
@@ -424,6 +428,9 @@ export const actions = actionTree(
     },
     setComposer({ commit }, Input: string) {
       commit('SET_COMPOSER', Input)
+    },
+    setUserId({ commit }, userId: string) {
+      commit('SET_USER_ID', userId)
     },
     /**
      * コードのプリセットをセットする
