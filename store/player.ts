@@ -1,3 +1,8 @@
+/**
+ * store/player.ts
+ * アプリ上の音源再生に関するstore
+ */
+import Vue from 'vue'
 import { mutationTree, actionTree } from 'typed-vuex'
 import { PlayerState, Instrument } from '~/types/player'
 import { ScorePart } from '~/types/music'
@@ -49,13 +54,13 @@ export const mutations = mutationTree(state, {
     state: PlayerState,
     previewPreset: { part: ScorePart | null; name: string | null }
   ) {
-    state.previewPreset = { ...previewPreset }
+    Vue.set(state, 'previewPreset', previewPreset)
   },
   SET_PREVIEW_UNITSOUND(
     state: PlayerState,
     previewUnitSound: { part: ScorePart | null; key: number | 0 }
   ) {
-    state.previewUnitSound = { ...previewUnitSound }
+    Vue.set(state, 'previewUnitSound', previewUnitSound)
   },
   SET_PLAYTIME(state: PlayerState, playtime: number) {
     state.playTime = playtime
@@ -67,7 +72,7 @@ export const mutations = mutationTree(state, {
     state: PlayerState,
     { part, isMute }: { part: ScorePart; isMute: boolean }
   ) {
-    state.isMute[part] = isMute
+    Vue.set(state.isMute, part, isMute)
   },
   UPDATE_KEY_RANGE(
     state: PlayerState,

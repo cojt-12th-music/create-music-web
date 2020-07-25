@@ -140,6 +140,11 @@ export default Vue.extend({
       .catch(function(error) {
         console.log(error)
       })
+    const userId = firebaseAuth().currentUser?.uid || ''
+
+    if (!this.$accessor.music.id || userId === this.$accessor.music.userId) {
+      this.editEnabled = true
+    }
   },
   methods: {
     twitterLogin() {
@@ -192,11 +197,13 @@ $operation-area-height: 10vh;
 
   .score-header-title {
     margin-bottom: 0.2rem;
+    -webkit-text-fill-color: $-gray-50;
     input {
       color: $-gray-50 !important;
     }
   }
   .score-header-creator {
+    -webkit-text-fill-color: $-gray-50;
     input {
       color: $-gray-100;
     }
@@ -206,13 +213,13 @@ $operation-area-height: 10vh;
     text-align: center;
 
     .mode-switch-label {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: bold;
       color: $-gray-100;
     }
 
     .mode-switch {
-      margin: 0 0 -1rem 0;
+      margin: 1rem 0 -1rem 0;
     }
   }
 }

@@ -48,8 +48,8 @@
       </div>
     </div>
 
-    <v-dialog v-model="showsBlockList" max-width="800">
-      <block-list :part="part" @closeDialog="closeDialog" />
+    <v-dialog v-model="showsBlockList" max-width="800" scrollable>
+      <block-list :part="part" @close-block-list="closeBlockList" />
     </v-dialog>
     <v-dialog
       v-if="part === 'melody'"
@@ -60,7 +60,7 @@
       <melody-modal
         v-if="currentBlock"
         :block-name="currentBlock.name"
-        @dialog="showsEditModal = $event"
+        @dialog="closeEditModal"
       />
     </v-dialog>
     <v-dialog
@@ -160,6 +160,14 @@ export default Vue.extend({
       }
     }
   },
+  watch: {
+    showsBlockList(value: boolean) {
+      if (!value) this.$accessor.player.stopPresetPreview()
+    },
+    showsEditModal(value: boolean) {
+      if (!value) this.$accessor.player.stopPresetPreview()
+    }
+  },
   methods: {
     showEditModal(block: Block) {
       // ブロックは編集前の状態を保持できるようdeep copyしておく
@@ -186,11 +194,16 @@ export default Vue.extend({
       })
     },
     // ブロックが渡された場合は編集モーダルを開く
-    closeDialog(block: Block | null = null) {
+    closeBlockList(block: Block | null = null) {
       this.showsBlockList = false
       if (block) {
         this.showEditModal(block)
       }
+    },
+    // ダイアログが閉じたときはプレビューを止める
+    onCloseDialog() {
+      console.log('on close')
+      this.$accessor.player.stopPresetPreview()
     },
     onChooseItem() {
       this.$emit('draggable-trash', this.part)
@@ -292,14 +305,6 @@ export default Vue.extend({
     color: $-primary-500;
   }
 }
-
-// .open-blocklist {
-//   margin-left: 1rem;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   transform: translateY(-0.5rem);
-// }
 
 @include pc {
 }
