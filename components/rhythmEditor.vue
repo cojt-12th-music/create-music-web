@@ -51,28 +51,12 @@ export default Vue.extend({
       })
       return newMusicalScore
     },
-    maxLength(): number {
-      // 各partにおけるdurationの合計の最大値 / 2 + 1 (追加ボタン分)
-      // TODO: fetch from store
-      return Math.floor(13 / 2) + 1
-    },
-    blocks: {
-      get(): Block[] {
-        return {
-          rhythm: this.$accessor.music.rhythmBlocks
-        }.rhythm
-      },
-      set(blocks: Block[]) {
-        const blockNames = blocks.map((block) => block.name)
-        this.$accessor.music.setBlockNames({ part: 'rhythm', blockNames })
-      }
-    },
     soundBlock(): Block {
       return this.$accessor.music.blocks.rhythm[this.blockName]
     }
   },
   methods: {
-    addscore(event: any) {
+    async addscore(event: any) {
       if (!this.$accessor.player.editEnabled) return
 
       console.log(event.clientX)
@@ -85,6 +69,13 @@ export default Vue.extend({
             delay: (event.clientX - 100) / 40,
             duration: 0.5
           }
+        })
+
+        this.$accessor.player.stopUnitSoundPreview()
+        await this.$nextTick()
+        this.$accessor.player.playUnitSoundPreview({
+          part: 'rhythm',
+          key: this.drumKey
         })
         this.$emit('edit-block')
       }

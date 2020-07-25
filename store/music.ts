@@ -3,12 +3,15 @@
  * ユーザが作成する楽譜に関するstore
  */
 
+import Vue from 'vue'
 import { getterTree, mutationTree, actionTree } from 'typed-vuex'
 import { Music, Block, Sound, ScorePart } from '@/types/music'
 import { MELODY_BLOCKS, CHORD_BLOCKS, RHYTHM_BLOCKS } from '@/lib/presets'
 import { firestoreAccessor } from '@/plugins/firebase'
 
 export const state = (): Music => ({
+  id: '',
+  userId: '',
   title: '無題のタイトル',
   composer: '名無しの作曲者',
   bpm: 100,
@@ -32,8 +35,7 @@ export const state = (): Music => ({
     melody: MELODY_BLOCKS,
     chord: CHORD_BLOCKS,
     rhythm: RHYTHM_BLOCKS
-  },
-  id: ''
+  }
 })
 
 export type MusicState = ReturnType<typeof state>
@@ -98,25 +100,15 @@ export const mutations = mutationTree(state, {
     state[part].blockNames.push(blockName)
   },
   /**
-   * ブロックをブロックリストに追加する
-   * @param block 追加するブロック
-   */
-  ADD_BLOCK_TO_LIST(
-    state: MusicState,
-    { part, block }: { part: ScorePart; block: Block }
-  ) {
-    state.blocks[part][block.name] = block
-  },
-  /**
    * ブロックを変更する
    * @param part 変更するブロックのパート
    * @param block 変更するブロック
    */
-  UPDATE_BLOCK(
+  UPDATE_BLOCK_LIST(
     state: MusicState,
     { part, block }: { part: ScorePart; block: Block }
   ) {
-    Object.assign(state.blocks[part], { [block.name]: block })
+    Vue.set(state.blocks[part], block.name, block)
   },
   /**
    * ブロックに新しいsoundを追加する
@@ -214,25 +206,26 @@ export const mutations = mutationTree(state, {
     state[part].blockNames.splice(0, blocksCount, ...blockNames)
   },
   /**
-   * リズムの音量を変更する
-   * @param rhythmGain セットするゲインの値
+   * 楽譜の音量を変更する
+   * @param part 音量を変更するパート
+   * @param gain セットするゲインの値
    */
-  SET_RHYTHM_GAIN(state: MusicState, rhythmGain: number) {
-    state.rhythm.gain = rhythmGain
+  SET_GAIN(
+    state: MusicState,
+    { part, gain }: { part: ScorePart; gain: number }
+  ) {
+    state[part].gain = gain
   },
   /**
-   * コードの音量を変更する
-   * @param chordGain セットするゲインの値
+   * 楽譜の楽器を変更する
+   * @param part 楽器を変更するパート
+   * @param inst セットする楽器名
    */
-  SET_CHORD_GAIN(state: MusicState, chordGain: number) {
-    state.chord.gain = chordGain
-  },
-  /**
-   * メロディの音量を変更する
-   * @param melodyGain セットするゲインの値
-   */
-  SET_MELODY_GAIN(state: MusicState, melodyGain: number) {
-    state.melody.gain = melodyGain
+  SET_INSTRUMENT(
+    state: MusicState,
+    { part, inst }: { part: ScorePart; inst: string }
+  ) {
+    state[part].instrument = inst
   },
   /**
    * BPMを変更する
@@ -242,31 +235,21 @@ export const mutations = mutationTree(state, {
     state.bpm = bpm
   },
   /**
-   * リズムの楽器を変更する
-   * @param rhythmInst セットする楽器名
+   * 楽曲名を変更する
+   * @param input セットする楽曲名
    */
-  SET_RHYTHM_INSTRUMENT(state: MusicState, rhythmInst: string) {
-    state.rhythm.instrument = rhythmInst
-  },
-  /**
-   * コードの楽器を変更する
-   * @param chordInst セットする楽器名
-   */
-  SET_CHORD_INSTRUMENT(state: MusicState, chordInst: string) {
-    state.chord.instrument = chordInst
-  },
-  /**
-   * メロディの楽器を変更する
-   * @param melodyInst セットする楽器名
-   */
-  SET_MELODY_INSTRUMENT(state: MusicState, melodyInst: string) {
-    state.melody.instrument = melodyInst
-  },
   SET_TITLE(state: MusicState, input: string) {
     state.title = input
   },
+  /**
+   * 作曲者を変更する
+   * @param input セットする作曲者名
+   */
   SET_COMPOSER(state: MusicState, input: string) {
     state.composer = input
+  },
+  SET_USER_ID(state: MusicState, userId: string) {
+    state.userId = userId
   },
   /**
    * 楽譜データをFirestoreからfetchしてstateにセットする
@@ -299,7 +282,17 @@ export const actions = actionTree(
       { commit },
       { part, block }: { part: ScorePart; block: Block }
     ) {
-      commit('ADD_BLOCK_TO_LIST', { part, block })
+      commit('UPDATE_BLOCK_LIST', { part, block })
+    },
+    /**
+     * ブロックを変更する
+     * @param block 変更するブロック
+     */
+    updateBlock(
+      { commit },
+      { part, block }: { part: ScorePart; block: Block }
+    ) {
+      commit('UPDATE_BLOCK_LIST', { part, block })
     },
     /**
      * 初期ブロックを作成する
@@ -311,27 +304,17 @@ export const actions = actionTree(
         name: '無題',
         category: 'マイブロック',
         sounds: new Array<Sound>(0),
-        duration: 0,
+        duration: 4,
         isOriginal: true
       }
       // もしhoge'が存在しているならhoge''を見る, これを存在しないところまで繰り返す
       while (state.blocks[part][block.name]) {
         block.name = `${block.name}'`
       }
-      commit('ADD_BLOCK_TO_LIST', { part, block })
+      commit('UPDATE_BLOCK_LIST', { part, block })
       commit('CLONE_BLOCK', { part, blockName: block.name })
 
       return block
-    },
-    /**
-     * ブロックを変更する
-     * @param block 変更するブロック
-     */
-    updateBlock(
-      { commit },
-      { part, block }: { part: ScorePart; block: Block }
-    ) {
-      commit('UPDATE_BLOCK', { part, block })
     },
     /**
      * blockをディープコピーし, 新たなblockを追加する
@@ -352,7 +335,7 @@ export const actions = actionTree(
       block.category = 'マイブロック'
       block.isOriginal = true
       // コピー後のブロックをリストに追加する
-      commit('ADD_BLOCK_TO_LIST', { part, block })
+      commit('UPDATE_BLOCK_LIST', { part, block })
 
       // コピー前のブロック名をコピー後のものに置き換える
       const blockNames = state[part].blockNames.map((name: string) =>
@@ -420,25 +403,18 @@ export const actions = actionTree(
       commit('SET_BLOCK_NAMES', { part, blockNames })
     },
     /**
-     * リズムの音量を変更する
-     * @param rhythmGain セットするゲインの値
+     * 楽譜の音量を変更する
+     * @param gain セットするゲインの値
      */
-    setRhythmGain({ commit }, rhythmGain: number) {
-      commit('SET_RHYTHM_GAIN', rhythmGain)
+    setGain({ commit }, param: { part: ScorePart; gain: number }) {
+      commit('SET_GAIN', param)
     },
     /**
-     * コードの音量を変更する
-     * @param chordGain セットするゲインの値
+     * メロディの楽器を変更する
+     * @param inst セットする楽器名
      */
-    setChordGain({ commit }, chordGain: number) {
-      commit('SET_CHORD_GAIN', chordGain)
-    },
-    /**
-     * メロディの音量を変更する
-     * @param melodyGain セットするゲインの値
-     */
-    setMelodyGain({ commit }, melodyGain: number) {
-      commit('SET_MELODY_GAIN', melodyGain)
+    setInstrument({ commit }, param: { part: ScorePart; inst: string }) {
+      commit('SET_INSTRUMENT', param)
     },
     /**
      * BPMを変更する
@@ -447,52 +423,25 @@ export const actions = actionTree(
     setBpm({ commit }, bpm: number) {
       commit('SET_BPM', bpm)
     },
-    /**
-     * リズムの楽器を変更する
-     * @param rhythmInst セットする楽器名
-     */
-    setRhythmInstrument({ commit }, rhythmInst: string) {
-      commit('SET_RHYTHM_INSTRUMENT', rhythmInst)
-    },
-    /**
-     * コードの楽器を変更する
-     * @param chordInst セットする楽器名
-     */
-    setChordInstrument({ commit }, chordInst: string) {
-      commit('SET_CHORD_INSTRUMENT', chordInst)
-    },
-    /**
-     * メロディの楽器を変更する
-     * @param melodyInst セットする楽器名
-     */
-    setMelodyInstrument({ commit }, MelodyInst: string) {
-      commit('SET_MELODY_INSTRUMENT', MelodyInst)
-    },
     setTitle({ commit }, Input: string) {
       commit('SET_TITLE', Input)
     },
     setComposer({ commit }, Input: string) {
       commit('SET_COMPOSER', Input)
     },
+    setUserId({ commit }, userId: string) {
+      commit('SET_USER_ID', userId)
+    },
     /**
-     * コードのプリセットをセットする
-     * @param presetName セットするプリセット名
+     * 楽譜をFirestoreに登録する
      */
-    addScore({ commit, state }) {
-      const data = { ...state }
-      // blocksはデカいのでとりあえず全て除外
-      // TODO: 初期のプリセットのみ除外するように
-      /**
-      data.blocks = {
-        rhythm: {},
-        chord: {},
-        melody: {}
-      }
-      */
-
-      firestoreAccessor.scores
-        .create(data)
+    async addScore({ commit, state }) {
+      await firestoreAccessor.scores
+        .create({ ...state })
         .then((score) => commit('SET_SCORE', score))
+    },
+    updateScore({ state }) {
+      firestoreAccessor.scores.update(state.id, { ...state })
     }
   }
 )
