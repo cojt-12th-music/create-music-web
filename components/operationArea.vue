@@ -335,7 +335,11 @@ export default Vue.extend({
     // 各パートの楽器を初期化
     init() {
       this.isLoading = true
-      this.$accessor.player.setContext(new AudioContext())
+      // @ts-ignore
+      const Ctx = (window.webkitAudioContext || window.AudioContext) as {
+        new (contextOptions?: AudioContextOptions | undefined): AudioContext
+      }
+      this.$accessor.player.setContext(new Ctx())
 
       // 各パートの楽器を初期化
       this.$accessor.music.setInstrument({

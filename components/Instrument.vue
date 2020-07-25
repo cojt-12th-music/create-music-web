@@ -179,20 +179,18 @@ export default Vue.extend({
 
           return Promise.all(
             Object.keys(sfz.samples).map((key) =>
-              this.context
-                .decodeAudioData(
-                  this.base64ToArrayBuffer(sfz.samples[key].data)
-                )
-                .then((buf) => {
-                  const offsetInSamples = buf
-                    .getChannelData(0)
-                    .findIndex((f) => f !== 0)
+              this.decodeAudioData(
+                this.base64ToArrayBuffer(sfz.samples[key].data)
+              ).then((buf) => {
+                const offsetInSamples = buf
+                  .getChannelData(0)
+                  .findIndex((f) => f !== 0)
 
-                  this.samples[key] = {
-                    data: buf,
-                    offset: offsetInSamples / 44100 - sfz.samples[key].offset
-                  }
-                })
+                this.samples[key] = {
+                  data: buf,
+                  offset: offsetInSamples / 44100 - sfz.samples[key].offset
+                }
+              })
             )
           )
         })
@@ -207,11 +205,11 @@ export default Vue.extend({
       await fetch(this.reverbPath)
         .then((res) => res.text())
         .then((b64) => {
-          this.context
-            .decodeAudioData(this.base64ToArrayBuffer(b64))
-            .then((audioBuffer) => {
+          this.decodeAudioData(this.base64ToArrayBuffer(b64)).then(
+            (audioBuffer) => {
               this.reverbNode.buffer = audioBuffer
-            })
+            }
+          )
         })
         .then(() => {
           this.$emit('update:isReady', true)
@@ -474,6 +472,11 @@ export default Vue.extend({
         }
       }
       return Base64Binary.decodeArrayBuffer(base64)
+    },
+    decodeAudioData(buf: ArrayBuffer): Promise<AudioBuffer> {
+      return new Promise((resolve, reject) => {
+        this.context.decodeAudioData(buf, resolve, reject)
+      })
     }
   }
 })
