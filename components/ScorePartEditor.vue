@@ -1,7 +1,7 @@
 <template>
   <div class="score-part-container">
     <div class="column-title">
-      <div class="part-title-container" @click="isMute = !isMute">
+      <div class="part-title-container" @click="switchMute">
         <v-icon large class="icon" :class="{ disabled: isMute }">{{
           partIcon
         }}</v-icon>
@@ -42,11 +42,7 @@
       </draggable>
 
       <div class="button-wrapper">
-        <v-icon
-          x-large
-          class="dialog-button"
-          @click.stop="showsBlockList = true"
-        >
+        <v-icon x-large class="dialog-button" @click.stop="openBlockList">
           mdi-plus-circle-outline
         </v-icon>
       </div>
@@ -179,6 +175,18 @@ export default Vue.extend({
     }
   },
   methods: {
+    switchMute() {
+      // 再生中のときはしれっと無視する
+      if (!this.isPlaying) {
+        this.isMute = !this.isMute
+      }
+    },
+    openBlockList() {
+      // 再生中のときはしれっと無視する
+      if (!this.isPlaying) {
+        this.showsBlockList = true
+      }
+    },
     showEditModal(block: Block) {
       // ブロックは編集前の状態を保持できるようdeep copyしておく
       this.currentBlock = JSON.parse(JSON.stringify(block))
