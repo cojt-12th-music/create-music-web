@@ -83,9 +83,6 @@ export default Vue.extend({
     if (!firebaseAuth().currentUser) {
       await firebaseAuth()
         .signInAnonymously()
-        .then((cred) => {
-          console.log(cred.user?.uid)
-        })
         .catch((error) => {
           // Handle Errors here.
           console.log('anonymous error.')
@@ -146,6 +143,7 @@ export default Vue.extend({
 
     const userId = firebaseAuth().currentUser?.uid || ''
 
+    this.$accessor.player.setUserId(userId)
     if (!this.$accessor.music.id || userId === this.$accessor.music.userId) {
       this.editEnabled = true
     }

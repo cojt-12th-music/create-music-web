@@ -8,6 +8,7 @@ import { PlayerState, Instrument } from '~/types/player'
 import { ScorePart } from '~/types/music'
 
 export const state = (): PlayerState => ({
+  userId: '',
   context: null,
   isPlaying: false,
   isReady: false,
@@ -32,6 +33,9 @@ export const state = (): PlayerState => ({
 })
 
 export const mutations = mutationTree(state, {
+  SET_USER_ID(state: PlayerState, userId: string) {
+    state.userId = userId
+  },
   SET_CONTEXT(state: PlayerState, ctx: AudioContext) {
     state.context = ctx
   },
@@ -89,6 +93,9 @@ export const mutations = mutationTree(state, {
 export const actions = actionTree(
   { state, mutations },
   {
+    setUserId({ commit }, userId: string) {
+      commit('SET_USER_ID', userId)
+    },
     setContext({ commit }, ctx: AudioContext) {
       commit('SET_CONTEXT', ctx)
     },

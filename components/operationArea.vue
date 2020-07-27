@@ -215,7 +215,6 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { firebaseAuth } from '@/plugins/firebase'
 
 type DataType = {
   // 初めのinitモーダル
@@ -328,11 +327,10 @@ export default Vue.extend({
     async share() {
       this.uploading = true
       // 楽譜がFirestoreに保存されており, userIdが自身と一致する場合はupdate
-      const userId = firebaseAuth().currentUser?.uid || ''
+      const userId = this.$accessor.player.userId
       if (this.$accessor.music.id && userId === this.$accessor.music.userId) {
         await this.$accessor.music.updateScore()
       } else {
-        this.$accessor.music.setUserId(userId)
         await this.$accessor.music.addScore()
       }
 
