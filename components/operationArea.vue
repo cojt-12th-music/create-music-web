@@ -432,11 +432,20 @@ export default Vue.extend({
       ])
     },
     setHighlightTimes(part: ScorePart): Promise<void> {
+      const offset = this.$accessor.player.playTime
+
       // ブロックの累積のdurationを取得し, そこから再生終了時間を割り出してパラメータを変えている
       return Promise.resolve(
         this.$accessor.music
           .durationAccumurations(part)
           .forEach((duration, index) => {
+            if (duration <= offset) {
+              this.$accessor.player.setHighlightedBlockIndex({
+                part,
+                index: index + 1
+              })
+              return
+            }
             this.highlightTimeouts.push(
               setTimeout(
                 () =>
@@ -444,7 +453,7 @@ export default Vue.extend({
                     part,
                     index: index + 1
                   }),
-                ((duration * 60) / this.$accessor.music.bpm) * 1000
+                (((duration - offset) * 60) / this.$accessor.music.bpm) * 1000
               )
             )
           })
