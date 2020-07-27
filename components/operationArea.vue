@@ -23,7 +23,6 @@
         </v-col>
         <v-col align-self="center">
           <div class="iconRight">
-
             <v-btn icon @click="share">
               <v-icon size="300%" color="#F96500">
                 mdi-share-variant
@@ -317,8 +316,10 @@ export default Vue.extend({
       this.$accessor.player.play()
       this.setId = setTimeout(
         this.stop,
-        ((this.$accessor.music.maxDuration * 60) / this.$accessor.music.bpm +
-          1) *
+        (((this.$accessor.music.maxDuration - this.$accessor.player.playTime) *
+          60) /
+          this.$accessor.music.bpm +
+          2) *
           1000
       )
     },
