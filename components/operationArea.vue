@@ -205,6 +205,11 @@
         </div>
       </v-card>
     </v-dialog>
+
+    <v-overlay :value="uploading" class="loading-overlay">
+      <p class="uploading">アップロード中</p>
+      <v-progress-circular indeterminate size="48"></v-progress-circular>
+    </v-overlay>
   </div>
 </template>
 
@@ -215,6 +220,7 @@ import { firebaseAuth } from '@/plugins/firebase'
 type DataType = {
   // 初めのinitモーダル
   isLoading: boolean
+  uploading: boolean
   // ナビゲーションドロワーの展開用
   configDialog: boolean
   // リズムの楽器選択用
@@ -235,6 +241,7 @@ export default Vue.extend({
   data(): DataType {
     return {
       isLoading: false,
+      uploading: false,
       configDialog: false,
       rhythmInstruments: ['ドラム', 'パーカッション'],
       selectedRhythmInst: 'ドラム',
@@ -319,6 +326,7 @@ export default Vue.extend({
     },
     // シェアボタンの動作
     async share() {
+      this.uploading = true
       // 楽譜がFirestoreに保存されており, userIdが自身と一致する場合はupdate
       const userId = firebaseAuth().currentUser?.uid || ''
       if (this.$accessor.music.id && userId === this.$accessor.music.userId) {
@@ -327,6 +335,9 @@ export default Vue.extend({
         this.$accessor.music.setUserId(userId)
         await this.$accessor.music.addScore()
       }
+
+      this.uploading = false
+
       const scoreUrl = `${location.origin}/ogp/?id=${this.$accessor.music.id}`
       const text = '音楽を作ってみました♪'
       location.href = `https://twitter.com/intent/tweet?url=${scoreUrl}&text=${text}`
@@ -410,5 +421,13 @@ div.iconRight {
 }
 div.textColoring {
   color: #f0f0f0;
+}
+
+.loading-overlay {
+  text-align: center;
+
+  p.uploading {
+    font-weight: bold;
+  }
 }
 </style>

@@ -81,8 +81,11 @@ export default Vue.extend({
   },
   async fetch({ route, store }: Context) {
     if (!firebaseAuth().currentUser) {
-      firebaseAuth()
+      await firebaseAuth()
         .signInAnonymously()
+        .then((cred) => {
+          console.log(cred.user?.uid)
+        })
         .catch((error) => {
           // Handle Errors here.
           console.log('anonymous error.')
@@ -140,6 +143,7 @@ export default Vue.extend({
       .catch(function(error) {
         console.log(error)
       })
+
     const userId = firebaseAuth().currentUser?.uid || ''
 
     if (!this.$accessor.music.id || userId === this.$accessor.music.userId) {
