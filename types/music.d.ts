@@ -23,12 +23,14 @@ export interface Sound {
  * Block: ブロックに関するデータ型. 編集画面のブロックの部分である.
  * name: ブロックのラベル (Firestoreにおける主キー)
  * category: ブロックのカテゴリ
+ * isOriginal: ブロックがユーザが作成したものか
  * sounds: ブロックの構成する音
  * duration: ブロックを再生するのにかかる時間
  */
 export interface Block {
   name: string
   category: string
+  isOriginal?: boolean
   sounds: Sound[]
   duration: number
 }
@@ -46,11 +48,6 @@ interface BlockHash {
 export interface Preset {
   name: string
   blockNames: string[]
-}
-
-// プリセットのnameをキーとするオブジェクト
-interface PresetHash {
-  [presetName: string]: Preset
 }
 
 /**
@@ -99,7 +96,8 @@ export type ScorePart = 'rhythm' | 'chord' | 'melody'
  * blocks: melody, chord, rhytmそれぞれのブロック
  */
 export interface Music {
-  id?: string
+  id: string
+  userId: string
   title: string
   composer: string
   bpm: number

@@ -5,7 +5,11 @@ import { parseMIDI } from './parser'
 
 const listPartMidi = async (part: ScorePart) => {
   const res: { [key: string]: string[] } = {}
-  const categories = await fs.readdir(path.resolve('lib/presets/midi', part))
+  const categories = (
+    await fs.readdir(path.resolve('lib/presets/midi', part))
+  ).filter((f) =>
+    fs.statSync(path.resolve('lib/presets/midi', part, f)).isDirectory()
+  )
   await Promise.all(
     categories.map(async (c) => {
       res[c] = await (

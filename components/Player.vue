@@ -10,9 +10,10 @@
           :bpm="bpm"
           :is-playing="isMelodyPlaying"
           :is-ready.sync="isMelodyReady"
-          :gain-value="gainValue"
+          :gain-value="melodyGain"
           :reverb-path="null"
           :unit-sound-preview="melodyUnitSoundKey"
+          @on-key-range-detected="onMelodyKeyRangeDetected"
         />
         <instrument
           :sfz-path="chordInstrument"
@@ -22,8 +23,9 @@
           :bpm="bpm"
           :is-playing="isChordPlaying"
           :is-ready.sync="isChordReady"
-          :gain-value="gainValue"
+          :gain-value="chordGain"
           :unit-sound-preview="chordUnitSoundKey"
+          @on-key-range-detected="onChordKeyRangeDetected"
         />
         <instrument
           :sfz-path="rhythmInstrument"
@@ -33,14 +35,18 @@
           :bpm="bpm"
           :is-playing="isRhythmPlaying"
           :is-ready.sync="isRhythmReady"
-          :gain-value="gainValue"
+          :gain-value="rhythmGain"
           :unit-sound-preview="rhythmUnitSoundKey"
+          @on-key-range-detected="onRhythmKeyRangeDetected"
         />
       </v-col>
     </v-row>
     <v-btn @click="test">test</v-btn>
     <v-btn @click="testUnit">testUnit</v-btn>
+    <p>単音</p>
     <v-select v-model="unitKey" :items="keys"> </v-select>
+    <p>小節</p>
+    <v-select v-model="measure" :items="measures"> </v-select>
     <v-slider
       v-model="gainValue"
       ticks
@@ -69,6 +75,8 @@ type DataType = {
   rhythmUnitSoundKey: number
   unitKey: number // デバッグ用
   keys: number[] // デバッグ用
+  measure: number // デバッグ用
+  measures: number[] // デバッグ用
 }
 export default Vue.extend({
   components: {
@@ -97,7 +105,9 @@ export default Vue.extend({
       chordUnitSoundKey: 0,
       rhythmUnitSoundKey: 0,
       unitKey: 0,
-      keys: [48, 60, 64, 67, 72]
+      keys: [48, 60, 64, 67, 72],
+      measure: 0,
+      measures: [1, 2, 3]
     }
   },
   computed: {
@@ -113,6 +123,11 @@ export default Vue.extend({
         if (targetTemplate) return this.flatBlock([targetTemplate])
         else return []
       }
+
+      if (this.$accessor.player.isMute.melody) {
+        return []
+      }
+
       return this.flatBlock(this.$accessor.music.melodyBlocks)
     },
     chordNotes(): Sound[] {
@@ -124,6 +139,11 @@ export default Vue.extend({
         if (targetTemplate) return this.flatBlock([targetTemplate])
         else return []
       }
+
+      if (this.$accessor.player.isMute.chord) {
+        return []
+      }
+
       return this.flatBlock(this.$accessor.music.chordBlocks)
     },
     rhythmNotes(): Sound[] {
@@ -135,6 +155,11 @@ export default Vue.extend({
         if (targetTemplate) return this.flatBlock([targetTemplate])
         else return []
       }
+
+      if (this.$accessor.player.isMute.rhythm) {
+        return []
+      }
+
       return this.flatBlock(this.$accessor.music.rhythmBlocks)
     },
     bpm(): number {
@@ -169,6 +194,15 @@ export default Vue.extend({
     },
     rhythmInstrument(): string {
       return this.$accessor.music.rhythmInstrument
+    },
+    melodyGain(): Number {
+      return this.$accessor.music.melody.gain
+    },
+    chordGain(): Number {
+      return this.$accessor.music.chord.gain
+    },
+    rhythmGain(): Number {
+      return this.$accessor.music.rhythm.gain
     }
   },
   watch: {
@@ -205,17 +239,26 @@ export default Vue.extend({
   mounted() {
     fetch('/instruments/instruments.json')
       .then((res) => res.json())
-      .then((res) => {
-        this.$accessor.player.setInstruments(res)
-        this.$accessor.music.setMelodyInstrument(
-          this.$accessor.player.instruments[1].path
+      .then((res: { name: string; path: string }[]) => {
+        this.$accessor.player.setInstruments(
+          res.map((i) => ({
+            hiKey: 100,
+            loKey: 0,
+            ...i
+          }))
         )
-        this.$accessor.music.setChordInstrument(
-          this.$accessor.player.instruments[2].path
-        )
-        this.$accessor.music.setRhythmInstrument(
-          this.$accessor.player.instruments[0].path
-        )
+        this.$accessor.music.setInstrument({
+          part: 'melody',
+          inst: this.$accessor.player.instruments[1].path
+        })
+        this.$accessor.music.setInstrument({
+          part: 'chord',
+          inst: this.$accessor.player.instruments[2].path
+        })
+        this.$accessor.music.setInstrument({
+          part: 'rhythm',
+          inst: this.$accessor.player.instruments[0].path
+        })
       })
     fetch('/reverbs/reverbs.json')
       .then((res) => res.json())
@@ -229,12 +272,17 @@ export default Vue.extend({
       return block
         .map((block) => {
           // 各soundsのdelayに今までのブロックのdurationを足した
-          const sounds = block.sounds.map(({ delay, ...e }) => {
+          const filter = block.sounds.filter(({ delay }) => {
+            return delay + allDelay >= this.$accessor.player.playTime
+          })
+
+          const sounds = filter.map(({ delay, ...e }) => {
             return {
-              delay: delay + allDelay,
+              delay: delay + allDelay - this.$accessor.player.playTime,
               ...e
             }
           })
+
           allDelay += block.duration
           return sounds
         })
@@ -246,6 +294,7 @@ export default Vue.extend({
       )
     },
     async test() {
+      this.$accessor.player.setPlayTime(this.measure)
       this.$accessor.player.stopPresetPreview()
       await this.$nextTick()
       this.$accessor.player.playPresetPreview({
@@ -257,6 +306,24 @@ export default Vue.extend({
       this.$accessor.player.playUnitSoundPreview({
         part: 'melody',
         key: this.unitKey
+      })
+    },
+    onMelodyKeyRangeDetected(e: { hiKey: number; loKey: number }) {
+      this.$accessor.player.updateKeyRange({
+        ...e,
+        path: this.melodyInstrument
+      })
+    },
+    onChordKeyRangeDetected(e: { hiKey: number; loKey: number }) {
+      this.$accessor.player.updateKeyRange({
+        ...e,
+        path: this.chordInstrument
+      })
+    },
+    onRhythmKeyRangeDetected(e: { hiKey: number; loKey: number }) {
+      this.$accessor.player.updateKeyRange({
+        ...e,
+        path: this.rhythmInstrument
       })
     }
   }

@@ -10,12 +10,12 @@
         <v-col align-self="center">
           <div class="iconCenter">
             <div v-if="isPlaying">
-              <v-btn :disabled="!isReady" icon @click="stop">
+              <v-btn :disabled="isNotReady" icon @click="stop">
                 <v-icon size="400%" color="#F96500">mdi-stop</v-icon>
               </v-btn>
             </div>
             <div v-else>
-              <v-btn :disabled="!isReady" icon @click="play">
+              <v-btn :disabled="isNotReady" icon @click="play">
                 <v-icon size="400%" color="#F96500">mdi-play</v-icon>
               </v-btn>
             </div>
@@ -183,24 +183,33 @@
           </v-list-item>
           <v-list-item>
             <v-select
-              v-model="selectedColorThema"
-              :items="colorThema"
+              v-model="selectedColorTheme"
+              :items="colorTheme"
               label="色のテーマ"
               dark
-              @change="selectColorThema"
+              @change="selectColorTheme"
             ></v-select>
           </v-list-item>
         </v-list>
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="initialized" persistent>
+    <v-dialog v-model="isNotReady" persistent>
       <v-card color="#0A0A0A">
         <v-card-title class="justify-center">
           <div class="textColoring">音楽を作ってみましょう♪</div>
         </v-card-title>
-        <div class="iconCenter pa-2">
-          <v-btn @click="init">始める！</v-btn>
+        <div v-if="isLoading" style="text-align: center;">
+          <v-progress-circular
+            indeterminate
+            color="white"
+            class="ma-2"
+          ></v-progress-circular>
+        </div>
+        <div v-else>
+          <div class="iconCenter pa-2">
+            <v-btn @click="init">始める！</v-btn>
+          </div>
         </div>
       </v-card>
     </v-dialog>
@@ -209,10 +218,11 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { firebaseAuth } from '@/plugins/firebase'
 
 type DataType = {
   // 初めのinitモーダル
-  initialized: boolean
+  isLoading: boolean
   // ナビゲーションドロワーの展開用
   configDialog: boolean
   // リズムの楽器選択用
@@ -225,59 +235,81 @@ type DataType = {
   melodyInstruments: string[]
   selectedMelodyInst: string
   // 色のテーマ用
-  colorThema: string[]
-  selectedColorThema: string
-  // bpmの選択用
-  bpm: number
-  // 音のバランス
-  rhythmVolume: number
-  chordVolume: number
-  melodyVolume: number
+  colorTheme: string[]
+  selectedColorTheme: string
 }
 
 export default Vue.extend({
   data(): DataType {
     return {
-      initialized: true,
+      isLoading: false,
       configDialog: false,
-      rhythmInstruments: ['ドラム'],
+      rhythmInstruments: ['ドラム', 'パーカッション'],
       selectedRhythmInst: 'ドラム',
-      chordInstruments: ['エレキ', 'ギター', 'ピアノ'],
+      chordInstruments: [
+        'エレキ',
+        'ギター',
+        'ピアノ',
+        'オルガン',
+        'クラリネット',
+        'シンセベース',
+        '木琴',
+        'ハープ'
+      ],
       selectedChordInst: 'ギター',
-      melodyInstruments: ['エレキ', 'ギター', 'ピアノ'],
+      melodyInstruments: [
+        'エレキ',
+        'ギター',
+        'ピアノ',
+        'オルガン',
+        'クラリネット',
+        'シンセベース',
+        '木琴',
+        'ハープ'
+      ],
       selectedMelodyInst: 'ピアノ',
-      colorThema: ['ダークモード', 'ライトモード'],
-      selectedColorThema: 'ダークモード',
-      bpm: 100,
-      rhythmVolume: 80,
-      chordVolume: 80,
-      melodyVolume: 80
+      colorTheme: ['ダークモード', 'ライトモード'],
+      selectedColorTheme: 'ダークモード'
     }
   },
   computed: {
     isPlaying() {
       return this.$accessor.player.isPlaying
     },
-    isReady() {
-      return this.$accessor.player.isReady
-    }
-  },
-  watch: {
-    // BPMの値が変更されたとき
-    bpm() {
-      this.bpmChanged()
+    isNotReady() {
+      return !this.$accessor.player.isReady
     },
-    // リズムの音量値が変更されたとき
-    rhythmVolume() {
-      this.rhythmVolumeChanged()
+    rhythmVolume: {
+      get(): number {
+        return this.$accessor.music.rhythm.gain * 80
+      },
+      set(volume: number) {
+        this.$accessor.music.setGain({ part: 'rhythm', gain: volume / 80 })
+      }
     },
-    // コードの音量値が変更されたとき
-    chordVolume() {
-      this.chordVolumeChanged()
+    chordVolume: {
+      get(): number {
+        return this.$accessor.music.chord.gain * 80
+      },
+      set(volume: number) {
+        this.$accessor.music.setGain({ part: 'chord', gain: volume / 80 })
+      }
     },
-    // メロディの音量値が変更されたとき
-    melodyVolume() {
-      this.melodhyVolumeChanged()
+    melodyVolume: {
+      get(): number {
+        return this.$accessor.music.melody.gain * 80
+      },
+      set(volume: number) {
+        this.$accessor.music.setGain({ part: 'melody', gain: volume / 80 })
+      }
+    },
+    bpm: {
+      get(): number {
+        return this.$accessor.music.bpm
+      },
+      set(bpm: number) {
+        this.$accessor.music.setBpm(bpm)
+      }
     }
   },
   methods: {
@@ -294,31 +326,45 @@ export default Vue.extend({
       this.configDialog = true
     },
     // シェアボタンの動作
-    // twitterシェアのURLを取得
-    share() {
-      // const shareTag = <HTMLAnchorElement>document.getElementById("shareTag")
-      // const shareURL =
-      //   'https://twitter.com/intent/tweet?url=' +
-      //   location.href +
-      //   '&text=音楽を作ってみました♪'
-      // shareTag.href=shareURL
+    async share() {
+      // 楽譜がFirestoreに保存されており, userIdが自身と一致する場合はupdate
+      const userId = firebaseAuth().currentUser?.uid || ''
+      if (this.$accessor.music.id && userId === this.$accessor.music.userId) {
+        await this.$accessor.music.updateScore()
+      } else {
+        this.$accessor.music.setUserId(userId)
+        await this.$accessor.music.addScore()
+      }
+      const scoreUrl = `${location.origin}/ogp/?id=${this.$accessor.music.id}`
+      const text = '音楽を作ってみました♪'
+      location.href = `https://twitter.com/intent/tweet?url=${scoreUrl}&text=${text}`
     },
     // 初めの初期化（コンテキスト生成）
     // 各パートの楽器を初期化
     init() {
-      this.initialized = false
-      this.$accessor.player.setContext(new AudioContext())
+      this.isLoading = true
+      // @ts-ignore
+      const Ctx = (window.webkitAudioContext || window.AudioContext) as {
+        new (contextOptions?: AudioContextOptions | undefined): AudioContext
+      }
+      this.$accessor.player.setContext(new Ctx())
 
       // 各パートの楽器を初期化
-      this.$accessor.music.setRhythmInstrument(
-        'instruments/ColomboADK-FreePats-SFZ-20200530/ColomboADK-FreePats-20200530.jsfz'
-      )
-      this.$accessor.music.setMelodyInstrument(
-        'instruments/UprightPianoKW-SFZ-20190703/UprightPianoKW-20190703.jsfz'
-      )
-      this.$accessor.music.setChordInstrument(
-        'instruments/SpanishClassicalGuitar-SFZ-20190618/SpanishClassicalGuitar-20190618.jsfz'
-      )
+      this.$accessor.music.setInstrument({
+        part: 'rhythm',
+        inst:
+          'instruments/ColomboADK-FreePats-SFZ-20200530/ColomboADK-FreePats-20200530.jsfz'
+      })
+      this.$accessor.music.setInstrument({
+        part: 'chord',
+        inst:
+          'instruments/SpanishClassicalGuitar-SFZ-20190618/SpanishClassicalGuitar-20190618.jsfz'
+      })
+      this.$accessor.music.setInstrument({
+        part: 'melody',
+        inst:
+          'instruments/UprightPianoKW-SFZ-20190703/UprightPianoKW-20190703.jsfz'
+      })
     },
     // 楽器名から音ファイルのパスを返す
     nameToPath(instrumentName: string) {
@@ -337,41 +383,22 @@ export default Vue.extend({
     async selectRhythmInst() {
       const path: string = await this.nameToPath(this.selectedRhythmInst)
 
-      this.$accessor.music.setRhythmInstrument(path)
+      this.$accessor.music.setInstrument({ part: 'rhythm', inst: path })
     },
     // コードの楽器選択
     async selectChordInst() {
       const path: string = await this.nameToPath(this.selectedChordInst)
 
-      this.$accessor.music.setChordInstrument(path)
+      this.$accessor.music.setInstrument({ part: 'chord', inst: path })
     },
     // メロディの楽器選択
     async selectMelodyInst() {
       const path: string = await this.nameToPath(this.selectedMelodyInst)
 
-      this.$accessor.music.setMelodyInstrument(path)
+      this.$accessor.music.setInstrument({ part: 'melody', inst: path })
     },
     // カラーモード選択
-    selectColorThema() {},
-    // BPM変更時
-    bpmChanged() {
-      this.$accessor.music.setBpm(this.bpm)
-    },
-    // リズムの音量変更時
-    rhythmVolumeChanged() {
-      this.$accessor.music.setRhythmGain(this.rhythmVolume / 80)
-    },
-    // コードの音量変更時
-    chordVolumeChanged() {
-      this.$accessor.music.setChordGain(this.chordVolume / 80)
-    },
-    // メロディの音量変更時
-    melodhyVolumeChanged() {
-      this.$accessor.music.setMelodyGain(this.melodyVolume / 80)
-    },
-    upload() {
-      this.$accessor.music.addScore()
-    }
+    selectColorTheme() {}
   }
 })
 </script>

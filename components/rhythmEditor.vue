@@ -3,7 +3,7 @@
     <div class="column-title">
       <div class="part-title-container">
         <v-icon large class="icon">fa-drum</v-icon>
-        <div class="part-title">Key:{{ drumKey }}</div>
+        <div class="part-title">{{ inst }}</div>
       </div>
     </div>
 
@@ -28,6 +28,10 @@ export default Vue.extend({
       type: Number,
       required: true
     },
+    inst: {
+      type: String,
+      required: true
+    },
     blockName: {
       required: true,
       type: String
@@ -47,28 +51,14 @@ export default Vue.extend({
       })
       return newMusicalScore
     },
-    maxLength(): number {
-      // 各partにおけるdurationの合計の最大値 / 2 + 1 (追加ボタン分)
-      // TODO: fetch from store
-      return Math.floor(13 / 2) + 1
-    },
-    blocks: {
-      get(): Block[] {
-        return {
-          rhythm: this.$accessor.music.rhythmBlocks
-        }.rhythm
-      },
-      set(blocks: Block[]) {
-        const blockNames = blocks.map((block) => block.name)
-        this.$accessor.music.setBlockNames({ part: 'rhythm', blockNames })
-      }
-    },
     soundBlock(): Block {
       return this.$accessor.music.blocks.rhythm[this.blockName]
     }
   },
   methods: {
-    addscore(event: any) {
+    async addscore(event: any) {
+      if (!this.$accessor.player.editEnabled) return
+
       console.log(event.clientX)
       if (event.clientX > 100) {
         this.$accessor.music.addSound({
@@ -80,15 +70,26 @@ export default Vue.extend({
             duration: 0.5
           }
         })
+
+        this.$accessor.player.stopUnitSoundPreview()
+        await this.$nextTick()
+        this.$accessor.player.playUnitSoundPreview({
+          part: 'rhythm',
+          key: this.drumKey
+        })
+        this.$emit('edit-block')
       }
     },
     deletescore(soundId: number) {
+      if (!this.$accessor.player.editEnabled) return
+
       console.log('deleteSoundId:' + soundId)
       this.$accessor.music.deleteSound({
         part: 'rhythm',
         blockName: this.blockName,
         soundId
       })
+      this.$emit('edit-block')
     }
   }
 })

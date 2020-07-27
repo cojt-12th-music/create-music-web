@@ -1,9 +1,9 @@
 <template>
   <div id="melody-modal">
     <v-app-bar extension-height="64px" dark>
-      <v-toolbar-title>メロディ編集</v-toolbar-title>
+      <v-toolbar-title>{{ blockName }}</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn icon @click="$emit('dialog', false)">
+      <v-btn icon @click="$emit('dialog', isEdited)">
         <v-icon>mdi-close</v-icon>
       </v-btn>
       <template v-slot:extension>
@@ -48,6 +48,19 @@
         />
       </div>
     </div>
+
+    <div class="play-area">
+      <div v-if="isPlaying">
+        <v-btn icon dark @click="stopPreview()">
+          <v-icon size="350%" color="#F96500">mdi-stop</v-icon>
+        </v-btn>
+      </div>
+      <div v-else>
+        <v-btn icon dark @click="playPreview()">
+          <v-icon size="350%" color="#F96500">mdi-play</v-icon>
+        </v-btn>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -57,6 +70,7 @@ import { Sound, Block } from '../types/music'
 
 type Rect = { top: number; left: number; height: number; width: number }
 type DataType = {
+  isEdited: boolean
   heightPerBlock: number
   widthPerNote: number
   quantize: number
@@ -69,6 +83,7 @@ type DataType = {
   editMode: 'border' | 'move' | null
   guidelines: { [key: string]: number[] }
   selectedGuideLineName: string
+  isPlaying: boolean
 }
 
 export default Vue.extend({
@@ -80,6 +95,7 @@ export default Vue.extend({
   },
   data(): DataType {
     return {
+      isEdited: false,
       heightPerBlock: 25,
       widthPerNote: 60,
       quantize: 0.5,
@@ -94,7 +110,8 @@ export default Vue.extend({
         明るい: [0, 2, 4, 5, 7, 9, 11],
         暗い: [0, 2, 3, 5, 7, 9, 11]
       },
-      selectedGuideLineName: '明るい'
+      selectedGuideLineName: '明るい',
+      isPlaying: false
     }
   },
   computed: {
@@ -105,22 +122,36 @@ export default Vue.extend({
       return this.$accessor.music.blocks.melody[this.blockName]
     },
     blockDuration(): number {
-      return Math.ceil(this.soundBlock.duration)
+      return Math.ceil(this.soundBlock.duration) || 4
     },
     selectedSound(): Sound | undefined {
       return this.sounds.find((s) => s.id === this.selectedSoundID)
     },
     keys(): boolean[] {
       const guideline = this.guidelines[this.selectedGuideLineName]
-      return [...Array(100).keys()].map((k) =>
-        guideline.some((g) => k % 12 === g)
+      return [...Array(this.maxkey - this.minkey).keys()].map((k) =>
+        guideline.some((g) => (this.maxkey - k) % 12 === g)
+      )
+    },
+    maxkey() {
+      return (
+        this.$accessor.player.instruments.find(
+          (i) => i.path === this.$accessor.music.melodyInstrument
+        )?.hiKey || 100
+      )
+    },
+    minkey() {
+      return (
+        this.$accessor.player.instruments.find(
+          (i) => i.path === this.$accessor.music.melodyInstrument
+        )?.loKey || 0
       )
     }
   },
   methods: {
     calcBlock(s: Sound): Rect {
       return {
-        top: this.heightPerBlock * s.key,
+        top: this.heightPerBlock * (this.maxkey - s.key),
         left: this.widthPerNote * s.delay,
         width: this.widthPerNote * s.duration,
         height: this.heightPerBlock
@@ -128,7 +159,7 @@ export default Vue.extend({
     },
     posToSound(x: number, y: number): { key: number; delay: number } {
       return {
-        key: Math.floor(y / this.heightPerBlock),
+        key: this.maxkey - Math.floor(y / this.heightPerBlock),
         delay: Math.round(x / this.widthPerNote / this.quantize) * this.quantize
       }
     },
@@ -190,6 +221,7 @@ export default Vue.extend({
       clientY: number
     ): { x: number; y: number } {
       if (!this.$refs.editInner) throw new Error('ref参照がありません')
+
       const inner = this.$refs.editInner as HTMLElement
       const pos = {
         x: clientX - inner.getBoundingClientRect().left,
@@ -199,6 +231,7 @@ export default Vue.extend({
     },
     mouseDown(e: MouseEvent) {
       if ('ontouchstart' in window) return
+
       const pos = this.calcPosInEditInner(e.clientX, e.clientY)
       this.startOffsetInBlock = { x: e.offsetX, y: e.offsetX }
       this.startPos = { x: pos.x, y: pos.y }
@@ -216,6 +249,7 @@ export default Vue.extend({
     },
     mouseMove(e: MouseEvent) {
       if ('ontouchmove' in window) return
+
       if (this.isMouseDown) {
         const pos = this.calcPosInEditInner(e.clientX, e.clientY)
 
@@ -228,6 +262,7 @@ export default Vue.extend({
     },
     mouseUp(e: MouseEvent) {
       if ('ontouchend' in window) return
+
       const pos = this.calcPosInEditInner(e.clientX, e.clientY)
 
       if (
@@ -262,6 +297,7 @@ export default Vue.extend({
     },
     touchMove(e: TouchEvent) {
       if (!this.selectedSoundID) return
+
       e.preventDefault()
       const pos = this.calcPosInEditInner(
         e.touches[0].clientX,
@@ -277,9 +313,13 @@ export default Vue.extend({
         e.changedTouches[0].clientY
       )
       if (this.startPos.x === pos.x && this.startPos.y === pos.y) {
+        if (!this.$accessor.player.editEnabled) return
+
         if (!this.selectedSoundID) {
           this.addSoundFromPos(pos.x, pos.y)
-        } else this.deleteSound(this.selectedSoundID)
+        } else {
+          this.deleteSound(this.selectedSoundID)
+        }
       }
       this.selectedSoundID = null
     },
@@ -291,7 +331,7 @@ export default Vue.extend({
           : 1
       this.$accessor.music.addSound({
         part: 'melody',
-        blockName: this.soundBlock.name,
+        blockName: this.blockName,
         sound: {
           id: newID,
           key: newPos.key,
@@ -299,27 +339,41 @@ export default Vue.extend({
           duration: this.quantize
         }
       })
+      this.$accessor.player.playUnitSoundPreview({
+        part: 'melody',
+        key: newPos.key
+      })
+      this.isEdited = true
+
       return newID
     },
     moveSoundFromPos(x: number, y: number) {
       if (!this.selectedSound) return
+
       const newPos = this.posToSound(x - this.startOffsetInBlock.x, y)
       this.$accessor.music.updateSound({
         part: 'melody',
-        blockName: this.soundBlock.name,
+        blockName: this.blockName,
         sound: {
           id: this.selectedSound.id,
           duration: this.selectedSound.duration,
           ...newPos
         }
       })
+      this.$accessor.player.playUnitSoundPreview({
+        part: 'melody',
+        key: newPos.key
+      })
+
+      this.isEdited = true
     },
     changeSoundDurationFromPos(x: number, y: number) {
       if (!this.selectedSound) return
+
       const newPos = this.posToSound(x, y)
       this.$accessor.music.updateSound({
         part: 'melody',
-        blockName: this.soundBlock.name,
+        blockName: this.blockName,
         sound: {
           id: this.selectedSound.id,
           duration: Math.max(
@@ -330,6 +384,8 @@ export default Vue.extend({
           key: this.selectedSound.key
         }
       })
+
+      this.isEdited = true
     },
     deleteSound(soundId: number) {
       this.$accessor.music.deleteSound({
@@ -337,6 +393,19 @@ export default Vue.extend({
         blockName: this.blockName,
         soundId
       })
+
+      this.isEdited = true
+    },
+    playPreview() {
+      this.$accessor.player.playPresetPreview({
+        part: 'melody',
+        name: this.blockName
+      })
+      this.isPlaying = true
+    },
+    stopPreview() {
+      this.$accessor.player.stopPresetPreview()
+      this.isPlaying = false
     }
   }
 })
@@ -387,5 +456,16 @@ export default Vue.extend({
     width: 4px;
     border-radius: 2px;
   }
+}
+
+.play-area {
+  background-color: $-gray-900;
+  position: fixed;
+  bottom: 0px;
+  height: 81px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
