@@ -2,7 +2,7 @@
   <div
     id="block-component-frame"
     :style="{
-      width: blockLength * baseWidth + (blockLength - 1) * blockInterval + 'rem'
+      width: baseWidth * blockLength + blockInterval * (blockLength - 1) + 'rem'
     }"
     :class="{ highlight: isHighlighted }"
   >
@@ -29,14 +29,13 @@ export default Vue.extend({
   data() {
     return {
       baseWidth: 4,
-      blockInterval: 1,
-      melodyDialog: false
+      blockInterval: 1
     }
   },
   computed: {
     // 半小節を1つ分の長さに
     blockLength(): number {
-      return this.block.duration / 2
+      return this.block.duration / 4
     }
   }
 })

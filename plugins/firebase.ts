@@ -49,4 +49,5 @@ export const firestoreAccessor = {
   scores: createFireRepository<Music>(db.collection('scores'))
 }
 
-export const firebaseAuth = firebase.auth()
+export const firebaseAuth = firebase.auth
+export const twitterProvider = new firebase.auth.TwitterAuthProvider()
