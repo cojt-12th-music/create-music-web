@@ -38,8 +38,12 @@ const config: Configuration = {
         hid: 'og:description',
         property: 'og:description',
         content: '共通ディスクリプション'
+      },
+      {
+        hid: 'og:image',
+        property: 'og:image',
+        content: 'https://create-music-web.web.app/ogp.png'
       }
-      // { hid: 'og:image', property: 'og:image', content: '画像のurl' },
       // { name: 'twitter:card', content: 'summary' },
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
