@@ -33,7 +33,11 @@
           :key="index"
           class="block-item-wrapper"
         >
-          <block-item :block="block" @click.native="showEditModal(block)" />
+          <block-item
+            :block="block"
+            :is-highlighted="isPlaying && !isMute && index === highlightedIndex"
+            @click.native="showEditModal(block)"
+          />
         </div>
       </draggable>
 
@@ -158,6 +162,12 @@ export default Vue.extend({
         const blockNames = blocks.map((block) => block.name)
         this.$accessor.music.setBlockNames({ part: this.part, blockNames })
       }
+    },
+    isPlaying(): boolean {
+      return this.$accessor.player.isPlaying
+    },
+    highlightedIndex(): number {
+      return this.$accessor.player.highlightedBlockIndex[this.part]
     }
   },
   watch: {
@@ -202,7 +212,6 @@ export default Vue.extend({
     },
     // ダイアログが閉じたときはプレビューを止める
     onCloseDialog() {
-      console.log('on close')
       this.$accessor.player.stopPresetPreview()
     },
     onChooseItem() {
