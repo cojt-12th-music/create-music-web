@@ -80,12 +80,9 @@ export default Vue.extend({
     Player
   },
   async fetch({ route, store }: Context) {
-    let userId = firebaseAuth().currentUser?.uid
-    if (!userId) {
-      userId = await firebaseAuth()
-        .signInAnonymously()
-        .then((cred) => cred.user?.uid || '')
-    }
+    const userId = await firebaseAuth()
+      .signInAnonymously()
+      .then((cred) => cred.user?.uid || '')
 
     store.commit('player/SET_USER_ID', userId)
 
