@@ -84,7 +84,24 @@ export const getters = getterTree(state, {
   melodyInstrument: (state: MusicState): string => state.melody.instrument,
   // コード
   chordInstrument: (state: MusicState): string => state.chord.instrument,
-  rhythmInstrument: (state: MusicState): string => state.rhythm.instrument
+  rhythmInstrument: (state: MusicState): string => state.rhythm.instrument,
+
+  maxDuration: (state: MusicState): number => {
+    const rhythmDuration = state.rhythm.blockNames.reduce(
+      (p: number, name: string) => p + state.blocks.rhythm[name].duration,
+      0
+    )
+    const chordDuration = state.chord.blockNames.reduce(
+      (p: number, name: string) => p + state.blocks.chord[name].duration,
+      0
+    )
+    const melodyDuration = state.melody.blockNames.reduce(
+      (p: number, name: string) => p + state.blocks.melody[name].duration,
+      0
+    )
+
+    return Math.max(rhythmDuration, chordDuration, melodyDuration)
+  }
 })
 
 export const mutations = mutationTree(state, {
