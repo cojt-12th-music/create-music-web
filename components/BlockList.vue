@@ -8,7 +8,7 @@
         </v-btn>
       </v-card-title>
 
-      <v-chip-group v-model="selection" column>
+      <v-chip-group v-model="selection" column class="card-content-wrapper">
         <v-card-text
           v-for="(blocks, category, categoryIndex) in blockGroup"
           :key="categoryIndex"
@@ -272,5 +272,10 @@ div#component-frame {
 .add-enter,
 .add-leave-to {
   transform: translateY(10vh) translateZ(0);
+}
+
+// ホントは良くないけど、一時しのぎ
+.card-content-wrapper ::v-deep .v-slide-group__content {
+  overflow-y: scroll;
 }
 </style>
