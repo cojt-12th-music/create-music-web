@@ -101,6 +101,15 @@ export const getters = getterTree(state, {
     )
 
     return Math.max(rhythmDuration, chordDuration, melodyDuration)
+  },
+  durationAccumurations: (
+    state: MusicState
+  ): ((part: ScorePart) => number[]) => (part: ScorePart) => {
+    let accDuration = 0
+    return state[part].blockNames.map((name) => {
+      accDuration += state.blocks[part][name].duration
+      return accDuration
+    })
   }
 })
 

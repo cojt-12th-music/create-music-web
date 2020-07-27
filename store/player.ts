@@ -29,7 +29,12 @@ export const state = (): PlayerState => ({
     part: null,
     key: 0
   },
-  reverbs: []
+  reverbs: [],
+  highlightedBlockIndex: {
+    melody: 0,
+    chord: 0,
+    rhythm: 0
+  }
 })
 
 export const mutations = mutationTree(state, {
@@ -87,6 +92,17 @@ export const mutations = mutationTree(state, {
       target.hiKey = e.hiKey
       target.loKey = e.loKey
     }
+  },
+  SET_HIGHLIGHTED_BLOCK_INDEX(
+    state: PlayerState,
+    { part, index }: { part: ScorePart; index: number }
+  ) {
+    Vue.set(state.highlightedBlockIndex, part, index)
+  },
+  RESET_HIGHLIGHTED_BLOCK_INDEX(state: PlayerState) {
+    Vue.set(state.highlightedBlockIndex, 'rhythm', 0)
+    Vue.set(state.highlightedBlockIndex, 'chord', 0)
+    Vue.set(state.highlightedBlockIndex, 'melody', 0)
   }
 })
 
@@ -146,6 +162,15 @@ export const actions = actionTree(
       e: { hiKey: number; loKey: number; path: string }
     ) {
       commit('UPDATE_KEY_RANGE', e)
+    },
+    setHighlightedBlockIndex(
+      { commit },
+      params: { part: ScorePart; index: number }
+    ) {
+      commit('SET_HIGHLIGHTED_BLOCK_INDEX', params)
+    },
+    resetHighlightedBlockIndex({ commit }) {
+      commit('RESET_HIGHLIGHTED_BLOCK_INDEX')
     }
   }
 )
