@@ -130,23 +130,23 @@ export default Vue.extend({
     }
   },
   async mounted() {
+    firebaseAuth().onAuthStateChanged((user) => {
+      let userId = this.$accessor.player.userId
+      // 念のため
+      if (!userId) {
+        userId = user?.uid || ''
+        this.$accessor.player.setUserId(userId)
+        console.log('setted:', userId)
+      }
+      if (!this.$accessor.music.id || userId === this.$accessor.music.userId) {
+        this.editEnabled = true
+      }
+    })
     await firebaseAuth()
-      .getRedirectResult()
-      .catch(function(error) {
-        console.log(error)
+      .signInAnonymously()
+      .catch((error) => {
+        console.error(error)
       })
-
-    let userId = this.$accessor.player.userId
-    // 念のため
-    if (!userId) {
-      userId = firebaseAuth().currentUser?.uid || ''
-      this.$accessor.player.setUserId(userId)
-      console.log('setted:', userId)
-    }
-
-    if (!this.$accessor.music.id || userId === this.$accessor.music.userId) {
-      this.editEnabled = true
-    }
   },
   methods: {
     twitterLogin() {
