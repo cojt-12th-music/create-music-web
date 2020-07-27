@@ -58,6 +58,7 @@ const createHtml = (title, description) => {
     <meta property="og:title" content="${title}" />
     <meta property="og:description"${description}" />
     <meta property="og:type" content="article" />
+    <meta property="og:image" content="https://create-music-web.web.app/ogp.png" />
     <meta property="og:site_name" content="music-sharp" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${title}" />
