@@ -80,15 +80,13 @@ export default Vue.extend({
     Player
   },
   async fetch({ route, store }: Context) {
-    if (!firebaseAuth().currentUser) {
-      await firebaseAuth()
+    let userId = firebaseAuth().currentUser?.uid
+    if (userId) {
+      store.commit('player/SET_USER_ID', userId)
+    } else {
+      userId = await firebaseAuth()
         .signInAnonymously()
-        .catch((error) => {
-          // Handle Errors here.
-          console.log('anonymous error.')
-          console.log(error.code)
-          console.log(error.message)
-        })
+        .then((cred) => cred.user?.uid || '')
     }
 
     const scoreId = route.query.id
@@ -141,9 +139,14 @@ export default Vue.extend({
         console.log(error)
       })
 
-    const userId = firebaseAuth().currentUser?.uid || ''
+    let userId = this.$accessor.player.userId
+    // 念のため
+    if (!userId) {
+      userId = firebaseAuth().currentUser?.uid || ''
+      this.$accessor.player.setUserId(userId)
+      console.log('setted:', userId)
+    }
 
-    this.$accessor.player.setUserId(userId)
     if (!this.$accessor.music.id || userId === this.$accessor.music.userId) {
       this.editEnabled = true
     }

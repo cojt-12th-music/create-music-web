@@ -328,6 +328,7 @@ export default Vue.extend({
       this.uploading = true
       // 楽譜がFirestoreに保存されており, userIdが自身と一致する場合はupdate
       const userId = this.$accessor.player.userId
+      console.log(userId)
       if (this.$accessor.music.id && userId === this.$accessor.music.userId) {
         await this.$accessor.music.updateScore()
       } else {
