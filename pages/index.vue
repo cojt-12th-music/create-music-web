@@ -147,6 +147,13 @@ export default Vue.extend({
       .catch((error) => {
         console.error(error)
       })
+
+    const scoreId = this.$route.query.id
+    if (scoreId && typeof scoreId === 'string') {
+      firestoreAccessor.scores.show(scoreId).then((score: Music) => {
+        this.$accessor.music.SET_SCORE(score)
+      })
+    }
   },
   methods: {
     twitterLogin() {
