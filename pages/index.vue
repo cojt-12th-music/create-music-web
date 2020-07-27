@@ -81,13 +81,13 @@ export default Vue.extend({
   },
   async fetch({ route, store }: Context) {
     let userId = firebaseAuth().currentUser?.uid
-    if (userId) {
-      store.commit('player/SET_USER_ID', userId)
-    } else {
+    if (!userId) {
       userId = await firebaseAuth()
         .signInAnonymously()
         .then((cred) => cred.user?.uid || '')
     }
+
+    store.commit('player/SET_USER_ID', userId)
 
     const scoreId = route.query.id
     if (scoreId && typeof scoreId === 'string') {
