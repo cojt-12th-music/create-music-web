@@ -1,6 +1,7 @@
 import { ScorePart } from './music'
 
 export interface PlayerState {
+  userId: string
   context: AudioContext | null
   isPlaying: boolean
   isReady: boolean
