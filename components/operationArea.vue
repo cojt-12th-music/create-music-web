@@ -23,19 +23,11 @@
         </v-col>
         <v-col align-self="center">
           <div class="iconRight">
-            <a
-              id="shareTag"
-              href="https://twitter.com/intent/tweet?url=https://us-central1-create-music-web.cloudfunctions.net/returnDynamicOGP
- &text=音楽を作ってみました♪"
-              target="blank_"
-              style="text-decoration: none;"
-            >
-              <v-btn icon @click="share">
-                <v-icon size="300%" color="#F96500">
-                  mdi-share-variant
-                </v-icon>
-              </v-btn>
-            </a>
+            <v-btn icon @click="share">
+              <v-icon size="300%" color="#F96500">
+                mdi-share-variant
+              </v-icon>
+            </v-btn>
           </div>
         </v-col>
       </v-row>

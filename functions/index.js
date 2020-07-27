@@ -7,7 +7,7 @@ exports.returnDynamicOGP = functions.https.onRequest((req, res) => {
 
   // ユーザーアクセスはリダイレクト
   if (!isBot(userAgent)) {
-    res.redirect('/?id=' + res.query.id)
+    res.redirect('/?id=' + req.query.id)
     return
   }
 
