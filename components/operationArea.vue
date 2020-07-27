@@ -30,9 +30,7 @@
               style="text-decoration: none;"
             >
               <v-btn icon @click="share">
-                <v-icon size="300%" color="#F96500">
-                  mdi-share-variant
-                </v-icon>
+                <v-icon size="300%" color="#F96500">mdi-share-variant</v-icon>
               </v-btn>
             </a>
           </div>
@@ -43,9 +41,7 @@
     <v-dialog v-model="configDialog" max-width="80%">
       <v-card color="#0A0A0A">
         <v-card-title class="justify-center">
-          <div class="textColoring" style="text-align: center;">
-            設定
-          </div>
+          <div class="textColoring" style="text-align: center;">設定</div>
         </v-card-title>
 
         <v-list color="#333333">
@@ -232,6 +228,7 @@ type DataType = {
   rhythmVolume: number
   chordVolume: number
   melodyVolume: number
+  setId: NodeJS.Timeout | null
 }
 
 export default Vue.extend({
@@ -268,7 +265,8 @@ export default Vue.extend({
       bpm: 100,
       rhythmVolume: 80,
       chordVolume: 80,
-      melodyVolume: 80
+      melodyVolume: 80,
+      setId: null
     }
   },
   computed: {
@@ -301,10 +299,19 @@ export default Vue.extend({
     // 音楽を再生
     play() {
       this.$accessor.player.play()
+      this.setId = setTimeout(
+        this.stop,
+        ((this.$accessor.music.maxDuration * 60) / this.$accessor.music.bpm +
+          1) *
+          1000
+      )
     },
     // 音楽再生をストップ
     stop() {
       this.$accessor.player.stop()
+      if (this.setId) {
+        clearTimeout(this.setId)
+      }
     },
     // 設定変更画面(ポップアップ)を表示
     config() {

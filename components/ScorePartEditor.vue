@@ -2,9 +2,9 @@
   <div class="score-part-container">
     <div class="column-title">
       <div class="part-title-container" @click="enabled = !enabled">
-        <v-icon large class="icon" :class="{ disabled: !enabled }">{{
-          partIcon
-        }}</v-icon>
+        <v-icon large class="icon" :class="{ disabled: !enabled }">
+          {{ partIcon }}
+        </v-icon>
         <div class="part-title" :class="{ disabled: !enabled }">
           {{ partTitle }}
         </div>
@@ -34,9 +34,9 @@
         </div>
       </draggable>
       <div class="button-wrapper">
-        <v-icon x-large class="dialog-button" @click.stop="showDialog()">
-          mdi-plus-circle-outline
-        </v-icon>
+        <v-icon x-large class="dialog-button" @click.stop="showDialog()"
+          >mdi-plus-circle-outline</v-icon
+        >
       </div>
     </div>
     <!-- ブロックが押されたら編集画面表示 -->
@@ -106,25 +106,7 @@ export default Vue.extend({
     },
     maxLength(): number {
       // 各partにおけるdurationの合計の最大値 / 2 + 1 (追加ボタン分)
-      // TODO: fetch from store
-      const RhythmLength: number = this.$accessor.music.rhythmBlocks.reduce(
-        (p: number, x: Block) => p + x.duration,
-        0
-      )
-      const ChordLength: number = this.$accessor.music.chordBlocks.reduce(
-        (p: number, x: Block) => p + x.duration,
-        0
-      )
-      const MelodyLength: number = this.$accessor.music.melodyBlocks.reduce(
-        (p: number, x: Block) => p + x.duration,
-        0
-      )
-      const maxLength: number = Math.max(
-        RhythmLength,
-        ChordLength,
-        MelodyLength
-      )
-      return Math.floor(maxLength / 2) + 1
+      return Math.floor(this.$accessor.music.maxDuration / 2) + 1
     },
     partTitle(): string {
       return {
