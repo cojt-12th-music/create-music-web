@@ -21,6 +21,9 @@ export interface PlayerState {
     key: number | 0
   }
   reverbs: string[]
+  highlightedBlockIndex: {
+    [part in ScorePart]: number
+  }
 }
 
 export interface Instrument {

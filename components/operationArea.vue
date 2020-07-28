@@ -213,6 +213,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { ScorePart } from '../types/music'
 
 type DataType = {
   // 初めのinitモーダル
@@ -233,6 +234,7 @@ type DataType = {
   colorTheme: string[]
   selectedColorTheme: string
   setId: NodeJS.Timeout | null
+  highlightTimeouts: NodeJS.Timeout[]
 }
 
 export default Vue.extend({
@@ -267,7 +269,8 @@ export default Vue.extend({
       selectedMelodyInst: 'ピアノ',
       colorTheme: ['ダークモード', 'ライトモード'],
       selectedColorTheme: 'ダークモード',
-      setId: null
+      setId: null,
+      highlightTimeouts: []
     }
   },
   computed: {
@@ -312,23 +315,32 @@ export default Vue.extend({
   },
   methods: {
     // 音楽を再生
-    play() {
+    async play() {
+      // ハイライトのタイムアウト設定がまだクリアされていなかったらしれっと無視する
+      if (this.highlightTimeouts.length) return
+
       this.$accessor.player.play()
+      // 再生自動終了の設定
       this.setId = setTimeout(
         this.stop,
         (((this.$accessor.music.maxDuration - this.$accessor.player.playTime) *
           60) /
           this.$accessor.music.bpm +
-          2) *
+          0.5) *
           1000
       )
+      // ブロックのハイライト設定
+      await this.setAllHighlightTimes()
     },
     // 音楽再生をストップ
-    stop() {
+    async stop() {
       this.$accessor.player.stop()
+      // 再生自動終了クリア設定
       if (this.setId) {
         clearTimeout(this.setId)
       }
+      // ブロックのハイライトクリア設定
+      await this.clearAllHighlightTimes()
     },
     // 設定変更画面(ポップアップ)を表示
     config() {
@@ -339,7 +351,6 @@ export default Vue.extend({
       this.uploading = true
       // 楽譜がFirestoreに保存されており, userIdが自身と一致する場合はupdate
       const userId = this.$accessor.player.userId
-      console.log(userId)
       if (this.$accessor.music.id && userId === this.$accessor.music.userId) {
         await this.$accessor.music.updateScore()
       } else {
@@ -411,7 +422,49 @@ export default Vue.extend({
       this.$accessor.music.setInstrument({ part: 'melody', inst: path })
     },
     // カラーモード選択
-    selectColorTheme() {}
+    selectColorTheme() {},
+    // ブロックを再生開始時間ごとにハイライトするようtimeoutをセット
+    async setAllHighlightTimes() {
+      await Promise.all([
+        this.setHighlightTimes('melody'),
+        this.setHighlightTimes('rhythm'),
+        this.setHighlightTimes('chord')
+      ])
+    },
+    setHighlightTimes(part: ScorePart): Promise<void> {
+      const offset = this.$accessor.player.playTime
+
+      // ブロックの累積のdurationを取得し, そこから再生終了時間を割り出してパラメータを変えている
+      return Promise.resolve(
+        this.$accessor.music
+          .durationAccumurations(part)
+          .forEach((duration, index) => {
+            if (duration <= offset) {
+              this.$accessor.player.setHighlightedBlockIndex({
+                part,
+                index: index + 1
+              })
+              return
+            }
+            this.highlightTimeouts.push(
+              setTimeout(
+                () =>
+                  this.$accessor.player.setHighlightedBlockIndex({
+                    part,
+                    index: index + 1
+                  }),
+                (((duration - offset) * 60) / this.$accessor.music.bpm) * 1000
+              )
+            )
+          })
+      )
+    },
+    // ハイライトに関する全てのタイムアウトをクリア
+    clearAllHighlightTimes() {
+      this.highlightTimeouts.forEach((timeout) => clearTimeout(timeout))
+      this.$accessor.player.resetHighlightedBlockIndex()
+      this.highlightTimeouts.splice(0)
+    }
   }
 })
 </script>

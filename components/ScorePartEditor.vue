@@ -1,7 +1,7 @@
 <template>
   <div class="score-part-container">
     <div class="column-title">
-      <div class="part-title-container" @click="isMute = !isMute">
+      <div class="part-title-container" @click="switchMute">
         <v-icon large class="icon" :class="{ disabled: isMute }">{{
           partIcon
         }}</v-icon>
@@ -33,16 +33,16 @@
           :key="index"
           class="block-item-wrapper"
         >
-          <block-item :block="block" @click.native="showEditModal(block)" />
+          <block-item
+            :block="block"
+            :is-highlighted="isPlaying && !isMute && index === highlightedIndex"
+            @click.native="showEditModal(block)"
+          />
         </div>
       </draggable>
 
       <div class="button-wrapper">
-        <v-icon
-          x-large
-          class="dialog-button"
-          @click.stop="showsBlockList = true"
-        >
+        <v-icon x-large class="dialog-button" @click.stop="openBlockList">
           mdi-plus-circle-outline
         </v-icon>
       </div>
@@ -158,6 +158,12 @@ export default Vue.extend({
         const blockNames = blocks.map((block) => block.name)
         this.$accessor.music.setBlockNames({ part: this.part, blockNames })
       }
+    },
+    isPlaying(): boolean {
+      return this.$accessor.player.isPlaying
+    },
+    highlightedIndex(): number {
+      return this.$accessor.player.highlightedBlockIndex[this.part]
     }
   },
   watch: {
@@ -169,6 +175,18 @@ export default Vue.extend({
     }
   },
   methods: {
+    switchMute() {
+      // 再生中のときはしれっと無視する
+      if (!this.isPlaying) {
+        this.isMute = !this.isMute
+      }
+    },
+    openBlockList() {
+      // 再生中のときはしれっと無視する
+      if (!this.isPlaying) {
+        this.showsBlockList = true
+      }
+    },
     showEditModal(block: Block) {
       // ブロックは編集前の状態を保持できるようdeep copyしておく
       this.currentBlock = JSON.parse(JSON.stringify(block))
@@ -202,7 +220,6 @@ export default Vue.extend({
     },
     // ダイアログが閉じたときはプレビューを止める
     onCloseDialog() {
-      console.log('on close')
       this.$accessor.player.stopPresetPreview()
     },
     onChooseItem() {
