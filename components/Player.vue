@@ -120,7 +120,8 @@ export default Vue.extend({
         const targetTemplate = this.$accessor.music.melodyTemplates.find(
           (t) => t.name === this.$accessor.player.previewPreset.name
         )
-        if (targetTemplate) return this.flatBlock([targetTemplate])
+        console.log(targetTemplate)
+        if (targetTemplate) return this.flatBlock([targetTemplate], 0)
         else return []
       }
 
@@ -128,7 +129,10 @@ export default Vue.extend({
         return []
       }
 
-      return this.flatBlock(this.$accessor.music.melodyBlocks)
+      return this.flatBlock(
+        this.$accessor.music.melodyBlocks,
+        this.$accessor.player.playTime
+      )
     },
     chordNotes(): Sound[] {
       // プレビュー用
@@ -136,7 +140,7 @@ export default Vue.extend({
         const targetTemplate = this.$accessor.music.chordTemplates.find(
           (t) => t.name === this.$accessor.player.previewPreset.name
         )
-        if (targetTemplate) return this.flatBlock([targetTemplate])
+        if (targetTemplate) return this.flatBlock([targetTemplate], 0)
         else return []
       }
 
@@ -144,7 +148,10 @@ export default Vue.extend({
         return []
       }
 
-      return this.flatBlock(this.$accessor.music.chordBlocks)
+      return this.flatBlock(
+        this.$accessor.music.chordBlocks,
+        this.$accessor.player.playTime
+      )
     },
     rhythmNotes(): Sound[] {
       // プレビュー用
@@ -152,7 +159,7 @@ export default Vue.extend({
         const targetTemplate = this.$accessor.music.rhythmTemplates.find(
           (t) => t.name === this.$accessor.player.previewPreset.name
         )
-        if (targetTemplate) return this.flatBlock([targetTemplate])
+        if (targetTemplate) return this.flatBlock([targetTemplate], 0)
         else return []
       }
 
@@ -160,7 +167,10 @@ export default Vue.extend({
         return []
       }
 
-      return this.flatBlock(this.$accessor.music.rhythmBlocks)
+      return this.flatBlock(
+        this.$accessor.music.rhythmBlocks,
+        this.$accessor.player.playTime
+      )
     },
     bpm(): number {
       return this.$accessor.music.bpm
@@ -267,18 +277,18 @@ export default Vue.extend({
       })
   },
   methods: {
-    flatBlock(block: Block[]) {
+    flatBlock(block: Block[], playTime: number) {
       let allDelay = 0
       return block
         .map((block) => {
           // 各soundsのdelayに今までのブロックのdurationを足した
           const filter = block.sounds.filter(({ delay }) => {
-            return delay + allDelay >= this.$accessor.player.playTime
+            return delay + allDelay >= playTime
           })
 
           const sounds = filter.map(({ delay, ...e }) => {
             return {
-              delay: delay + allDelay - this.$accessor.player.playTime,
+              delay: delay + allDelay - playTime,
               ...e
             }
           })
