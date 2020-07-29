@@ -24,7 +24,7 @@
         class="score-draggable"
         :group="part"
         v-bind="dragOptions"
-        :disabled="!editEnabled"
+        :disabled="!editEnabled || isPlaying"
         @choose="onChooseItem"
         @unchoose="onUnchooseItem"
       >
@@ -188,6 +188,10 @@ export default Vue.extend({
       }
     },
     showEditModal(block: Block) {
+      // 再生中のときは(ry
+      if (this.isPlaying) {
+        return
+      }
       // ブロックは編集前の状態を保持できるようdeep copyしておく
       this.currentBlock = JSON.parse(JSON.stringify(block))
       this.showsEditModal = true

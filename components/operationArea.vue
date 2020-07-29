@@ -361,7 +361,10 @@ export default Vue.extend({
 
       const scoreUrl = `${location.origin}/ogp/?id=${this.$accessor.music.id}`
       const text = '音楽を作ってみました♪'
-      location.href = `https://twitter.com/intent/tweet?url=${scoreUrl}&text=${text}`
+      open(
+        `https://twitter.com/intent/tweet?url=${scoreUrl}&text=${text}`,
+        '_blank'
+      )
     },
     // 初めの初期化（コンテキスト生成）
     // 各パートの楽器を初期化
