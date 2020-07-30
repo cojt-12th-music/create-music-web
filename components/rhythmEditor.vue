@@ -1,5 +1,5 @@
 <template>
-  <div class="score-part-container" @click="addscore">
+  <div ref="editInner" class="score-part-container" @click="addscore">
     <div class="column-title">
       <div class="part-title-container">
         <v-icon large class="icon">fa-drum</v-icon>
@@ -59,14 +59,18 @@ export default Vue.extend({
     async addscore(event: any) {
       if (!this.$accessor.player.editEnabled) return
 
-      console.log(event.clientX)
-      if (event.clientX > 100) {
+      if (!this.$refs.editInner) throw new Error('ref参照がありません')
+
+      const inner = this.$refs.editInner as HTMLElement
+      const coordinate = event.pageX - inner.getBoundingClientRect().left
+      console.log(coordinate)
+      if (coordinate > 100) {
         this.$accessor.music.addSound({
           part: 'rhythm',
           blockName: this.soundBlock.name,
           sound: {
             key: this.drumKey,
-            delay: (event.clientX - 100) / 40,
+            delay: (coordinate - 100) / 40,
             duration: 0.5
           }
         })
@@ -102,6 +106,7 @@ export default Vue.extend({
   justify-content: left;
   box-sizing: border-box;
   border-bottom: 1px solid $-gray-500;
+  width: 500vw;
 }
 
 .column-title {
