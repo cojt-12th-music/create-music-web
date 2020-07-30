@@ -73,12 +73,12 @@ export default Vue.extend({
     },
     seekBarStyle(): Object {
       const style = {
-        transform: `translateX(${(this.$accessor.player.playTime * 5) /
-          this.blockLength}rem)`
+        transform: `translate3d(${(this.$accessor.player.playTime * 5) /
+          this.blockLength}rem, 0, 0)`
       }
       if (this.$accessor.player.isPlaying) {
         Object.assign(style, {
-          transform: `translateX(${this.scoreLength * 5}rem)`,
+          transform: `translate3d(${this.scoreLength * 5}rem, 0, 0)`,
           transitionProperty: 'transform',
           transitionDuration: `${((this.musicDuration -
             this.$accessor.player.playTime) *
@@ -134,6 +134,7 @@ div#component-frame {
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
     border-bottom: 15px solid $-gray-300;
+    box-sizing: border-box;
   }
 
   .seek-bar {

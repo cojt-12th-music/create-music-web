@@ -17,7 +17,7 @@ export const state = (): PlayerState => ({
     chord: false,
     rhythm: false
   },
-  editEnabled: false,
+  editEnabled: true,
   playTime: 0,
   loadingProgress: 0,
   instruments: [],
